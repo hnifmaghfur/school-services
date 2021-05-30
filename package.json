@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "lint": "eslint bin test",
+    "lint": "eslint bin",
     "lint:fix": "npm run lint -- --fix"
   },
   "author": "Hanif Maghfur",

@@ -22,8 +22,6 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# sonarlint directory
-.sonarlint
 
 # package lock
 package-lock.json
