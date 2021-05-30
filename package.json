@@ -1,0 +1,88 @@
+{
+  "name": "sekolahan-project",
+  "version": "1.0.0",
+  "description": "Project Sekolahan",
+  "main": "index.js",
+  "engines": {
+    "node": "12.16.3"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint bin test",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "author": "Hanif Maghfur",
+  "license": "MIT",
+  "homepage": "https://github.com/hnifmaghfur",
+  "dependencies": {
+    "confidence": "^4.0.2",
+    "crypto": "^1.0.1",
+    "dateformat": "^4.5.1",
+    "dotenv": "^6.1.0",
+    "events": "1.1.1",
+    "joi": "^14.0.1",
+    "jsftp": "2.0.0",
+    "jsonwebtoken": "^8.3.0",
+    "mongodb": "^3.1.10",
+    "morgan": "^1.10.0",
+    "mysql": "^2.15.0",
+    "nodemon": "^2.0.3",
+    "passport": "0.4.0",
+    "passport-http": "0.3.0",
+    "pg": "^7.11.0",
+    "query-string": "5.0.1",
+    "raven": "2.2.1",
+    "request": "^2.88.0",
+    "request-promise": "4.2.2",
+    "restify": "^8.3.3",
+    "restify-cors-middleware": "^1.1.1",
+    "restify-errors": "^8.0.0",
+    "rewire": "^5.0.0",
+    "serve-static-restify": "^3.0.0",
+    "util": "0.10.3",
+    "uuid": "3.1.0",
+    "validate.js": "0.12.0",
+    "winston": "^2.4.3",
+    "winston-logstash": "^0.4.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "chai": "^4.1.2",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-react": "^7.11.1",
+    "hippie": "^0.5.2",
+    "mocha": "^7.1.2",
+    "mocha-junit-reporter": "^1.17.0",
+    "nyc": "^15.0.1",
+    "pre-commit": "^1.2.2",
+    "sinon": "^4.2.2"
+  },
+  "nyc": {
+    "lines": 10,
+    "statements": 10,
+    "functions": 10,
+    "branches": 10,
+    "check-coverage": true,
+    "include": [
+      "bin/**/*.js"
+    ],
+    "exclude": [
+      "index.js",
+      "bin/api/app/server.js"
+    ],
+    "reporter": [
+      "html",
+      "text",
+      "lcov",
+      "text-summary"
+    ],
+    "all": true,
+    "cache": true,
+    "report-dir": "./coverage"
+  },
+  "pre-commit": [
+    "lint"
+  ]
+}
