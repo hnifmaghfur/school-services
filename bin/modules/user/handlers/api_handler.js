@@ -10,6 +10,8 @@ const { ERROR:httpError, SUCCESS:http } = require('../../../helpers/http-status/
 
 const postDataLogin = async (req, res) => {
   const payload = req.body;
+  // eslint-disable-next-line no-console
+  console.log(req.body);
   const validatePayload = validator.isValidPayload(payload, commandModel.login);
   const postRequest = async (result) => {
     if (result.err) {
