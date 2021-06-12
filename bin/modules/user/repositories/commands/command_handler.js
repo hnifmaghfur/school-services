@@ -16,7 +16,14 @@ const registerUser = async (payload) => {
   return postCommand(payload);
 };
 
+const addClass = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addClass(payload);
+  return postCommand(payload);
+};
+
 module.exports = {
   postDataLogin,
-  registerUser
+  registerUser,
+  addClass
 };

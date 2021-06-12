@@ -18,12 +18,21 @@ class User {
       limit: parseInt(limit),
       page: (parseInt(page) - 1) * parseInt(limit)
     };
-    const user = await this.query.findAllClass(searching);
-    if (user.err) {
-      logger.log(ctx, user.err, 'user not found');
+    const kelas = await this.query.findAllClass(searching);
+    if (kelas.err) {
+      logger.log(ctx, kelas.err, 'user not found');
       return wrapper.error(new NotFoundError('Can not find user'));
     }
-    const { data } = user;
+
+
+    const data = kelas.data.map((item, index) => {
+      return {
+        nomor: index + 1,
+        kelas: item.nama_kelas,
+        walikelas: item.walikelas,
+        tahunAjaran: item.tahun_ajaran
+      };
+    });
     return wrapper.data(data);
   }
 

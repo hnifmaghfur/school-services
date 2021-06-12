@@ -1,0 +1,19 @@
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`user` (
+  `id` INT NOT NULL,
+  `user_id` VARCHAR(45) NULL,
+  `username` VARCHAR(45) NULL,
+  `password` VARCHAR(100) NULL,
+  `isActive` VARCHAR(45) NULL,
+  `createdAt` VARCHAR(45) NULL,
+  `updatedAt` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`kelas` (
+  `id` INT NOT NULL,
+  `kelas_id` VARCHAR(45) NULL,
+  `nama_kelas` VARCHAR(45) NULL,
+  `wali_kelas` VARCHAR(45) NULL,
+  `tahun_ajaran` VARCHAR(45) NULL,
+  `createdAt` VARCHAR(45) NULL,
+  `updatedAt` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));

@@ -25,6 +25,23 @@ const postDataLogin = async (req, res) => {
   sendResponse(await postRequest(validatePayload));
 };
 
+const registerUser = async (req, res) => {
+  const payload = req.body;
+  const validatePayload = validator.isValidPayload(payload, commandModel.login);
+  const postRequest = async (result) => {
+    if (result.err) {
+      return result;
+    }
+    return commandHandler.registerUser(result.data);
+  };
+  const sendResponse = async (result) => {
+    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+    (result.err) ? wrapper.response(res, 'fail', result, 'Register User', httpError.CONFLICT)
+      : wrapper.response(res, 'success', result, 'Register User', http.CREATED);
+  };
+  sendResponse(await postRequest(validatePayload));
+};
+
 const getAllClass = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -48,25 +65,32 @@ const getAllClass = async (req, res) => {
   }
 };
 
-const registerUser = async (req, res) => {
-  const payload = req.body;
-  const validatePayload = validator.isValidPayload(payload, commandModel.login);
-  const postRequest = async (result) => {
-    if (result.err) {
-      return result;
-    }
-    return commandHandler.registerUser(result.data);
-  };
-  const sendResponse = async (result) => {
+const addClass = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addClass);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addClass(result.data);
+    };
+    const sendResponse = async (result) => {
     /* eslint no-unused-expressions: [2, { allowTernary: true }] */
-    (result.err) ? wrapper.response(res, 'fail', result, 'Register User', httpError.CONFLICT)
-      : wrapper.response(res, 'success', result, 'Register User', http.CREATED);
-  };
-  sendResponse(await postRequest(validatePayload));
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Class')
+        : wrapper.response(res, 'success', result, 'Add Class', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
 };
 
 module.exports = {
   postDataLogin,
   getAllClass,
+  addClass,
   registerUser
 };

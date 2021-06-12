@@ -38,7 +38,8 @@ function AppServer() {
   // authenticated client can access the end point, place code bellow
   this.server.post('/admin/v1/login',  userHandler.postDataLogin);
   this.server.post('/admin/v1/register', userHandler.registerUser);
-  this.server.get('/class/v1/all', jwtAuth.verifyToken, userHandler.getAllClass);
+  this.server.post('/kelas/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
+  this.server.get('/kelas/v1/all', jwtAuth.verifyToken, userHandler.getAllClass);
 
   //Initiation
   mongoConnectionPooling.init();

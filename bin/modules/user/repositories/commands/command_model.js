@@ -6,6 +6,13 @@ const login = joi.object({
   isActive : joi.boolean().default(true, 'Example If Need Default Value')
 });
 
+const addClass = joi.object({
+  namaKelas: joi.string().required(),
+  walikelas: joi.string().required(),
+  tahunAjaran : joi.string().required()
+});
+
 module.exports = {
-  login
+  login,
+  addClass
 };
