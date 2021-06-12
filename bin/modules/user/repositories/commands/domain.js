@@ -24,7 +24,7 @@ class User {
     const ctx = 'login';
     const { username, password } = payload;
     const user = await this.query.findOneUser({ username });
-    if (user.err) {
+    if (validate.isEmpty(user.data)) {
       logger.log(ctx, user.err, 'user not found');
       return wrapper.error(new NotFoundError('user not found'));
     }
