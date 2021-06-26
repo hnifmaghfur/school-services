@@ -13,7 +13,25 @@ const getAllClass = async (payload) => {
   const result = await getData();
   return result;
 };
+const getAllSiswa = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewAllSiswa(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaTentangDiri = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaTentangDiri(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 
 module.exports = {
-  getAllClass
+  getAllClass,
+  getAllSiswa,
+  getSiswaTentangDiri
 };

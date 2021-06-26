@@ -94,7 +94,7 @@ class User {
     };
 
     const result = await this.command.insertOneClass(data);
-    if (result.affectedRows == 0) {
+    if (result.data.affectedRows == 0 || result.error) {
       logger.log(ctx, 'failed upload data', 'insert user');
       return wrapper.error(new InternalServerError('Internal Server Error'));
     }

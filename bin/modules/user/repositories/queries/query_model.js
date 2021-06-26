@@ -6,6 +6,11 @@ const getAll = joi.object({
   limit: joi.string().required(),
 });
 
+const getSiswaId = joi.object({
+  siswa_id: joi.string().required(),
+});
+
 module.exports = {
-  getAll
+  getAll,
+  getSiswaId
 };

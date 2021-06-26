@@ -1,5 +1,3 @@
-
-
 const wrapper = require('../../utils/wrapper');
 const connect = require('./connection');
 const validate = require('validate.js');
@@ -70,7 +68,7 @@ class DB {
             if (err.code === 'ECONNREFUSED') {
               errorMessage = 'Database connection was refused.';
             }
-            connection.release();
+            // connection.release();
             return reject(wrapper.error(err.code, errorMessage, 500));
           }
 
@@ -80,7 +78,7 @@ class DB {
               return reject(wrapper.error(err.code, err.sqlMessage, 500));
             }
 
-            connection.release();
+            // connection.release();
             return resolve(wrapper.data(result));
 
           });

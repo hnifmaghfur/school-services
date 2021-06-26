@@ -40,6 +40,9 @@ function AppServer() {
   this.server.post('/admin/v1/register', userHandler.registerUser);
   this.server.post('/kelas/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
   this.server.get('/kelas/v1/all', jwtAuth.verifyToken, userHandler.getAllClass);
+  // this.server.post('/siswa/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
+  this.server.get('/siswa/v1/all', jwtAuth.verifyToken, userHandler.getAllSiswa);
+  this.server.get('/siswa/v1/tentang-diri/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaTentangDiri);
 
   //Initiation
   mongoConnectionPooling.init();
