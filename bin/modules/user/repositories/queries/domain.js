@@ -103,27 +103,79 @@ class User {
     const ctx = 'getSiswaKompetensi';
     const { siswa_id } = payload;
 
-    const mapelPengetahuan = await this.query.findMapelPengetahuan({siswa_id});
+    const mapelPengetahuan = await this.query.findMapelPengetahuan({ siswa_id });
     if (mapelPengetahuan.err) {
       logger.log(ctx, mapelPengetahuan.err, 'mapel pengetahuan not found');
       return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));
     }
 
-    const mapelKeterampilan = await this.query.findMapelKeterampilan({siswa_id});
+    const mapelKeterampilan = await this.query.findMapelKeterampilan({ siswa_id });
     if (mapelKeterampilan.err) {
       logger.log(ctx, mapelKeterampilan.err, 'mapel keterampilan not found');
       return wrapper.error(new NotFoundError('Can not find mapel keterampilan'));
     }
 
-    const pengetahuan = mapelPengetahuan.data[0];
-    const keterampilan = mapelKeterampilan.data[0];
+    const mapelSikap = await this.query.findMapelSikap({ siswa_id });
+    if (mapelSikap.err) {
+      logger.log(ctx, mapelSikap.err, 'mapel sikap not found');
+      return wrapper.error(new NotFoundError('Can not find mapel sikap'));
+    }
 
-    // const data = {
+    const absen = await this.query.findAbsen({ siswa_id });
+    if (absen.err) {
+      logger.log(ctx, absen.err, 'absen not found');
+      return wrapper.error(new NotFoundError('Can not find absen'));
+    }
 
-    // }
+    const p = mapelPengetahuan.data[0];
+    const k = mapelKeterampilan.data[0];
+    const s = mapelSikap.data[0];
+
+    const data = {
+      Kelompok_A : [
+        ['Pendidikan Agama & Budi Pekerti', p.agama, k.agama, s.agama],
+        ['PPKn', p.pkn, k.pkn, s.pkn],
+        ['Bahasa Indonesia', p.b_indo, k.b_indo, s.b_indo],
+        ['Bahasa Inggris', p.b_ing, k.b_ing, s.b_ing],
+      ],
+      Kelompok_B: [
+        ['Seni Budaya', p.seni, k.seni, s.seni],
+        ['Penjas, Olahraga & Kesehatan', p.penjas, k.penjas, s.penjas],
+        ['Prakarya & Kewirausahaan', p.prakarya, k.prakarya, s.prakarya],
+      ],
+      Kelompok_C_Peminatan: [
+        ['Matematika', p.matematika_P, k.matematika_P, s.matematika_P],
+        ['Biologi', p.biologi_P, k.biologi_P, s.biologi_P],
+        ['Fisika', p.fisika_P, k.fisika_P, s.fisika_P],
+        ['Kimia', p.kimia_P, k.kimia_P, s.kimia_P],
+        ['Geografi', p.geografi_P, k.geografi_P, s.geografi_P],
+        ['Sejarah', p.sejarah_P, k.sejarah_P, s.sejarah_P],
+        ['Sosiologi', p.sosiologi_P, k.sosiologi_P, s.sosiologi_P],
+        ['Ekonomi', p.ekonomi_P, k.ekonomi_P, s.ekonomi_P],
+      ],
+      Kelompok_C_Lintas_Peminatan: [
+        ['Matematika', p.matematika_LP, k.matematika_LP, s.matematika_LP],
+        ['Biologi', p.biologi_LP, k.biologi_LP, s.biologi_LP],
+        ['Fisika', p.fisika_LP, k.fisika_LP, s.fisika_LP],
+        ['Kimia', p.kimia_LP, k.kimia_P, s.kimia_LP],
+        ['Geografi', p.geografi_LP, k.geografi_LP, s.geografi_LP],
+        ['Sejarah', p.sejarah_LP, k.sejarah_LP, s.sejarah_LP],
+        ['Sosiologi', p.sosiologi_LP, k.sosiologi_LP, s.sosiologi_LP],
+        ['Ekonomi', p.ekonomi_LP, k.ekonomi_LP, s.ekonomi_LP],
+        ['Bahasa & Sastra Indonesia', p.b_indo_LP, k.b_indo_LP, s.b_indo_LP],
+        ['Bahasa & Sastra Inggris', p.b_ing_LP, k.b_ing_LP, s.b_ing_LP],
+        ['Bahasa Asing Lain', p.b_asing_LP, k.b_asing_LP, s.b_asing_LP],
+        ['Antropologi', p.antropologi_LP, k.antropologi_LP, s.antropologi_LP],
+      ],
+      Ketidak_hadiran: {
+        sakit:  absen.data[0].sakit,
+        izin:  absen.data[0].izin,
+        tanpa_keterangan:  absen.data[0].tanpa_keterangan,
+      }
+    };
 
     logger.log(ctx, 'success', 'get kompetensi siswa');
-    return wrapper.data(keterampilan);
+    return wrapper.data(data);
   }
 
 }

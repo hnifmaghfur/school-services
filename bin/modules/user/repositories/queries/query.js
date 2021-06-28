@@ -69,6 +69,20 @@ class Query {
     return result;
   }
 
+  async findMapelSikap(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM mapel_sikap WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAbsen(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM kehadiran WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async findAllSiswa(document) {
     const validateData = [document.kelas_id, document.limit, document.page];
     const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%" AND kelas.kelas_id = ? LIMIT ? OFFSET ?`;

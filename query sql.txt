@@ -17,3 +17,44 @@ CREATE TABLE `heroku_ce1a2d5eb88fd49`.`kelas` (
   `createdAt` VARCHAR(45) NULL,
   `updatedAt` VARCHAR(45) NULL,
   PRIMARY KEY (`id`));
+
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (
+  `sikap_id` VARCHAR(40) NOT NULL,
+  `siswa_id` VARCHAR(40) NOT NULL,
+  `kelas_id` VARCHAR(40) NOT NULL,
+  `agama` VARCHAR(40) NOT NULL,
+  `pkn` VARCHAR(40) NOT NULL,
+  `b_indo` VARCHAR(40) NOT NULL,
+  `b_ing`  VARCHAR(40) NOT NULL,
+  `seni`  VARCHAR(40) NOT NULL,
+  `penjas` VARCHAR(40) NOT NULL,
+  `prakarya` VARCHAR(40) NOT NULL,
+  `matematika_P` VARCHAR(40) NOT NULL,
+  `matematika_LP` VARCHAR(40) NOT NULL,
+  `biologi_P` VARCHAR(40) NOT NULL,
+  `biologi_LP` VARCHAR(40) NOT NULL,
+  `fisika_P` VARCHAR(40) NOT NULL,
+  `fisika_LP` VARCHAR(40) NOT NULL,
+  `kimia_P` VARCHAR(40) NOT NULL,
+  `kimia_LP` VARCHAR(40) NOT NULL,
+  `geografi_P` VARCHAR(40) NOT NULL,
+  `geografi_LP` VARCHAR(40) NOT NULL,
+  `sejarah_P` VARCHAR(40) NOT NULL,
+  `sejarah_LP` VARCHAR(40) NOT NULL,
+  `sosiologi_P` VARCHAR(40) NOT NULL,
+  `sosiologi_LP` VARCHAR(40) NOT NULL,
+  `ekonomi_P` VARCHAR(40) NOT NULL,
+  `ekonomi_LP` VARCHAR(40) NOT NULL,
+  `b_indo_LP` VARCHAR(40) NOT NULL,
+  `b_ing_LP` VARCHAR(40) NOT NULL,
+  `b_asing_LP` VARCHAR(40) NOT NULL,
+  `antropologi_LP` VARCHAR(40) NOT NULL,
+  `createdAt` VARCHAR(40) NOT NULL,
+  `updatedAt` VARCHAR(40) NOT NULL,
+  PRIMARY KEY (`sikap_id`));
+
+INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('39fddf3c-f78f-4f2e-842a-93744dd88b3c', 'f9e3985b-3413-4992-92b8-069917e8823b', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Sangat Baik', 'Baik', 'Cukup', 'Baik', 'Sangat Baik', 'Baik', 'Cukup', 'Baik', 'Baik', 'Baik', 'Sangat Tidak Baik', 'Cukup', 'Sangat Baik', 'Sangat Baik', 'Sangat Baik', 'Cukup', 'Baik', 'Cukup', 'Sangat Baik', 'Sangat Baik', 'Sangat Baik', 'Baik', 'Baik', 'Cukup', 'Baik', 'Sangat Baik', 'Sangat Baik', '2021-06-28T16:15:40+0700', '2021-06-28T16:15:40+0700');
+INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('c5cc6b57-43e0-4f45-85bf-bc784725aed7', '4f8b1af7-1207-4806-a190-ff755de2e52b', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Sangat Baik', 'Baik', 'Cukup', 'Sangat Baik', 'Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Cukup', 'Sangat Baik', 'Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Baik', '2021-06-28T16:15:42+0700', '2021-06-28T16:15:42+0700');
+INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('37d39b98-a940-446d-92f2-4b93efb0523c', '68dc2b22-3b91-48ca-a312-0c7212fc254c', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Cukup', 'Sangat Baik', 'Baik', 'Cukup', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Cukup', 'Sangat Baik', '2021-06-28T16:16:10+0700', '2021-06-28T16:16:10+0700');
+INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('b2dd67d4-6048-4d74-b458-f903e3ac378a', '6fd6bc93-e7a8-4cb7-8d81-9c2e216859c2', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Cukup', 'Sangat Baik', 'Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Baik', 'Sangat Baik', 'Baik', 'Sangat Baik', '2021-06-28T16:16:31+0700', '2021-06-28T16:16:31+0700');
+INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('f53f945b-72a6-4fa2-856c-086ae9fa117d', 'abfe0c54-8d3c-4654-97ef-61c5c77114ff', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Sangat Tidak Baik', 'Cukup', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Cukup', 'Sangat Baik', 'Sangat Baik', 'Sangat Baik', 'Baik', 'Cukup', 'Baik', 'Cukup', 'Sangat Baik', 'Baik', '2021-06-28T16:16:48+0700', '2021-06-28T16:16:48+0700');
