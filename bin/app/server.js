@@ -36,13 +36,19 @@ function AppServer() {
   });
 
   // authenticated client can access the end point, place code bellow
-  this.server.post('/admin/v1/login',  userHandler.postDataLogin);
+  //admin
+  this.server.post('/admin/v1/login', userHandler.postDataLogin);
   this.server.post('/admin/v1/register', userHandler.registerUser);
+
+  //kelas
   this.server.post('/kelas/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
   this.server.get('/kelas/v1/all', jwtAuth.verifyToken, userHandler.getAllClass);
+
+  //siswa
   // this.server.post('/siswa/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
   this.server.get('/siswa/v1/all', jwtAuth.verifyToken, userHandler.getAllSiswa);
   this.server.get('/siswa/v1/tentang-diri/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaTentangDiri);
+  this.server.get('/siswa/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaKompetensi);
 
   //Initiation
   mongoConnectionPooling.init();

@@ -29,9 +29,18 @@ const getSiswaTentangDiri = async (payload) => {
   const result = await getData();
   return result;
 };
+const getSiswaKompetensi = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaKompetensi(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 
 module.exports = {
   getAllClass,
   getAllSiswa,
-  getSiswaTentangDiri
+  getSiswaTentangDiri,
+  getSiswaKompetensi,
 };

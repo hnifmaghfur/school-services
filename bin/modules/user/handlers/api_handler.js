@@ -56,7 +56,7 @@ const getAllClass = async (req, res) => {
 
     const sendResponse = async (result) => {
       (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
-        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
     };
     sendResponse(await getRequest(validatePayload));
   } else {
@@ -69,7 +69,7 @@ const getAllSiswa = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
     const payload = req.query;
-    const validatePayload = validator.isValidPayload(payload, queryModel.getAll);
+    const validatePayload = validator.isValidPayload(payload, queryModel.getAllSiswa);
     const getRequest = async (result) => {
       if (result.err) {
         return result;
@@ -79,7 +79,7 @@ const getAllSiswa = async (req, res) => {
 
     const sendResponse = async (result) => {
       (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
-        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
     };
     sendResponse(await getRequest(validatePayload));
   } else {
@@ -98,6 +98,29 @@ const getSiswaTentangDiri = async (req, res) => {
         return result;
       }
       return queryHandler.getSiswaTentangDiri(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaKompetensi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaKompetensi(result.data);
     };
 
     const sendResponse = async (result) => {
@@ -139,6 +162,7 @@ module.exports = {
   getAllClass,
   getAllSiswa,
   getSiswaTentangDiri,
+  getSiswaKompetensi,
   addClass,
   registerUser
 };

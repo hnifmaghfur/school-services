@@ -21,63 +21,64 @@ class User {
       limit: parseInt(limit),
       page: (parseInt(page) - 1) * parseInt(limit)
     };
+
+    const count = await this.query.countKelas();
+
     const kelas = await this.query.findAllClass(searching);
     if (kelas.err) {
       logger.log(ctx, kelas.err, 'user not found');
-      return wrapper.error(new NotFoundError('Can not find user'));
+      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
 
     const data = kelas.data.map((item, index) => {
       return {
+        kelas_id: item.kelas_id,
         nomor: index + 1,
         kelas: item.nama_kelas,
-        walikelas: item.walikelas,
+        walikelas: item.wali_kelas,
         tahunAjaran: item.tahun_ajaran
       };
     });
-    return wrapper.data(data);
+
+    const meta = {
+      page: parseInt(page),
+      data: kelas.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_kelas / parseInt(limit)),
+      totalData: count.data[0].jumlah_kelas
+    };
+
+    return wrapper.paginationData(data, meta);
   }
 
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { search, page, limit } = payload;
+    const { search, page, limit, kelas_id } = payload;
     const searching = {
       search: search ? search : '',
+      kelas_id,
       limit: parseInt(limit),
       page: (parseInt(page) - 1) * parseInt(limit)
     };
     const siswa = await this.query.findAllSiswa(searching);
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'user not found');
-      return wrapper.error(new NotFoundError('Can not find user'));
+      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
-    let data = [];
-    await Promise.all(siswa.data.map(async item => {
-      const kelas = await this.query.findAllIsiKelas({ siswa_id: item.siswa_id });
-      if (validate.isEmpty(kelas.err)) {
-        await Promise.all(kelas.data.map( async value => {
-        //   const dataSiswa = await this.query.findAllClassId({ kelas_id: value.kelas_id });
-        //   if (validate.isEmpty(dataSiswa.err)) {
-          data.push({
-            kelas_id: value.kelas_id,
-            siswa_id: item.siswa_id,
-            NISN: item.NISN,
-            NIS: item.NIS,
-            name: item.nama_siswa,
-            kelas: value.nama_kelas,
-            jenis_kelamin: item.jenis_kelamin
-          });
-        //   }
-        }));
-      }
+    const count = await this.query.countSiswa(searching);
 
-    }));
+    const data = siswa.data;
 
+    const meta = {
+      page: parseInt(page),
+      data: siswa.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
+      totalData: count.data[0].jumlah_siswa
+    };
 
     logger.log(ctx, 'success', 'get all siswa');
-    return wrapper.data(data);
+    return wrapper.paginationData(data, meta);
   }
 
   async viewSiswaTentangDiri(payload) {
@@ -96,6 +97,33 @@ class User {
 
     logger.log(ctx, 'success', 'get tentang siswa');
     return wrapper.data(dataSiswa);
+  }
+
+  async viewSiswaKompetensi(payload) {
+    const ctx = 'getSiswaKompetensi';
+    const { siswa_id } = payload;
+
+    const mapelPengetahuan = await this.query.findMapelPengetahuan({siswa_id});
+    if (mapelPengetahuan.err) {
+      logger.log(ctx, mapelPengetahuan.err, 'mapel pengetahuan not found');
+      return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));
+    }
+
+    const mapelKeterampilan = await this.query.findMapelKeterampilan({siswa_id});
+    if (mapelKeterampilan.err) {
+      logger.log(ctx, mapelKeterampilan.err, 'mapel keterampilan not found');
+      return wrapper.error(new NotFoundError('Can not find mapel keterampilan'));
+    }
+
+    const pengetahuan = mapelPengetahuan.data[0];
+    const keterampilan = mapelKeterampilan.data[0];
+
+    // const data = {
+
+    // }
+
+    logger.log(ctx, 'success', 'get kompetensi siswa');
+    return wrapper.data(keterampilan);
   }
 
 }
