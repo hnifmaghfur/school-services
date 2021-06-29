@@ -29,6 +29,54 @@ const getSiswaTentangDiri = async (payload) => {
   const result = await getData();
   return result;
 };
+const getSiswaTempatTinggal = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaTempatTinggal(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaPendidikan = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaPendidikan(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaKesehatan = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaKesehatan(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaHobi = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaHobi(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaOrangTua = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaOrangTua(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getSiswaPindah = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewSiswaPindah(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getSiswaKompetensi = async (payload) => {
   const getData = async () => {
     const result = await user.viewSiswaKompetensi(payload);
@@ -42,5 +90,11 @@ module.exports = {
   getAllClass,
   getAllSiswa,
   getSiswaTentangDiri,
+  getSiswaTempatTinggal,
+  getSiswaPendidikan,
+  getSiswaKesehatan,
+  getSiswaHobi,
+  getSiswaOrangTua,
+  getSiswaPindah,
   getSiswaKompetensi,
 };

@@ -111,6 +111,144 @@ const getSiswaTentangDiri = async (req, res) => {
   }
 };
 
+const getSiswaTempatTinggal = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaTempatTinggal(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaPendidikan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaPendidikan(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaKesehatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaKesehatan(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaHobi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaHobi(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaOrangTua = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaOrangTua(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getSiswaPindah = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaPindah(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const getSiswaKompetensi = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -162,6 +300,12 @@ module.exports = {
   getAllClass,
   getAllSiswa,
   getSiswaTentangDiri,
+  getSiswaTempatTinggal,
+  getSiswaPendidikan,
+  getSiswaKesehatan,
+  getSiswaHobi,
+  getSiswaOrangTua,
+  getSiswaPindah,
   getSiswaKompetensi,
   addClass,
   registerUser

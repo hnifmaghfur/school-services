@@ -48,6 +48,12 @@ function AppServer() {
   // this.server.post('/siswa/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
   this.server.get('/siswa/v1/all', jwtAuth.verifyToken, userHandler.getAllSiswa);
   this.server.get('/siswa/v1/tentang-diri/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaTentangDiri);
+  this.server.get('/siswa/v1/tempat-tinggal/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaTempatTinggal);
+  this.server.get('/siswa/v1/pendidikan/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaPendidikan);
+  this.server.get('/siswa/v1/kesehatan/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaKesehatan);
+  this.server.get('/siswa/v1/hobi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaHobi);
+  this.server.get('/siswa/v1/orang-tua/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaOrangTua);
+  this.server.get('/siswa/v1/pindah/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaPindah);
   this.server.get('/siswa/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaKompetensi);
 
   //Initiation

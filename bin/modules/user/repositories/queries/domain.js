@@ -99,6 +99,115 @@ class User {
     return wrapper.data(dataSiswa);
   }
 
+  async viewSiswaTempatTinggal(payload) {
+    const ctx = 'getSiswaTempatTinggal';
+    const { siswa_id } = payload;
+
+    const siswa = await this.query.findAllTempatTinggal({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+
+  async viewSiswaPendidikan(payload) {
+    const ctx = 'getSiswaPendidikan';
+    const { siswa_id } = payload;
+
+    const siswa = await this.query.findAllPendidikan({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+
+  async viewSiswaKesehatan(payload) {
+    const ctx = 'getSiswaKesehatan';
+    const { siswa_id } = payload;
+
+    const siswa = await this.query.findAllKesehatan({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+
+  async viewSiswaHobi(payload) {
+    const ctx = 'getSiswaHobi';
+    const { siswa_id } = payload;
+
+    const siswa = await this.query.findAllHobi({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+
+  async viewSiswaOrangTua(payload) {
+    const ctx = 'getSiswaOrangTua';
+    const { siswa_id } = payload;
+
+    //khusus orang tua ada wali juga, tolong cek lagi, type 1 = ayah 2=ibu 3=wali
+
+    const siswa = await this.query.findAllOrangTua({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+  async viewSiswaPindah(payload) {
+    const ctx = 'getSiswaPindah';
+    const { siswa_id } = payload;
+
+    const siswa = await this.query.findAllOrangTua({siswa_id});
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const dataSiswa = siswa.data[0];
+    delete dataSiswa.createdAt;
+    delete dataSiswa.updatedAt;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(dataSiswa);
+  }
+
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';
     const { siswa_id } = payload;

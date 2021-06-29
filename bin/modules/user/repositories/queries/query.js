@@ -55,6 +55,41 @@ class Query {
     return result;
   }
 
+  async findAllTempatTinggal(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM tempat_tinggal_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAllPendidikan(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM pendidikan_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAllKesehatan(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM kesehatan_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAllHobi(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM hobi_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAllOrangTua(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM orang_tua_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async findMapelPengetahuan(document) {
     const validateData = [document.siswa_id];
     const query = 'SELECT * FROM mapel_pengetahuan WHERE siswa_id = ?';

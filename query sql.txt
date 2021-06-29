@@ -58,3 +58,38 @@ INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kel
 INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('37d39b98-a940-446d-92f2-4b93efb0523c', '68dc2b22-3b91-48ca-a312-0c7212fc254c', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Cukup', 'Sangat Baik', 'Baik', 'Cukup', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Cukup', 'Sangat Baik', '2021-06-28T16:16:10+0700', '2021-06-28T16:16:10+0700');
 INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('b2dd67d4-6048-4d74-b458-f903e3ac378a', '6fd6bc93-e7a8-4cb7-8d81-9c2e216859c2', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Baik', 'Sangat Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Cukup', 'Cukup', 'Sangat Baik', 'Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Baik', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Baik', 'Sangat Baik', 'Baik', 'Sangat Baik', '2021-06-28T16:16:31+0700', '2021-06-28T16:16:31+0700');
 INSERT INTO `heroku_ce1a2d5eb88fd49`.`mapel_sikap` (`sikap_id`, `siswa_id`, `kelas_id`, `agama`, `pkn`, `b_indo`, `b_ing`, `seni`, `penjas`, `prakarya`, `matematika_P`, `matematika_LP`, `biologi_P`, `biologi_LP`, `fisika_P`, `fisika_LP`, `kimia_P`, `kimia_LP`, `geografi_P`, `geografi_LP`, `sejarah_P`, `sejarah_LP`, `sosiologi_P`, `sosiologi_LP`, `ekonomi_P`, `ekonomi_LP`, `b_indo_LP`, `b_ing_LP`, `b_asing_LP`, `antropologi_LP`, `createdAt`, `updatedAt`) VALUES ('f53f945b-72a6-4fa2-856c-086ae9fa117d', 'abfe0c54-8d3c-4654-97ef-61c5c77114ff', 'ae450482-7abb-4b36-9f58-a2a9f3578ee1', 'Sangat Baik', 'Cukup', 'Sangat Tidak Baik', 'Sangat Baik', 'Cukup', 'Cukup', 'Sangat Tidak Baik', 'Cukup', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Baik', 'Baik', 'Sangat Baik', 'Sangat Tidak Baik', 'Sangat Tidak Baik', 'Sangat Baik', 'Cukup', 'Sangat Baik', 'Sangat Baik', 'Sangat Baik', 'Baik', 'Cukup', 'Baik', 'Cukup', 'Sangat Baik', 'Baik', '2021-06-28T16:16:48+0700', '2021-06-28T16:16:48+0700');
+
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`hobi_siswa` (
+  `hobi_id` VARCHAR(50) NOT NULL,
+  `siswa_id` VARCHAR(50) NOT NULL,
+  `seni` VARCHAR(50) NOT NULL,
+  `olahraga` VARCHAR(50) NOT NULL,
+  `organisasi` VARCHAR(50) NOT NULL,
+  `lain-lain` VARCHAR(50) NOT NULL,
+  `createdAt` VARCHAR(50) NOT NULL,
+  `updatedAt` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`hobi_id`));
+
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`orang_tua_siswa` (
+`ortu_id` VARCHAR(50) NOT NULL,
+  `siswa_id`VARCHAR(50) NOT NULL,
+ `type_ortu` VARCHAR(50) NOT NULL,
+  `nama` VARCHAR(50) NOT NULL,
+  `TTL` VARCHAR(50) NOT NULL,
+  `agama` VARCHAR(50) NOT NULL,
+  `kewarganegaraan` VARCHAR(50) NOT NULL,
+  `pendidikan` VARCHAR(50) NOT NULL,
+  `gol_pekerjaan` VARCHAR(50) NOT NULL,
+  `pekerjaan` VARCHAR(50) NOT NULL,
+  `penghasilan` VARCHAR(50) NOT NULL,
+  `alamat` VARCHAR(50) NOT NULL,
+  `no_telpon` VARCHAR(50) NOT NULL,
+  `status` VARCHAR(50) NOT NULL,
+  `status_nikah` VARCHAR(50) NOT NULL,
+  `tahun_meninggal` VARCHAR(50) NOT NULL,
+  `hubungan_wali` VARCHAR(50) NOT NULL,
+  `createdAt` VARCHAR(50) NOT NULL,
+  `updatedAt` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`ortu_id`));
+
+
