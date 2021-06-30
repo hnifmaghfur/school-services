@@ -194,7 +194,7 @@ class User {
     const ctx = 'getSiswaPindah';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllOrangTua({siswa_id});
+    const siswa = await this.query.findAllPindahan({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));

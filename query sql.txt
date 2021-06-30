@@ -92,4 +92,17 @@ CREATE TABLE `heroku_ce1a2d5eb88fd49`.`orang_tua_siswa` (
   `updatedAt` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`ortu_id`));
 
+CREATE TABLE `heroku_ce1a2d5eb88fd49`.`pindah_siswa` (
+  `pindah_id` VARCHAR(50) NOT NULL, 
+  `siswa_id` VARCHAR(50) NOT NULL,
+  `pindah_sekolah` VARCHAR(50) NOT NULL,
+  `pindah_alasan` VARCHAR(50) NOT NULL,
+  `diterima_di` VARCHAR(50) NOT NULL,
+  `diterima_program` VARCHAR(50) NOT NULL,
+  `meninggalkan_di` VARCHAR(50) NOT NULL,
+  `meninggalkan_program` VARCHAR(50) NOT NULL,
+  `meninggalkan_alasan` VARCHAR(50) NOT NULL,
+  `akhir_tamat_belajar` VARCHAR(50) NOT NULL,
+  `akhir_STTB` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`pindah_id`));
 

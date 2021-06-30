@@ -90,6 +90,13 @@ class Query {
     return result;
   }
 
+  async findAllPindahan(document) {
+    const validateData = [document.siswa_id];
+    const query = 'SELECT * FROM pindah_siswa WHERE siswa_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async findMapelPengetahuan(document) {
     const validateData = [document.siswa_id];
     const query = 'SELECT * FROM mapel_pengetahuan WHERE siswa_id = ?';
