@@ -88,6 +88,29 @@ const getAllSiswa = async (req, res) => {
   }
 };
 
+const getAllDataSiswa = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getAll);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getAllDataSiswa(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const getSiswaTentangDiri = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -299,6 +322,7 @@ module.exports = {
   postDataLogin,
   getAllClass,
   getAllSiswa,
+  getAllDataSiswa,
   getSiswaTentangDiri,
   getSiswaTempatTinggal,
   getSiswaPendidikan,

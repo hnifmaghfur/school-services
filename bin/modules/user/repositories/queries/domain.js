@@ -81,6 +81,36 @@ class User {
     return wrapper.paginationData(data, meta);
   }
 
+  async viewAllDataSiswa(payload) {
+    const ctx = 'getAllSiswa';
+    const { search, page, limit } = payload;
+    const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit)
+    };
+
+    const siswa = await this.query.findAllDataSiswa(searching);
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+    }
+
+    const count = await this.query.countSiswa(searching);
+
+    const data = siswa.data;
+
+    const meta = {
+      page: parseInt(page),
+      data: siswa.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
+      totalData: count.data[0].jumlah_siswa
+    };
+
+    logger.log(ctx, 'success', 'get all siswa');
+    return wrapper.paginationData(data, meta);
+  }
+
   async viewSiswaTentangDiri(payload) {
     const ctx = 'getSiswaTentangDiri';
     const { siswa_id } = payload;
