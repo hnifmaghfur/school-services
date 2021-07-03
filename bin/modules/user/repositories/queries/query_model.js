@@ -1,9 +1,19 @@
 const joi = require('joi');
 
-const getAll = joi.object({
+const getAllClass = joi.object({
   search: joi.string().allow(''),
   page: joi.string().required(),
   limit: joi.string().required(),
+  sort: joi.string().required().valid('ASC', 'DESC'),
+  tab: joi.string().required().valid('all', 'ipa', 'ips')
+});
+
+const getAllDataSiswa = joi.object({
+  search: joi.string().allow(''),
+  page: joi.string().required(),
+  limit: joi.string().required(),
+  sort: joi.string().required().valid('ASC', 'DESC'),
+  tab: joi.string().required().valid('all', 'laki', 'perempuan')
 });
 
 const getAllSiswa = joi.object({
@@ -11,6 +21,8 @@ const getAllSiswa = joi.object({
   kelas_id: joi.string().required(),
   page: joi.string().required(),
   limit: joi.string().required(),
+  sort: joi.string().required().valid('ASC', 'DESC'),
+  tab: joi.string().required().valid('all', 'laki', 'perempuan')
 });
 
 const getSiswaId = joi.object({
@@ -18,7 +30,8 @@ const getSiswaId = joi.object({
 });
 
 module.exports = {
-  getAll,
+  getAllClass,
   getAllSiswa,
+  getAllDataSiswa,
   getSiswaId
 };

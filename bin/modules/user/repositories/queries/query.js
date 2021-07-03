@@ -22,21 +22,28 @@ class Query {
 
   async findAllClass(document) {
     const validateData = [document.limit, document.page];
-    const query = `SELECT * FROM kelas WHERE nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%" LIMIT ? OFFSET ?`;
+    const query = `SELECT * FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%") ORDER BY nama_kelas ${document.sort} LIMIT ? OFFSET ?`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async countKelas(document) {
     const validateData = [];
-    const query = 'SELECT COUNT(kelas_id) as jumlah_kelas FROM kelas';
+    const query = `SELECT COUNT(kelas_id) as jumlah_kelas FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%")`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async countSiswa(document) {
     const validateData = [document.kelas_id];
-    const query = `SELECT COUNT(isi_kelas.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%" AND kelas.kelas_id = ?`;
+    const query = `SELECT COUNT(siswa.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?)`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async countSiswaAll(document) {
+    const validateData = [];
+    const query = `SELECT COUNT(siswa.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%")`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
@@ -127,14 +134,14 @@ class Query {
 
   async findAllSiswa(document) {
     const validateData = [document.kelas_id, document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%" AND kelas.kelas_id = ? LIMIT ? OFFSET ?`;
+    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?) ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findAllDataSiswa(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%" LIMIT ? OFFSET ?`;
+    const validateData = [ document.limit, document.page];
+    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
     const result = await this.db.findData(query, validateData);
     return result;
   }

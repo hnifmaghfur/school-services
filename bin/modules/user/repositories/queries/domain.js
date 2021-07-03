@@ -15,14 +15,18 @@ class User {
 
   async viewAllClass(payload) {
     const ctx = 'getAllClass';
-    const { search, page, limit } = payload;
+    const { search, page, limit, sort, tab } = payload;
+    const tabAll = '(nama_kelas LIKE "%ipa%" OR nama_kelas LIKE "%ips%")';
+    const tabNorm = `nama_kelas LIKE "%${tab}%"`;
     const searching = {
       search: search ? search : '',
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit)
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+      tab: tab == 'all' ? tabAll : tabNorm
     };
 
-    const count = await this.query.countKelas();
+    const count = await this.query.countKelas(searching);
 
     const kelas = await this.query.findAllClass(searching);
     if (kelas.err) {
@@ -53,12 +57,16 @@ class User {
 
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { search, page, limit, kelas_id } = payload;
+    const { search, page, limit, kelas_id, sort, tab } = payload;
+    const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
+    const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
     const searching = {
       search: search ? search : '',
       kelas_id,
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit)
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+      tab: tab == 'all' ? tabAll : tabNorm
     };
     const siswa = await this.query.findAllSiswa(searching);
     if (siswa.err) {
@@ -83,11 +91,15 @@ class User {
 
   async viewAllDataSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { search, page, limit } = payload;
+    const { search, page, limit, sort, tab } = payload;
+    const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
+    const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
     const searching = {
       search: search ? search : '',
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit)
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+      tab: tab == 'all' ? tabAll : tabNorm
     };
 
     const siswa = await this.query.findAllDataSiswa(searching);
@@ -96,7 +108,7 @@ class User {
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
-    const count = await this.query.countSiswa(searching);
+    const count = await this.query.countSiswaAll(searching);
 
     const data = siswa.data;
 
