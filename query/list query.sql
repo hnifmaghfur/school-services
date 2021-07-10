@@ -2,6 +2,8 @@ show tables;
 
 select * from user;
 select * from kelas;
+select * from guru;
+select * from tenaga_ahli;
 select * from siswa where jenis_kelamin LIKe '%perempuan%';
 select * from isi_kelas;
 select * from tentang_siswa;

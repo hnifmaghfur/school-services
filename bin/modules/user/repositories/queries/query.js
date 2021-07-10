@@ -22,7 +22,7 @@ class Query {
 
   async findAllClass(document) {
     const validateData = [document.limit, document.page];
-    const query = `SELECT * FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%") ORDER BY nama_kelas ${document.sort} LIMIT ? OFFSET ?`;
+    const query = `SELECT * FROM kelas WHERE ${document.tab}`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
@@ -148,21 +148,21 @@ class Query {
 
   async findAllSiswa(document) {
     const validateData = [document.kelas_id, document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?) ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
+    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND kelas.kelas_id = ?`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findAllGuru(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT guru_id, nip_karpeg, nama, jabatan FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
+    const validateData = [];
+    const query = 'SELECT guru_id, nip_karpeg, nama, jabatan FROM guru';
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findAllTenagaAhli(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT tenaga_ahli_id, nip_karpeg, nama, jabatan FROM tenaga_ahli WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
+    const validateData = [];
+    const query = 'SELECT tenaga_ahli_id, nip_karpeg, nama, jabatan FROM tenaga_ahli';
     const result = await this.db.findData(query, validateData);
     return result;
   }
@@ -182,8 +182,8 @@ class Query {
   }
 
   async findAllDataSiswa(document) {
-    const validateData = [ document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
+    const validateData = [];
+    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab}`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
