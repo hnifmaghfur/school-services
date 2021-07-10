@@ -43,7 +43,14 @@ class Query {
 
   async countGuru(document) {
     const validateData = [];
-    const query = `SELECT COUNT(guru_id) FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
+    const query = `SELECT COUNT(guru_id) as jumlah_guru FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async countTenagaAhli(document) {
+    const validateData = [];
+    const query = `SELECT COUNT(tenaga_ahli_id) as jumlah_tenaga_ahli FROM tenaga_ahli WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
@@ -153,9 +160,23 @@ class Query {
     return result;
   }
 
+  async findAllTenagaAhli(document) {
+    const validateData = [document.limit, document.page];
+    const query = `SELECT tenaga_ahli_id, nip_karpeg, nama, jabatan FROM tenaga_ahli WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async findOneGuru(document) {
     const validateData = [document.guru_id];
     const query = 'SELECT * FROM guru WHERE guru_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findOneTenagaAhli(document) {
+    const validateData = [document.tenaga_ahli_id];
+    const query = 'SELECT * FROM tenaga_ahli WHERE tenaga_ahli_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }

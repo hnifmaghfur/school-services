@@ -69,8 +69,8 @@ class User {
       tab: tab == 'all' ? tabAll : tabNorm
     };
     const siswa = await this.query.findAllSiswa(searching);
-    if (siswa.err) {
-      logger.log(ctx, siswa.err, 'user not found');
+    if (siswa.err || validate.isEmpty(siswa.data)) {
+      logger.log(ctx, ('find siswa'), 'user not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
@@ -100,8 +100,8 @@ class User {
     };
 
     const guru = await this.query.findAllGuru(searching);
-    if (guru.err) {
-      logger.log(ctx, guru.err, 'guru not found');
+    if (guru.err || validate.isEmpty(guru.data)) {
+      logger.log(ctx, 'search guru', 'guru not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
@@ -117,6 +117,37 @@ class User {
     };
 
     logger.log(ctx, 'success', 'get all guru');
+    return wrapper.paginationData(data, meta);
+  }
+
+  async viewAllTenagaAhli(payload) {
+    const ctx = 'getAllTenagaAhli';
+    const { search, page, limit, sort } = payload;
+    const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+    };
+
+    const tenagaAhli = await this.query.findAllTenagaAhli(searching);
+    if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
+      logger.log(ctx, 'search tenaga ahli', 'tenaga ahli not found');
+      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+    }
+
+    const count = await this.query.countTenagaAhli(searching);
+
+    const data = tenagaAhli.data;
+
+    const meta = {
+      page: parseInt(page),
+      data: tenagaAhli.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_tenaga_ahli / parseInt(limit)),
+      totalData: count.data[0].jumlah_tenaga_ahli
+    };
+
+    logger.log(ctx, 'success', 'get all tenaga ahli');
     return wrapper.paginationData(data, meta);
   }
 
@@ -136,6 +167,25 @@ class User {
     const data = guru.data[0];
 
     logger.log(ctx, 'success', 'get all guru');
+    return wrapper.data(data);
+  }
+
+  async viewTenagaAhli(payload) {
+    const ctx = 'getTenagaAhli';
+    const { tenaga_ahli_id } = payload;
+
+    const tenagaAhli = await this.query.findOneTenagaAhli({ tenaga_ahli_id });
+    if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
+      logger.log(ctx, 'find tenaga ahli', 'tenaga ahli not found');
+      return wrapper.error(new NotFoundError('Tenaga Ahli not Found'));
+    }
+
+    delete tenagaAhli.data[0].createdAt;
+    delete tenagaAhli.data[0].updatedAt;
+
+    const data = tenagaAhli.data[0];
+
+    logger.log(ctx, 'success', 'get tenaga ahli');
     return wrapper.data(data);
   }
 

@@ -61,6 +61,10 @@ function AppServer() {
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);
   this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, userHandler.getGuru);
 
+  //tenaga ahli
+  this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, userHandler.getAllTenagaAhli);
+  this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, userHandler.getTenagaAhli);
+
 
   //Initiation
   mongoConnectionPooling.init();

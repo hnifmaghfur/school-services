@@ -29,9 +29,25 @@ const getAllGuru = async (payload) => {
   const result = await getData();
   return result;
 };
+const getAllTenagaAhli = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewAllTenagaAhli(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getGuru = async (payload) => {
   const getData = async () => {
     const result = await user.viewGuru(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getTenagaAhli = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewTenagaAhli(payload);
     return result;
   };
   const result = await getData();
@@ -114,6 +130,8 @@ module.exports = {
   getAllClass,
   getAllGuru,
   getGuru,
+  getTenagaAhli,
+  getAllTenagaAhli,
   getAllSiswa,
   getAllDataSiswa,
   getSiswaTentangDiri,
