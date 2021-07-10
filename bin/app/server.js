@@ -57,6 +57,11 @@ function AppServer() {
   this.server.get('/siswa/v1/pindah/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaPindah);
   this.server.get('/siswa/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaKompetensi);
 
+  //guru
+  this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);
+  this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, userHandler.getGuru);
+
+
   //Initiation
   mongoConnectionPooling.init();
 }

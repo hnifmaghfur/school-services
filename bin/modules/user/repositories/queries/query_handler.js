@@ -21,6 +21,22 @@ const getAllSiswa = async (payload) => {
   const result = await getData();
   return result;
 };
+const getAllGuru = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewAllGuru(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getGuru = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewGuru(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getAllDataSiswa = async (payload) => {
   const getData = async () => {
     const result = await user.viewAllDataSiswa(payload);
@@ -96,6 +112,8 @@ const getSiswaKompetensi = async (payload) => {
 
 module.exports = {
   getAllClass,
+  getAllGuru,
+  getGuru,
   getAllSiswa,
   getAllDataSiswa,
   getSiswaTentangDiri,

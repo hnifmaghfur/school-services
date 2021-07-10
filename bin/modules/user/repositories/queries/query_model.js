@@ -25,13 +25,26 @@ const getAllSiswa = joi.object({
   tab: joi.string().required().valid('all', 'laki', 'perempuan')
 });
 
+const getAllGuru = joi.object({
+  search: joi.string().allow(''),
+  page: joi.string().required(),
+  limit: joi.string().required(),
+  sort: joi.string().required().valid('nama ASC', 'nama DESC', 'jabatan ASC', 'jabatan DESC')
+});
+
 const getSiswaId = joi.object({
   siswa_id: joi.string().required(),
+});
+
+const getGuruId = joi.object({
+  guru_id: joi.string().required(),
 });
 
 module.exports = {
   getAllClass,
   getAllSiswa,
+  getAllGuru,
+  getGuruId,
   getAllDataSiswa,
   getSiswaId
 };

@@ -89,6 +89,56 @@ class User {
     return wrapper.paginationData(data, meta);
   }
 
+  async viewAllGuru(payload) {
+    const ctx = 'getAllGuru';
+    const { search, page, limit, sort } = payload;
+    const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+    };
+
+    const guru = await this.query.findAllGuru(searching);
+    if (guru.err) {
+      logger.log(ctx, guru.err, 'guru not found');
+      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+    }
+
+    const count = await this.query.countGuru(searching);
+
+    const data = guru.data;
+
+    const meta = {
+      page: parseInt(page),
+      data: guru.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_guru / parseInt(limit)),
+      totalData: count.data[0].jumlah_guru
+    };
+
+    logger.log(ctx, 'success', 'get all guru');
+    return wrapper.paginationData(data, meta);
+  }
+
+  async viewGuru(payload) {
+    const ctx = 'getGuru';
+    const { guru_id } = payload;
+
+    const guru = await this.query.findOneGuru({ guru_id });
+    if (guru.err || validate.isEmpty(guru.data)) {
+      logger.log(ctx, 'find guru', 'guru not found');
+      return wrapper.error(new NotFoundError('Guru not Found'));
+    }
+
+    delete guru.data[0].createdAt;
+    delete guru.data[0].updatedAt;
+
+    const data = guru.data[0];
+
+    logger.log(ctx, 'success', 'get all guru');
+    return wrapper.data(data);
+  }
+
   async viewAllDataSiswa(payload) {
     const ctx = 'getAllSiswa';
     const { search, page, limit, sort, tab } = payload;

@@ -84,7 +84,53 @@ const getAllSiswa = async (req, res) => {
     sendResponse(await getRequest(validatePayload));
   } else {
     logger.log('GetAllClass', 'You dont have access', 'userId failed');
-    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Siswa', httpError.UNAUTHORIZED);
+  }
+};
+
+const getAllGuru = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getAllGuru);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getAllGuru(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
+  }
+};
+
+const getGuru = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getGuruId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getGuru(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
   }
 };
 
@@ -331,6 +377,8 @@ module.exports = {
   getSiswaOrangTua,
   getSiswaPindah,
   getSiswaKompetensi,
+  getAllGuru,
+  getGuru,
   addClass,
   registerUser
 };

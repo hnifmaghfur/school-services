@@ -41,6 +41,13 @@ class Query {
     return result;
   }
 
+  async countGuru(document) {
+    const validateData = [];
+    const query = `SELECT COUNT(guru_id) FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async countSiswaAll(document) {
     const validateData = [];
     const query = `SELECT COUNT(siswa.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%")`;
@@ -135,6 +142,20 @@ class Query {
   async findAllSiswa(document) {
     const validateData = [document.kelas_id, document.limit, document.page];
     const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?) ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findAllGuru(document) {
+    const validateData = [document.limit, document.page];
+    const query = `SELECT guru_id, nip_karpeg, nama, jabatan FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
+  async findOneGuru(document) {
+    const validateData = [document.guru_id];
+    const query = 'SELECT * FROM guru WHERE guru_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }
