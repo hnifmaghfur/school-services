@@ -27,6 +27,13 @@ class Query {
     return result;
   }
 
+  async findListKelas(document) {
+    const validateData = [];
+    const query = 'SELECT * FROM kelas ORDER BY nama_kelas ';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async countKelas(document) {
     const validateData = [];
     const query = `SELECT COUNT(kelas_id) as jumlah_kelas FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%")`;
@@ -76,6 +83,13 @@ class Query {
     return result;
   }
 
+  async findDataSiswa(document) {
+    const validateData = [document.siswa_id, document.kelas_id];
+    const query = 'SELECT siswa.nama_siswa AS name, kelas.nama_kelas as kelas, siswa.NISN AS NISN, siswa.NIS AS NIS FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
+    const result = await this.db.findData(query, validateData);
+    return result;
+  }
+
   async findAllTempatTinggal(document) {
     const validateData = [document.siswa_id];
     const query = 'SELECT * FROM tempat_tinggal_siswa WHERE siswa_id = ?';
@@ -119,29 +133,29 @@ class Query {
   }
 
   async findMapelPengetahuan(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM mapel_pengetahuan WHERE siswa_id = ?';
+    const validateData = [document.siswa_id, document.kelas_id];
+    const query = 'SELECT mapel_pengetahuan.* FROM mapel_pengetahuan JOIN isi_kelas ON mapel_pengetahuan.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findMapelKeterampilan(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM mapel_keterampilan WHERE siswa_id = ?';
+    const validateData = [document.siswa_id, document.kelas_id];
+    const query = 'SELECT mapel_keterampilan.* FROM mapel_keterampilan JOIN isi_kelas ON mapel_keterampilan.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findMapelSikap(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM mapel_sikap WHERE siswa_id = ?';
+    const validateData = [document.siswa_id, document.kelas_id];
+    const query = 'SELECT mapel_sikap.* FROM mapel_sikap JOIN isi_kelas ON isi_Kelas.siswa_id = mapel_sikap.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }
 
   async findAbsen(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM kehadiran WHERE siswa_id = ?';
+    const validateData = [document.siswa_id, document.kelas_id];
+    const query = 'SELECT kehadiran.* FROM kehadiran JOIN isi_kelas ON kehadiran.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
     const result = await this.db.findData(query, validateData);
     return result;
   }

@@ -24,6 +24,11 @@ const getSiswaId = joi.object({
   siswa_id: joi.string().required(),
 });
 
+const getSiswaIdKelasId = joi.object({
+  siswa_id: joi.string().required(),
+  kelas_id: joi.string().required(),
+});
+
 const getGuruId = joi.object({
   guru_id: joi.string().required(),
 });
@@ -39,5 +44,6 @@ module.exports = {
   getGuruId,
   getTenagaAhliId,
   getAllDataSiswa,
-  getSiswaId
+  getSiswaId,
+  getSiswaIdKelasId,
 };

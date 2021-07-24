@@ -2,7 +2,7 @@
 const Query = require('./query');
 const wrapper = require('../../../../helpers/utils/wrapper');
 const logger = require('../../../../helpers/utils/logger');
-const { NotFoundError } = require('../../../../helpers/error');
+const { NotFoundError, InternalServerError } = require('../../../../helpers/error');
 const validate = require('validate.js');
 const uuid = require('uuid').v4;
 const dateFormat = require('dateformat');
@@ -35,6 +35,25 @@ class User {
         kelas: item.nama_kelas,
         walikelas: item.wali_kelas,
         tahunAjaran: item.tahun_ajaran
+      };
+    });
+
+    return wrapper.data(data);
+  }
+
+  async viewListKelas() {
+    const ctx = 'getListKelas';
+
+    const kelas = await this.query.findListKelas();
+    if (kelas.err || validate.isEmpty(kelas.data)) {
+      logger.log(ctx, 'error', 'user not found');
+      return wrapper.error(new InternalServerError('Internal server error'));
+    }
+
+    const data = kelas.data.map((item, index) => {
+      return {
+        kelas_id: item.kelas_id,
+        kelas: item.nama_kelas,
       };
     });
 
@@ -130,7 +149,7 @@ class User {
 
   async viewAllDataSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { search, page, limit, sort, tab } = payload;
+    const { tab } = payload;
     const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
     const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
     const searching = {
@@ -146,6 +165,7 @@ class User {
 
     // const count = await this.query.countSiswaAll(searching);
 
+
     const data = siswa.data;
 
     // const meta = {
@@ -157,6 +177,29 @@ class User {
 
     logger.log(ctx, 'success', 'get all siswa');
     return wrapper.data(data);
+  }
+
+  async viewSiswaData(payload) {
+    const ctx = 'getSiswaTentangDiri';
+    const { siswa_id, kelas_id } = payload;
+
+    const siswa = await this.query.findDataSiswa({ siswa_id, kelas_id });
+    if (siswa.err || validate.isEmpty(siswa.data)) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new NotFoundError('Can not find siswa'));
+    }
+
+    const data = siswa.data[0];
+
+    const result = {
+      name: data.name,
+      kelas: data.kelas,
+      NISN: data.NISN,
+      NIS: data.NIS
+    };
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(result);
   }
 
   async viewSiswaTentangDiri(payload) {
@@ -261,9 +304,23 @@ class User {
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
-    delete dataSiswa.createdAt;
-    delete dataSiswa.updatedAt;
+    const dataSiswa = siswa.data.map(item => {
+      if (item.type_ortu === '1') {
+        item.type_ortu = 'ayah';
+        delete item.hubungan_wali;
+      } else if (item.type_ortu === '2') {
+        item.type_ortu = 'ibu';
+        delete item.hubungan_wali;
+      } else {
+        item.type_ortu = 'wali';
+      }
+
+      delete item.ortu_id;
+      delete item.createdAt;
+      delete item.updatedAt;
+
+      return item;
+    });
 
     logger.log(ctx, 'success', 'get tentang siswa');
     return wrapper.data(dataSiswa);
@@ -288,27 +345,27 @@ class User {
 
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';
-    const { siswa_id } = payload;
+    const { siswa_id, kelas_id } = payload;
 
-    const mapelPengetahuan = await this.query.findMapelPengetahuan({ siswa_id });
+    const mapelPengetahuan = await this.query.findMapelPengetahuan({ siswa_id, kelas_id });
     if (mapelPengetahuan.err) {
       logger.log(ctx, mapelPengetahuan.err, 'mapel pengetahuan not found');
       return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));
     }
 
-    const mapelKeterampilan = await this.query.findMapelKeterampilan({ siswa_id });
+    const mapelKeterampilan = await this.query.findMapelKeterampilan({ siswa_id, kelas_id });
     if (mapelKeterampilan.err) {
       logger.log(ctx, mapelKeterampilan.err, 'mapel keterampilan not found');
       return wrapper.error(new NotFoundError('Can not find mapel keterampilan'));
     }
 
-    const mapelSikap = await this.query.findMapelSikap({ siswa_id });
+    const mapelSikap = await this.query.findMapelSikap({ siswa_id, kelas_id });
     if (mapelSikap.err) {
       logger.log(ctx, mapelSikap.err, 'mapel sikap not found');
       return wrapper.error(new NotFoundError('Can not find mapel sikap'));
     }
 
-    const absen = await this.query.findAbsen({ siswa_id });
+    const absen = await this.query.findAbsen({ siswa_id, kelas_id });
     if (absen.err) {
       logger.log(ctx, absen.err, 'absen not found');
       return wrapper.error(new NotFoundError('Can not find absen'));

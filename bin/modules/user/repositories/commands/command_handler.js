@@ -22,8 +22,57 @@ const addClass = async (payload) => {
   return postCommand(payload);
 };
 
+const addTentangDiri = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addTentangDiri(payload);
+  return postCommand(payload);
+};
+
+const addTempatTinggal = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addTempatTinggal(payload);
+  return postCommand(payload);
+};
+
+const addPendidikan = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addPendidikan(payload);
+  return postCommand(payload);
+};
+
+const addKesehatan = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addKesehatan(payload);
+  return postCommand(payload);
+};
+
+const addOrangTua = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addOrangTua(payload);
+  return postCommand(payload);
+};
+
+const addHobi = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addHobi(payload);
+  return postCommand(payload);
+};
+
+const addPindah = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addPindah(payload);
+  return postCommand(payload);
+};
+
 module.exports = {
   postDataLogin,
   registerUser,
-  addClass
+  addClass,
+  addTentangDiri,
+  addTempatTinggal,
+  addPendidikan,
+  addKesehatan,
+  addOrangTua,
+  addHobi,
+  addPindah,
 };

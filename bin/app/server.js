@@ -44,8 +44,7 @@ function AppServer() {
   this.server.post('/kelas/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
   this.server.get('/kelas/v1/all', jwtAuth.verifyToken, userHandler.getAllClass);
 
-  //siswa
-  // this.server.post('/siswa/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
+  //siswa Get
   this.server.get('/siswa/v1/all', jwtAuth.verifyToken, userHandler.getAllSiswa);
   this.server.get('/siswa/v1/all-siswa', jwtAuth.verifyToken, userHandler.getAllDataSiswa);
   this.server.get('/siswa/v1/tentang-diri/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaTentangDiri);
@@ -55,7 +54,16 @@ function AppServer() {
   this.server.get('/siswa/v1/hobi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaHobi);
   this.server.get('/siswa/v1/orang-tua/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaOrangTua);
   this.server.get('/siswa/v1/pindah/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaPindah);
-  this.server.get('/siswa/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, userHandler.getSiswaKompetensi);
+  this.server.get('/siswa/v1/kompetensi', jwtAuth.verifyToken, userHandler.getSiswaKompetensi);
+
+  //siswa post
+  this.server.post('/siswa/v1/tentang-diri', jwtAuth.verifyToken, userHandler.addTentangDiri);
+  this.server.post('/siswa/v1/tempat-tinggal', jwtAuth.verifyToken, userHandler.addTempatTinggal);
+  this.server.post('/siswa/v1/pendidikan', jwtAuth.verifyToken, userHandler.addPendidikan);
+  this.server.post('/siswa/v1/kesehatan', jwtAuth.verifyToken, userHandler.addKesehatan);
+  this.server.post('/siswa/v1/hobi', jwtAuth.verifyToken, userHandler.addHobi);
+  this.server.post('/siswa/v1/orang-tua', jwtAuth.verifyToken, userHandler.addOrangTua);
+  this.server.post('/siswa/v1/pindah', jwtAuth.verifyToken, userHandler.addPindah);
 
   //guru
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);
@@ -64,6 +72,10 @@ function AppServer() {
   //tenaga ahli
   this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, userHandler.getAllTenagaAhli);
   this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, userHandler.getTenagaAhli);
+
+  //addOns
+  this.server.get('/siswa/v1/', jwtAuth.verifyToken, userHandler.getSiswaData);
+  this.server.get('/kelas/v1/list-kelas', jwtAuth.verifyToken, userHandler.getListKelas);
 
 
   //Initiation
