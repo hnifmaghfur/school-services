@@ -20,12 +20,12 @@ function AppServer() {
 
   // required for CORS configuration
   const corsConfig = corsMiddleware({
-    preflightMaxAge: 5,
+    // preflightMaxAge: 5,
     origins: ['*'],
     // ['*'] -> to expose all header, any type header will be allow to access
     // X-Requested-With,content-type,GET, POST, PUT, PATCH, DELETE, OPTIONS -> header type
-    allowHeaders: ['Authorization'],
-    exposeHeaders: ['Authorization']
+    // allowHeaders: ['Authorization'],
+    // exposeHeaders: ['Authorization']
   });
   this.server.pre(corsConfig.preflight);
   this.server.use(corsConfig.actual);
