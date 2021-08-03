@@ -29,17 +29,17 @@ const getAllSiswa = async (payload) => {
   const result = await getData();
   return result;
 };
-const getAllGuru = async () => {
+const getAllGuru = async (payload) => {
   const getData = async () => {
-    const result = await user.viewAllGuru();
+    const result = await user.viewAllGuru(payload);
     return result;
   };
   const result = await getData();
   return result;
 };
-const getAllTenagaAhli = async () => {
+const getAllTenagaAhli = async (payload) => {
   const getData = async () => {
-    const result = await user.viewAllTenagaAhli();
+    const result = await user.viewAllTenagaAhli(payload);
     return result;
   };
   const result = await getData();

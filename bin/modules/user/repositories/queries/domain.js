@@ -15,10 +15,14 @@ class User {
 
   async viewAllClass(payload) {
     const ctx = 'getAllClass';
-    const { tab } = payload;
+    const { search, page, limit, sort,tab } = payload;
     const tabAll = '(nama_kelas LIKE "%ipa%" OR nama_kelas LIKE "%ips%")';
     const tabNorm = `nama_kelas LIKE "%${tab}%"`;
     const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
       tab: tab == 'all' ? tabAll : tabNorm
     };
 
@@ -27,6 +31,8 @@ class User {
       logger.log(ctx, kelas.err, 'user not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
+
+    const count = await this.query.countKelas(searching);
 
     const data = kelas.data.map((item, index) => {
       return {
@@ -38,7 +44,14 @@ class User {
       };
     });
 
-    return wrapper.data(data);
+    const meta = {
+      page: parseInt(page),
+      data: kelas.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_kelas / parseInt(limit)),
+      totalData: count.data[0].jumlah_kelas
+    };
+
+    return wrapper.paginationData(data, meta);
   }
 
   async viewListKelas() {
@@ -62,51 +75,99 @@ class User {
 
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { tab, kelas_id } = payload;
+    const { search, page, limit, kelas_id, sort, tab } = payload;
     const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
     const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
     const searching = {
+      search: search ? search : '',
       kelas_id,
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
       tab: tab == 'all' ? tabAll : tabNorm
     };
+
     const siswa = await this.query.findAllSiswa(searching);
     if (siswa.err || validate.isEmpty(siswa.data)) {
       logger.log(ctx, ('find siswa'), 'user not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
+    const count = await this.query.countSiswa(searching);
+
     const data = siswa.data;
 
+    const meta = {
+      page: parseInt(page),
+      data: siswa.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
+      totalData: count.data[0].jumlah_siswa
+    };
+
     logger.log(ctx, 'success', 'get all siswa');
-    return wrapper.data(data);
+    return wrapper.paginationData(data, meta);
   }
 
   async viewAllGuru(payload) {
     const ctx = 'getAllGuru';
+    const { search, page, limit, sort } = payload;
+    const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+    };
 
-    const guru = await this.query.findAllGuru();
+    const guru = await this.query.findAllGuru(searching);
     if (guru.err || validate.isEmpty(guru.data)) {
       logger.log(ctx, 'search guru', 'guru not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
+    const count = await this.query.countGuru(searching);
+
     const data = guru.data;
+
+    const meta = {
+      page: parseInt(page),
+      data: guru.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_guru / parseInt(limit)),
+      totalData: count.data[0].jumlah_guru
+    };
+
     logger.log(ctx, 'success', 'get all guru');
-    return wrapper.data(data);
+    return wrapper.paginationData(data, meta);
   }
 
   async viewAllTenagaAhli(payload) {
     const ctx = 'getAllTenagaAhli';
-    const tenagaAhli = await this.query.findAllTenagaAhli();
+    const { search, page, limit, sort } = payload;
+    const searching = {
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+    };
+
+    const tenagaAhli = await this.query.findAllTenagaAhli(searching);
     if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
       logger.log(ctx, 'search tenaga ahli', 'tenaga ahli not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
+    const count = await this.query.countTenagaAhli(searching);
+
     const data = tenagaAhli.data;
 
+    const meta = {
+      page: parseInt(page),
+      data: tenagaAhli.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_tenaga_ahli / parseInt(limit)),
+      totalData: count.data[0].jumlah_tenaga_ahli
+    };
+
     logger.log(ctx, 'success', 'get all tenaga ahli');
-    return wrapper.paginationData(data);
+    return wrapper.paginationData(data, meta);
   }
 
   async viewGuru(payload) {
@@ -149,11 +210,14 @@ class User {
 
   async viewAllDataSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { tab } = payload;
+    const { search, limit, page, sort, tab } = payload;
     const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
     const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
     const searching = {
-
+      search: search ? search : '',
+      limit: parseInt(limit),
+      page: (parseInt(page) - 1) * parseInt(limit),
+      sort,
       tab: tab == 'all' ? tabAll : tabNorm
     };
 
@@ -163,20 +227,20 @@ class User {
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
     }
 
-    // const count = await this.query.countSiswaAll(searching);
+    const count = await this.query.countSiswaAll(searching);
 
 
     const data = siswa.data;
 
-    // const meta = {
-    //   page: parseInt(page),
-    //   data: siswa.data.length,
-    //   totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
-    //   totalData: count.data[0].jumlah_siswa
-    // };
+    const meta = {
+      page: parseInt(page),
+      data: siswa.data.length,
+      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
+      totalData: count.data[0].jumlah_siswa
+    };
 
     logger.log(ctx, 'success', 'get all siswa');
-    return wrapper.data(data);
+    return wrapper.paginationData(data, meta);
   }
 
   async viewSiswaData(payload) {

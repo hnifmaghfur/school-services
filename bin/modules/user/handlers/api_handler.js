@@ -105,15 +105,20 @@ const getAllSiswa = async (req, res) => {
 const getAllGuru = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const getRequest = async () => {
-      return queryHandler.getAllGuru();
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getAllGuru);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getAllGuru(result.data);
     };
 
     const sendResponse = async (result) => {
       (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
         : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
     };
-    sendResponse(await getRequest());
+    sendResponse(await getRequest(validatePayload));
   } else {
     logger.log('GetAllClass', 'You dont have access', 'userId failed');
     wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
@@ -123,15 +128,20 @@ const getAllGuru = async (req, res) => {
 const getAllTenagaAhli = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const getRequest = async () => {
-      return queryHandler.getAllTenagaAhli();
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getAllGuru);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getAllTenagaAhli(result.data);
     };
 
     const sendResponse = async (result) => {
       (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
         : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
     };
-    sendResponse(await getRequest());
+    sendResponse(await getRequest(validatePayload));
   } else {
     logger.log('GetAllClass', 'You dont have access', 'userId failed');
     wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
