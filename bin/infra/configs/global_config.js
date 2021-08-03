@@ -3,6 +3,12 @@ const confidence = require('confidence');
 
 const config = {
   port: process.env.PORT,
+  basicAuthApi: [
+    {
+      username: process.env.BASIC_AUTH_USERNAME,
+      password: process.env.BASIC_AUTH_PASSWORD
+    }
+  ],
   privateKey: process.env.PRIVATE_KEY_PATH,
   mongoDbUrl: process.env.MONGO_DATABASE_URL,
   mysqlConfig: {

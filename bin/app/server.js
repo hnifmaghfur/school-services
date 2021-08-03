@@ -2,6 +2,7 @@ const restify = require('restify');
 const corsMiddleware = require('restify-cors-middleware');
 const project = require('../../package.json');
 const jwtAuth = require('../auth/jwt_auth_helper');
+const basicAuth = require('../auth/basic_auth_helper');
 const wrapper = require('../helpers/utils/wrapper');
 const userHandler = require('../modules/user/handlers/api_handler');
 const mongoConnectionPooling = require('../helpers/databases/mongodb/connection');
@@ -24,8 +25,8 @@ function AppServer() {
     origins: ['*'],
     // ['*'] -> to expose all header, any type header will be allow to access
     // X-Requested-With,content-type,GET, POST, PUT, PATCH, DELETE, OPTIONS -> header type
-    // allowHeaders: ['Authorization'],
-    // exposeHeaders: ['Authorization']
+    allowHeaders: ['Authorization'],
+    exposeHeaders: ['Authorization']
   });
 
   this.server.pre(corsConfig.preflight);
@@ -38,8 +39,8 @@ function AppServer() {
 
   // authenticated client can access the end point, place code bellow
   //admin
-  this.server.post('/admin/v1/login', userHandler.postDataLogin);
-  this.server.post('/admin/v1/register', userHandler.registerUser);
+  this.server.post('/admin/v1/login',basicAuth.isAuthenticated, userHandler.postDataLogin);
+  this.server.post('/admin/v1/register',basicAuth.isAuthenticated, userHandler.registerUser);
 
   //kelas
   this.server.post('/kelas/v1/add', jwtAuth.verifyToken,  userHandler.addClass);
