@@ -29,7 +29,7 @@ function AppServer() {
   });
 
   this.server.pre(corsConfig.preflight);
-  // this.server.use(corsConfig.actual);
+  this.server.use(corsConfig.actual);
 
   // anonymous can access the end point, place code bellow
   this.server.get('/', (req, res) => {
