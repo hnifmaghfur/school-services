@@ -193,28 +193,6 @@ const getTenagaAhli = async (req, res) => {
   }
 };
 
-const getAllDataSiswa = async (req, res) => {
-  const { userId } = req.token;
-  if (userId) {
-    const payload = req.query;
-    const validatePayload = validator.isValidPayload(payload, queryModel.getAllDataSiswa);
-    const getRequest = async (result) => {
-      if (result.err) {
-        return result;
-      }
-      return queryHandler.getAllDataSiswa(result.data);
-    };
-
-    const sendResponse = async (result) => {
-      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
-        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
-    };
-    sendResponse(await getRequest(validatePayload));
-  } else {
-    logger.log('GetAllClass', 'You dont have access', 'userId failed');
-    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
-  }
-};
 
 const getSiswaData = async (req, res) => {
   const { userId } = req.token;
@@ -601,13 +579,35 @@ const addPindah = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const importSiswa = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    payload.file = req.files.file;
+    const validatePayload = validator.isValidPayload(payload, commandModel.importSiswa);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.importSiswa(result.data);
+    };
+    const sendResponse = async (result) => {
+    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Import Siswa')
+        : wrapper.response(res, 'success', result, 'Import Siswa', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 
 module.exports = {
   postDataLogin,
   getAllClass,
   getListKelas,
   getAllSiswa,
-  getAllDataSiswa,
   getSiswaData,
   getSiswaTentangDiri,
   getSiswaTempatTinggal,
@@ -629,5 +629,6 @@ module.exports = {
   addHobi,
   addOrangTua,
   addPindah,
-  registerUser
+  registerUser,
+  importSiswa
 };

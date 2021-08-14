@@ -14,8 +14,10 @@ const addClass = joi.object({
 
 const addTentangDiri = joi.object({
   kelas_id: joi.string().required(),
+  siswa_id: joi.string().required(),
   NIS: joi.string().required(),
   NISN: joi.string().required(),
+  image: joi.string().required(),
   nama_lengkap : joi.string().required(),
   nama_panggilan : joi.string().required(),
   ttl: joi.string().required(),
@@ -25,6 +27,7 @@ const addTentangDiri = joi.object({
   anak_ke: joi.string().required(),
   jml_sdr_kandung: joi.string().required(),
   jml_sdr_tiri: joi.string().required(),
+  jml_sdr_angkat: joi.string().required(),
   status_anak: joi.string().required(),
   bahasa: joi.string().required(),
   pihak_dihubungi: joi.string().required(),
@@ -43,10 +46,10 @@ const addPendidikan = joi.object({
   siswa_id: joi.string().required(),
   tanggal_diterima: joi.string().required(),
   lulus_dari: joi.string().required(),
-  tgl_no_ijazah : joi.string().required(),
-  tgl_no_STL : joi.string().required(),
+  tanggal_no_ijazah : joi.string().required(),
+  tanggal_no_stl : joi.string().required(),
   lama_belajar : joi.string().required(),
-  nilai_SKHUN : joi.string().required(),
+  nilai_skhun : joi.string().required(),
 });
 
 const addKesehatan = joi.object({
@@ -101,6 +104,10 @@ const addPindah = joi.object({
   akhir_sttb: joi.string().required(),
 });
 
+const importSiswa = joi.object({
+  file: joi.optional(),
+});
+
 module.exports = {
   login,
   addClass,
@@ -111,4 +118,5 @@ module.exports = {
   addOrangTua,
   addHobi,
   addPindah,
+  importSiswa,
 };

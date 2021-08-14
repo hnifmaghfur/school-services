@@ -1,8 +1,8 @@
 
 const User = require('./domain');
-const Mysql = require('../../../../helpers/databases/mysql/db');
+const Mongo = require('../../../../helpers/databases/mongodb/db');
 const config = require('../../../../infra/configs/global_config');
-const db = new Mysql(config.get('/mysqlConfig'));
+const db = new Mongo(config.get('/mongoDbUrl'));
 const user = new User(db);
 
 const getAllClass = async (payload) => {
@@ -56,14 +56,6 @@ const getGuru = async (payload) => {
 const getTenagaAhli = async (payload) => {
   const getData = async () => {
     const result = await user.viewTenagaAhli(payload);
-    return result;
-  };
-  const result = await getData();
-  return result;
-};
-const getAllDataSiswa = async (payload) => {
-  const getData = async () => {
-    const result = await user.viewAllDataSiswa(payload);
     return result;
   };
   const result = await getData();
@@ -150,7 +142,6 @@ module.exports = {
   getTenagaAhli,
   getAllTenagaAhli,
   getAllSiswa,
-  getAllDataSiswa,
   getSiswaData,
   getSiswaTentangDiri,
   getSiswaTempatTinggal,

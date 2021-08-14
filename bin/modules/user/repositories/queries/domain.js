@@ -15,18 +15,35 @@ class User {
 
   async viewAllClass(payload) {
     const ctx = 'getAllClass';
-    const { search, page, limit, sort,tab } = payload;
-    const tabAll = '(nama_kelas LIKE "%ipa%" OR nama_kelas LIKE "%ips%")';
-    const tabNorm = `nama_kelas LIKE "%${tab}%"`;
-    const searching = {
-      search: search ? search : '',
+    const { search, page, limit, sort, tab } = payload;
+    const stat = {
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit),
-      sort,
-      tab: tab == 'all' ? tabAll : tabNorm
+      page: parseInt(page),
     };
 
-    const kelas = await this.query.findAllClass(searching);
+    let sorting = {};
+    if (sort == 'ASC') {
+      sorting = { nama_kelas: 1 };
+    } else {
+      sorting = { nama_kelas: -1 };
+    }
+
+    let searching = {
+      $or: [
+        { 'nama_kelas': new RegExp(`${search || ''}`, 'i') },
+        { 'wali_kelas': new RegExp(`${search || ''}`, 'i') },
+        { 'tahun_ajaran': new RegExp(`${search || ''}`, 'i') },
+      ],
+    };
+
+    if (tab != 'all') {
+      searching = {
+        ...searching,
+        nama_kelas: {$in: [ new RegExp(`${tab || ''}`, 'i') ]}
+      };
+    }
+
+    const kelas = await this.query.findAllClass(sorting, stat, searching);
     if (kelas.err || validate.isEmpty(kelas.data)) {
       logger.log(ctx, kelas.err, 'user not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
@@ -47,8 +64,8 @@ class User {
     const meta = {
       page: parseInt(page),
       data: kelas.data.length,
-      totalPage: Math.ceil(count.data[0].jumlah_kelas / parseInt(limit)),
-      totalData: count.data[0].jumlah_kelas
+      totalPage: Math.ceil(count.data / parseInt(limit)),
+      totalData: count.data
     };
 
     return wrapper.paginationData(data, meta);
@@ -76,18 +93,39 @@ class User {
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
     const { search, page, limit, kelas_id, sort, tab } = payload;
-    const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
-    const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
-    const searching = {
-      search: search ? search : '',
-      kelas_id,
+
+    const stat = {
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit),
-      sort,
-      tab: tab == 'all' ? tabAll : tabNorm
+      page: parseInt(page),
     };
 
-    const siswa = await this.query.findAllSiswa(searching);
+    let sorting = {};
+    if (sort == 'ASC') {
+      sorting = { nama_lengkap: 1 };
+    } else {
+      sorting = { nama_lengkap: -1 };
+    }
+
+    let searching = {
+      $or: [
+        { 'nama_lengkap': new RegExp(`${search || ''}`, 'i') },
+        { 'NISN': new RegExp(`${search || ''}`, 'i') },
+        { 'NIS': new RegExp(`${search || ''}`, 'i') },
+      ],
+    };
+
+    if (kelas_id) {
+      searching = { ...searching, kelas_id };
+    }
+
+    if (tab != 'all') {
+      searching = {
+        ...searching,
+        jenis_kelamin: {$in: [ new RegExp(`${tab || ''}`, 'i') ]}
+      };
+    }
+
+    const siswa = await this.query.findAllSiswa(sorting, stat, searching);
     if (siswa.err || validate.isEmpty(siswa.data)) {
       logger.log(ctx, ('find siswa'), 'user not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
@@ -95,13 +133,32 @@ class User {
 
     const count = await this.query.countSiswa(searching);
 
-    const data = siswa.data;
+    const data = await Promise.all(siswa.data.map(async item => {
+      let nama_kelas = 'Belum ada kelas';
+      let tahun_ajaran = 'Belum ada kelas';
+      const dataKelas = await this.query.findOneClass({ kelas_id: item.kelas_id });
+      if (dataKelas.data) {
+        nama_kelas = dataKelas.data.nama_kelas;
+        tahun_ajaran = dataKelas.data.tahun_ajaran;
+      }
+
+      return {
+        'kelas_id': item.kelas_id || 'Belum ada kelas',
+        'siswa_id': item.siswa_id,
+        'nama_siswa': item.nama_lengkap,
+        'NISN': item.NISN,
+        'NIS': item.NIS,
+        'jenis_kelamin': item.jenis_kelamin,
+        nama_kelas,
+        tahun_ajaran
+      };
+    }));
 
     const meta = {
       page: parseInt(page),
       data: siswa.data.length,
-      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
-      totalData: count.data[0].jumlah_siswa
+      totalPage: Math.ceil(count.data / parseInt(limit)),
+      totalData: count.data
     };
 
     logger.log(ctx, 'success', 'get all siswa');
@@ -208,41 +265,6 @@ class User {
     return wrapper.data(data);
   }
 
-  async viewAllDataSiswa(payload) {
-    const ctx = 'getAllSiswa';
-    const { search, limit, page, sort, tab } = payload;
-    const tabAll = '(siswa.jenis_kelamin LIKE "%laki%" OR siswa.jenis_kelamin LIKE "%perempuan%")';
-    const tabNorm = `siswa.jenis_kelamin LIKE "%${tab}%"`;
-    const searching = {
-      search: search ? search : '',
-      limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit),
-      sort,
-      tab: tab == 'all' ? tabAll : tabNorm
-    };
-
-    const siswa = await this.query.findAllDataSiswa(searching);
-    if (siswa.err) {
-      logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
-    }
-
-    const count = await this.query.countSiswaAll(searching);
-
-
-    const data = siswa.data;
-
-    const meta = {
-      page: parseInt(page),
-      data: siswa.data.length,
-      totalPage: Math.ceil(count.data[0].jumlah_siswa / parseInt(limit)),
-      totalData: count.data[0].jumlah_siswa
-    };
-
-    logger.log(ctx, 'success', 'get all siswa');
-    return wrapper.paginationData(data, meta);
-  }
-
   async viewSiswaData(payload) {
     const ctx = 'getSiswaTentangDiri';
     const { siswa_id, kelas_id } = payload;
@@ -270,13 +292,16 @@ class User {
     const ctx = 'getSiswaTentangDiri';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllTentangDiri({siswa_id});
+    const siswa = await this.query.findOneTentangDiri({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new NotFoundError('Siswa tidak ditemukan'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
+    delete dataSiswa.NISN;
+    delete dataSiswa.NIS;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -288,13 +313,14 @@ class User {
     const ctx = 'getSiswaTempatTinggal';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllTempatTinggal({siswa_id});
+    const siswa = await this.query.findOneTempatTinggal({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -306,13 +332,14 @@ class User {
     const ctx = 'getSiswaPendidikan';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllPendidikan({siswa_id});
+    const siswa = await this.query.findOnePendidikan({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -324,13 +351,14 @@ class User {
     const ctx = 'getSiswaKesehatan';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllKesehatan({siswa_id});
+    const siswa = await this.query.findOneKesehatan({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -342,13 +370,14 @@ class User {
     const ctx = 'getSiswaHobi';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllHobi({siswa_id});
+    const siswa = await this.query.findOneHobi({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -362,7 +391,7 @@ class User {
 
     //khusus orang tua ada wali juga, tolong cek lagi, type 1 = ayah 2=ibu 3=wali
 
-    const siswa = await this.query.findAllOrangTua({siswa_id});
+    const siswa = await this.query.findManyOrangTua({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
@@ -377,9 +406,13 @@ class User {
         delete item.hubungan_wali;
       } else {
         item.type_ortu = 'wali';
+        delete item.status;
+        delete item.status_nikah;
+        delete item.tahun_meninggal;
       }
 
       delete item.ortu_id;
+      delete item._id;
       delete item.createdAt;
       delete item.updatedAt;
 
@@ -393,13 +426,14 @@ class User {
     const ctx = 'getSiswaPindah';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findAllPindahan({siswa_id});
+    const siswa = await this.query.findOnePindahan({siswa_id});
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new NotFoundError('Can not find siswa'));
     }
 
-    const dataSiswa = siswa.data[0];
+    const dataSiswa = siswa.data;
+    delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 

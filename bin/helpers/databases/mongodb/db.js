@@ -154,7 +154,7 @@ class DB {
 
   }
 
-  async findAllData(fieldName, row, page, param) {
+  async findAllData(sort, row, page, param) {
     const ctx = 'mongodb-findAllData';
     const dbName = await this.getDatabase();
     const result = await mongoConnection.getConnection(this.config);
@@ -166,10 +166,8 @@ class DB {
       const cacheConnection = result.data.db;
       const connection = cacheConnection.db(dbName);
       const db = connection.collection(this.collectionName);
-      const parameterSort = {};
-      parameterSort[fieldName] = 1;
       const parameterPage = row * (page - 1);
-      const recordset = await db.find(param).sort(parameterSort).limit(row).skip(parameterPage)
+      const recordset = await db.find(param).sort(sort).limit(row).skip(parameterPage)
         .toArray();
       if (validate.isEmpty(recordset)) {
         return wrapper.error('Data Not Found, Please Try Another Input');

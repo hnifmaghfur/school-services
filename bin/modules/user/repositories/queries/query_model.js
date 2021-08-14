@@ -5,20 +5,12 @@ const getAllClass = joi.object({
   page: joi.string().required(),
   limit: joi.string().required(),
   sort: joi.string().required().valid('ASC', 'DESC'),
-  tab: joi.string().required().valid('all', 'ipa', 'ips')
-});
-
-const getAllDataSiswa = joi.object({
-  search: joi.string().allow(''),
-  page: joi.string().required(),
-  limit: joi.string().required(),
-  sort: joi.string().required().valid('ASC', 'DESC'),
-  tab: joi.string().required().valid('all', 'laki', 'perempuan')
+  tab: joi.string().required().valid('all', 'mipa', 'ips')
 });
 
 const getAllSiswa = joi.object({
   search: joi.string().allow(''),
-  kelas_id: joi.string().required(),
+  kelas_id: joi.string().allow(''),
   page: joi.string().required(),
   limit: joi.string().required(),
   sort: joi.string().required().valid('ASC', 'DESC'),
@@ -55,7 +47,6 @@ module.exports = {
   getAllGuru,
   getGuruId,
   getTenagaAhliId,
-  getAllDataSiswa,
   getSiswaId,
   getSiswaIdKelasId,
 };

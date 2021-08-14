@@ -1,8 +1,8 @@
 
 const User = require('./domain');
-const Mysql = require('../../../../helpers/databases/mysql/db');
+const Mongo = require('../../../../helpers/databases/mongodb/db');
 const config = require('../../../../infra/configs/global_config');
-const db = new Mysql(config.get('/mysqlConfig'));
+const db = new Mongo(config.get('/mongoDbUrl'));
 
 const postDataLogin = async (payload) => {
   const user = new User(db);
@@ -64,6 +64,12 @@ const addPindah = async (payload) => {
   return postCommand(payload);
 };
 
+const importSiswa = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.importSiswa(payload);
+  return postCommand(payload);
+};
+
 module.exports = {
   postDataLogin,
   registerUser,
@@ -75,4 +81,5 @@ module.exports = {
   addOrangTua,
   addHobi,
   addPindah,
+  importSiswa,
 };

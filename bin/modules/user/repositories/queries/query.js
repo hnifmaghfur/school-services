@@ -6,46 +6,46 @@ class Query {
     this.db = db;
   }
 
-  async findOneUser(document) {
-    const validateData = [document.username];
-    const query = 'SELECT * FROM user WHERE username = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneUser(parameter) {
+    this.db.setCollection('users');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findOneClass(document) {
-    const validateData = [document.nama_kelas, document.wali_kelas, document.tahun_ajaran];
-    const query = 'SELECT * FROM kelas WHERE nama_kelas = ? AND wali_kelas = ? AND tahun_ajaran = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneClass(parameter) {
+    this.db.setCollection('class');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findAllClass(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT * FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%") ORDER BY nama_kelas ${document.sort} LIMIT ? OFFSET ?`;
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findAllClass(sorting, stat, parameter) {
+    this.db.setCollection('class');
+    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    return recordset;
   }
 
-  async findListKelas(document) {
-    const validateData = [];
-    const query = 'SELECT * FROM kelas ORDER BY nama_kelas ';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findListKelas(parameter) {
+    this.db.setCollection('class');
+    const recordset = await this.db.findMany( parameter );
+    return recordset;
   }
 
-  async countKelas(document) {
-    const validateData = [];
-    const query = `SELECT COUNT(kelas_id) as jumlah_kelas FROM kelas WHERE ${document.tab} AND (nama_kelas LIKE "%${document.search}%" OR wali_kelas LIKE "%${document.search}%")`;
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async countKelas(parameter) {
+    this.db.setCollection('class');
+    const recordset = await this.db.countData(parameter);
+    return recordset;
   }
 
-  async countSiswa(document) {
-    const validateData = [document.kelas_id];
-    const query = `SELECT COUNT(siswa.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?)`;
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findAllSiswa(sorting, stat, parameter) {
+    this.db.setCollection('tentangDiri');
+    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    return recordset;
+  }
+
+  async countSiswa(parameter) {
+    this.db.setCollection('tentangDiri');
+    const recordset = await this.db.countData(parameter);
+    return recordset;
   }
 
   async countGuru(document) {
@@ -62,13 +62,6 @@ class Query {
     return result;
   }
 
-  async countSiswaAll(document) {
-    const validateData = [];
-    const query = `SELECT COUNT(siswa.siswa_id) as jumlah_siswa FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%")`;
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
   async findAllClassId(document) {
     const validateData = [document.kelas_id];
     const query = 'SELECT * FROM kelas WHERE kelas_id = ?';
@@ -76,11 +69,10 @@ class Query {
     return result;
   }
 
-  async findAllTentangDiri(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM tentang_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneTentangDiri(parameter) {
+    this.db.setCollection('tentangDiri');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
   async findDataSiswa(document) {
@@ -90,46 +82,40 @@ class Query {
     return result;
   }
 
-  async findAllTempatTinggal(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM tempat_tinggal_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneTempatTinggal(parameter) {
+    this.db.setCollection('tempatTinggal');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findAllPendidikan(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM pendidikan_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOnePendidikan(parameter) {
+    this.db.setCollection('pendidikan');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findAllKesehatan(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM kesehatan_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneKesehatan(parameter) {
+    this.db.setCollection('kesehatan');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findAllHobi(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM hobi_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneHobi(parameter) {
+    this.db.setCollection('hobi');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
   }
 
-  async findAllOrangTua(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM orang_tua_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findManyOrangTua(parameter) {
+    this.db.setCollection('orangTua');
+    const recordset = await this.db.findMany( parameter );
+    return recordset;
   }
 
-  async findAllPindahan(document) {
-    const validateData = [document.siswa_id];
-    const query = 'SELECT * FROM pindah_siswa WHERE siswa_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOnePindahan(parameter) {
+    this.db.setCollection('pindah');
+    const recordset = await this.db.findOne( parameter );
+    return recordset;
   }
 
   async findMapelPengetahuan(document) {
@@ -160,13 +146,6 @@ class Query {
     return result;
   }
 
-  async findAllSiswa(document) {
-    const validateData = [document.kelas_id, document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") AND (kelas.kelas_id = ?) ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
   async findAllGuru(document) {
     const validateData = [document.limit, document.page];
     const query = `SELECT guru_id, nip_karpeg, nama, jabatan FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
@@ -191,13 +170,6 @@ class Query {
   async findOneTenagaAhli(document) {
     const validateData = [document.tenaga_ahli_id];
     const query = 'SELECT * FROM tenaga_ahli WHERE tenaga_ahli_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
-  async findAllDataSiswa(document) {
-    const validateData = [ document.limit, document.page];
-    const query = `SELECT kelas.kelas_id, siswa.siswa_id, siswa.nama_siswa, siswa.NISN, siswa.NIS, siswa.jenis_kelamin,kelas.nama_kelas, kelas.tahun_ajaran FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE ${document.tab} AND (siswa.nama_siswa LIKE "%${document.search}%" OR siswa.NISN LIKE "%${document.search}%" OR siswa.NIS LIKE "%${document.search}%") ORDER BY siswa.nama_siswa ${document.sort} LIMIT ? OFFSET ?`;
     const result = await this.db.findData(query, validateData);
     return result;
   }
