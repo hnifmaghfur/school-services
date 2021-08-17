@@ -579,6 +579,28 @@ const addPindah = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const addKompetensi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addKompetensi);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addKompetensi(result.data);
+    };
+    const sendResponse = async (result) => {
+    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Kompetensi')
+        : wrapper.response(res, 'success', result, 'Add Kompetensi', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 const importSiswa = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -629,6 +651,7 @@ module.exports = {
   addHobi,
   addOrangTua,
   addPindah,
+  addKompetensi,
   registerUser,
   importSiswa
 };

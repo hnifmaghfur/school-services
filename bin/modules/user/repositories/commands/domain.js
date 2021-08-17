@@ -355,6 +355,28 @@ class User {
     return wrapper.data({ siswa_id });
   }
 
+  async addKompetensi(payload) {
+    const ctx = 'Add-Kompetensi';
+    const { siswa_id, kelas_id, nilai, absen } = payload;
+
+    const pindah_id = uuid();
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+
+    const data = {
+
+    };
+
+    // const result = await this.command.insertOnePindah(data);
+    // if (result.err) {
+    //   logger.log(ctx, 'failed upload data', 'insert pindah');
+    //   return wrapper.error(new InternalServerError('internal server error'));
+    // }
+
+    logger.log(ctx, 'success add pindah siswa', 'insert pindah siswa');
+    return wrapper.data('success');
+  }
+
   async importSiswa(payload) {
     const ctx = 'Import-siswa';
     const { file } = payload;
@@ -607,6 +629,7 @@ class User {
     logger.log(ctx, 'success upload excel siswa', 'upload excel siswa');
     return wrapper.data(successMessage);
   }
+
 }
 
 module.exports = User;

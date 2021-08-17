@@ -168,14 +168,32 @@ class User {
   async viewAllGuru(payload) {
     const ctx = 'getAllGuru';
     const { search, page, limit, sort } = payload;
-    const searching = {
-      search: search ? search : '',
+    const stat = {
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit),
-      sort,
+      page: parseInt(page),
     };
 
-    const guru = await this.query.findAllGuru(searching);
+    let sorting = {};
+
+    if (sort == 'nama ASC') {
+      sorting = { nama: 1 };
+    } else if (sort == 'nama DESC') {
+      sorting = { nama: -1 };
+    } else if (sort == 'jabatan ASC') {
+      sorting = { jabatan: 1 };
+    } else if (sort == 'jabatan DESC') {
+      sorting = { jabatan: -1 };
+    }
+
+    let searching = {
+      $or: [
+        { 'nama': new RegExp(`${search || ''}`, 'i') },
+        { 'nip_karpeg': new RegExp(`${search || ''}`, 'i') },
+        { 'jabatan': new RegExp(`${search || ''}`, 'i') },
+      ],
+    };
+
+    const guru = await this.query.findAllGuru(sorting, stat, searching);
     if (guru.err || validate.isEmpty(guru.data)) {
       logger.log(ctx, 'search guru', 'guru not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
@@ -183,13 +201,20 @@ class User {
 
     const count = await this.query.countGuru(searching);
 
-    const data = guru.data;
+    const data = guru.data.map(item => {
+      return {
+        guru_id: item.guru_id,
+        NIP: item.nip_karpeg.substring(0, 20) || '-',
+        nama: item.nama,
+        jabatan: item.jabatan
+      };
+    });
 
     const meta = {
       page: parseInt(page),
       data: guru.data.length,
-      totalPage: Math.ceil(count.data[0].jumlah_guru / parseInt(limit)),
-      totalData: count.data[0].jumlah_guru
+      totalPage: Math.ceil(count.data / parseInt(limit)),
+      totalData: count.data
     };
 
     logger.log(ctx, 'success', 'get all guru');
@@ -199,14 +224,31 @@ class User {
   async viewAllTenagaAhli(payload) {
     const ctx = 'getAllTenagaAhli';
     const { search, page, limit, sort } = payload;
-    const searching = {
-      search: search ? search : '',
+    const stat = {
       limit: parseInt(limit),
-      page: (parseInt(page) - 1) * parseInt(limit),
-      sort,
+      page: parseInt(page),
     };
 
-    const tenagaAhli = await this.query.findAllTenagaAhli(searching);
+    let sorting = {};
+
+    if (sort == 'nama ASC') {
+      sorting = { nama: 1 };
+    } else if (sort == 'nama DESC') {
+      sorting = { nama: -1 };
+    } else if (sort == 'jabatan ASC') {
+      sorting = { jabatan: 1 };
+    } else if (sort == 'jabatan DESC') {
+      sorting = { jabatan: -1 };
+    }
+
+    let searching = {
+      $or: [
+        { 'nama': new RegExp(`${search || ''}`, 'i') },
+        { 'nip_karpeg': new RegExp(`${search || ''}`, 'i') },
+        { 'jabatan': new RegExp(`${search || ''}`, 'i') },
+      ],
+    };
+    const tenagaAhli = await this.query.findAllTenagaAhli(sorting, stat, searching);
     if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
       logger.log(ctx, 'search tenaga ahli', 'tenaga ahli not found');
       return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
@@ -214,13 +256,20 @@ class User {
 
     const count = await this.query.countTenagaAhli(searching);
 
-    const data = tenagaAhli.data;
+    const data = tenagaAhli.data.map(item => {
+      return {
+        tenaga_ahli_id: item.tenaga_ahli_id,
+        NIP: item.nip_karpeg.substring(0, 20) || '-',
+        nama: item.nama,
+        jabatan: item.jabatan
+      };
+    });
 
     const meta = {
       page: parseInt(page),
       data: tenagaAhli.data.length,
-      totalPage: Math.ceil(count.data[0].jumlah_tenaga_ahli / parseInt(limit)),
-      totalData: count.data[0].jumlah_tenaga_ahli
+      totalPage: Math.ceil(count.data / parseInt(limit)),
+      totalData: count.data
     };
 
     logger.log(ctx, 'success', 'get all tenaga ahli');
@@ -237,10 +286,11 @@ class User {
       return wrapper.error(new NotFoundError('Guru not Found'));
     }
 
-    delete guru.data[0].createdAt;
-    delete guru.data[0].updatedAt;
+    delete guru.data._id;
+    delete guru.data.createdAt;
+    delete guru.data.updatedAt;
 
-    const data = guru.data[0];
+    const data = guru.data;
 
     logger.log(ctx, 'success', 'get all guru');
     return wrapper.data(data);
@@ -256,10 +306,11 @@ class User {
       return wrapper.error(new NotFoundError('Tenaga Ahli not Found'));
     }
 
-    delete tenagaAhli.data[0].createdAt;
-    delete tenagaAhli.data[0].updatedAt;
+    delete tenagaAhli.data._id;
+    delete tenagaAhli.data.createdAt;
+    delete tenagaAhli.data.updatedAt;
 
-    const data = tenagaAhli.data[0];
+    const data = tenagaAhli.data;
 
     logger.log(ctx, 'success', 'get tenaga ahli');
     return wrapper.data(data);
@@ -445,76 +496,13 @@ class User {
     const ctx = 'getSiswaKompetensi';
     const { siswa_id, kelas_id } = payload;
 
-    const mapelPengetahuan = await this.query.findMapelPengetahuan({ siswa_id, kelas_id });
-    if (mapelPengetahuan.err) {
-      logger.log(ctx, mapelPengetahuan.err, 'mapel pengetahuan not found');
+    const dataMapel = await this.query.findKompetensi({ siswa_id, kelas_id });
+    if (dataMapel.err) {
+      logger.log(ctx, 'Internal Server Error', 'mapel pengetahuan not found');
       return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));
     }
 
-    const mapelKeterampilan = await this.query.findMapelKeterampilan({ siswa_id, kelas_id });
-    if (mapelKeterampilan.err) {
-      logger.log(ctx, mapelKeterampilan.err, 'mapel keterampilan not found');
-      return wrapper.error(new NotFoundError('Can not find mapel keterampilan'));
-    }
-
-    const mapelSikap = await this.query.findMapelSikap({ siswa_id, kelas_id });
-    if (mapelSikap.err) {
-      logger.log(ctx, mapelSikap.err, 'mapel sikap not found');
-      return wrapper.error(new NotFoundError('Can not find mapel sikap'));
-    }
-
-    const absen = await this.query.findAbsen({ siswa_id, kelas_id });
-    if (absen.err) {
-      logger.log(ctx, absen.err, 'absen not found');
-      return wrapper.error(new NotFoundError('Can not find absen'));
-    }
-
-    const p = mapelPengetahuan.data[0];
-    const k = mapelKeterampilan.data[0];
-    const s = mapelSikap.data[0];
-
-    const data = {
-      Kelompok_A : [
-        ['Pendidikan Agama & Budi Pekerti', p.agama, k.agama, s.agama],
-        ['PPKn', p.pkn, k.pkn, s.pkn],
-        ['Bahasa Indonesia', p.b_indo, k.b_indo, s.b_indo],
-        ['Bahasa Inggris', p.b_ing, k.b_ing, s.b_ing],
-      ],
-      Kelompok_B: [
-        ['Seni Budaya', p.seni, k.seni, s.seni],
-        ['Penjas, Olahraga & Kesehatan', p.penjas, k.penjas, s.penjas],
-        ['Prakarya & Kewirausahaan', p.prakarya, k.prakarya, s.prakarya],
-      ],
-      Kelompok_C_Peminatan: [
-        ['Matematika', p.matematika_P, k.matematika_P, s.matematika_P],
-        ['Biologi', p.biologi_P, k.biologi_P, s.biologi_P],
-        ['Fisika', p.fisika_P, k.fisika_P, s.fisika_P],
-        ['Kimia', p.kimia_P, k.kimia_P, s.kimia_P],
-        ['Geografi', p.geografi_P, k.geografi_P, s.geografi_P],
-        ['Sejarah', p.sejarah_P, k.sejarah_P, s.sejarah_P],
-        ['Sosiologi', p.sosiologi_P, k.sosiologi_P, s.sosiologi_P],
-        ['Ekonomi', p.ekonomi_P, k.ekonomi_P, s.ekonomi_P],
-      ],
-      Kelompok_C_Lintas_Peminatan: [
-        ['Matematika', p.matematika_LP, k.matematika_LP, s.matematika_LP],
-        ['Biologi', p.biologi_LP, k.biologi_LP, s.biologi_LP],
-        ['Fisika', p.fisika_LP, k.fisika_LP, s.fisika_LP],
-        ['Kimia', p.kimia_LP, k.kimia_P, s.kimia_LP],
-        ['Geografi', p.geografi_LP, k.geografi_LP, s.geografi_LP],
-        ['Sejarah', p.sejarah_LP, k.sejarah_LP, s.sejarah_LP],
-        ['Sosiologi', p.sosiologi_LP, k.sosiologi_LP, s.sosiologi_LP],
-        ['Ekonomi', p.ekonomi_LP, k.ekonomi_LP, s.ekonomi_LP],
-        ['Bahasa & Sastra Indonesia', p.b_indo_LP, k.b_indo_LP, s.b_indo_LP],
-        ['Bahasa & Sastra Inggris', p.b_ing_LP, k.b_ing_LP, s.b_ing_LP],
-        ['Bahasa Asing Lain', p.b_asing_LP, k.b_asing_LP, s.b_asing_LP],
-        ['Antropologi', p.antropologi_LP, k.antropologi_LP, s.antropologi_LP],
-      ],
-      Ketidak_hadiran: {
-        sakit:  absen.data[0].sakit,
-        izin:  absen.data[0].izin,
-        tanpa_keterangan:  absen.data[0].tanpa_keterangan,
-      }
-    };
+    const data = dataMapel.data;
 
     logger.log(ctx, 'success', 'get kompetensi siswa');
     return wrapper.data(data);

@@ -108,6 +108,17 @@ const importSiswa = joi.object({
   file: joi.optional(),
 });
 
+const addKompetensi = joi.object({
+  siswa_id: joi.string().required(),
+  kelas_id: joi.string().required(),
+  nilai: joi.array().required(),
+  absen: joi.object({
+    alpha: joi.string().required(),
+    sakit: joi.string().required(),
+    izin: joi.string().required(),
+  })
+});
+
 module.exports = {
   login,
   addClass,
@@ -118,5 +129,6 @@ module.exports = {
   addOrangTua,
   addHobi,
   addPindah,
+  addKompetensi,
   importSiswa,
 };

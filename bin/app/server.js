@@ -65,6 +65,7 @@ function AppServer() {
   this.server.post('/siswa/v1/hobi', jwtAuth.verifyToken, userHandler.addHobi);
   this.server.post('/siswa/v1/orang-tua', jwtAuth.verifyToken, userHandler.addOrangTua);
   this.server.post('/siswa/v1/pindah', jwtAuth.verifyToken, userHandler.addPindah);
+  this.server.post('/siswa/v1/kompetensi', jwtAuth.verifyToken, userHandler.addKompetensi);
 
   //guru
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);

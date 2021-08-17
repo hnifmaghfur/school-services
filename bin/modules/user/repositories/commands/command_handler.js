@@ -64,6 +64,12 @@ const addPindah = async (payload) => {
   return postCommand(payload);
 };
 
+const addKompetensi = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addKompetensi(payload);
+  return postCommand(payload);
+};
+
 const importSiswa = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.importSiswa(payload);
@@ -81,5 +87,6 @@ module.exports = {
   addOrangTua,
   addHobi,
   addPindah,
+  addKompetensi,
   importSiswa,
 };

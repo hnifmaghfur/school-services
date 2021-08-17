@@ -48,18 +48,16 @@ class Query {
     return recordset;
   }
 
-  async countGuru(document) {
-    const validateData = [];
-    const query = `SELECT COUNT(guru_id) as jumlah_guru FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async countGuru(parameter) {
+    this.db.setCollection('guru');
+    const recordset = await this.db.countData(parameter);
+    return recordset;
   }
 
-  async countTenagaAhli(document) {
-    const validateData = [];
-    const query = `SELECT COUNT(tenaga_ahli_id) as jumlah_tenaga_ahli FROM tenaga_ahli WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%"`;
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async countTenagaAhli(parameter) {
+    this.db.setCollection('tenagaAhli');
+    const recordset = await this.db.countData(parameter);
+    return recordset;
   }
 
   async findAllClassId(document) {
@@ -118,60 +116,34 @@ class Query {
     return recordset;
   }
 
-  async findMapelPengetahuan(document) {
-    const validateData = [document.siswa_id, document.kelas_id];
-    const query = 'SELECT mapel_pengetahuan.* FROM mapel_pengetahuan JOIN isi_kelas ON mapel_pengetahuan.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findKompetensi(parameter) {
+    this.db.setCollection('kompetensi');
+    const recordset = await this.db.findOne( parameter );
+    return recordset;
   }
 
-  async findMapelKeterampilan(document) {
-    const validateData = [document.siswa_id, document.kelas_id];
-    const query = 'SELECT mapel_keterampilan.* FROM mapel_keterampilan JOIN isi_kelas ON mapel_keterampilan.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findAllGuru(sorting, stat, parameter) {
+    this.db.setCollection('guru');
+    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    return recordset;
   }
 
-  async findMapelSikap(document) {
-    const validateData = [document.siswa_id, document.kelas_id];
-    const query = 'SELECT mapel_sikap.* FROM mapel_sikap JOIN isi_kelas ON isi_Kelas.siswa_id = mapel_sikap.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findAllTenagaAhli(sorting, stat, parameter) {
+    this.db.setCollection('tenagaAhli');
+    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    return recordset;
   }
 
-  async findAbsen(document) {
-    const validateData = [document.siswa_id, document.kelas_id];
-    const query = 'SELECT kehadiran.* FROM kehadiran JOIN isi_kelas ON kehadiran.siswa_id = isi_kelas.siswa_id JOIN kelas ON kelas.kelas_id = isi_kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneGuru(parameter) {
+    this.db.setCollection('guru');
+    const recordset = await this.db.findOne( parameter );
+    return recordset;
   }
 
-  async findAllGuru(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT guru_id, nip_karpeg, nama, jabatan FROM guru WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
-  async findAllTenagaAhli(document) {
-    const validateData = [document.limit, document.page];
-    const query = `SELECT tenaga_ahli_id, nip_karpeg, nama, jabatan FROM tenaga_ahli WHERE nama LIKE "%${document.search}%" OR jabatan LIKE "%${document.search}%" ORDER BY ${document.sort} LIMIT ? OFFSET ?`;
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
-  async findOneGuru(document) {
-    const validateData = [document.guru_id];
-    const query = 'SELECT * FROM guru WHERE guru_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
-  async findOneTenagaAhli(document) {
-    const validateData = [document.tenaga_ahli_id];
-    const query = 'SELECT * FROM tenaga_ahli WHERE tenaga_ahli_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
+  async findOneTenagaAhli(parameter) {
+    this.db.setCollection('tenagaAhli');
+    const recordset = await this.db.findOne( parameter );
+    return recordset;
   }
 
   async findAllIsiKelas(document) {
