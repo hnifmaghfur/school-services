@@ -140,6 +140,12 @@ class Query {
     return recordset;
   }
 
+  async findOneSiswa(parameter) {
+    this.db.setCollection('tentangDiri');
+    const recordset = await this.db.findOne( parameter );
+    return recordset;
+  }
+
   async findOneTenagaAhli(parameter) {
     this.db.setCollection('tenagaAhli');
     const recordset = await this.db.findOne( parameter );

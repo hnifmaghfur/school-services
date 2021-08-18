@@ -79,6 +79,12 @@ class User {
     const ctx = 'Add-Class';
     const { namaKelas, walikelas, tahunAjaran } = payload;
 
+    const validateKelas = await this.query.findOneClass({ namaKelas, tahunAjaran });
+    if (!validate.isEmpty(validateKelas.data)) {
+      logger.log(ctx, 'kelas telah ada', 'validate kelas');
+      return wrapper.error(new ConflictError('Kelas telah ada.'));
+    }
+
     const searching = {
       namaKelas,
       walikelas,
@@ -113,6 +119,18 @@ class User {
   async addTentangDiri(payload) {
     const ctx = 'Add-Tentang-Diri';
     const { kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ $or: [ { NIS }, { NISN } ] });
+    if (!validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa telah terdaftar', 'validate siswa');
+      return wrapper.error(new ConflictError('NISN atau NIS siswa telah terdaftar'));
+    }
+
+    const validateKelas = await this.query.findOneClass({ kelas_id });
+    if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
+      logger.log(ctx, 'kelas tidak ada', 'validate kelas');
+      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+    }
 
     const siswa_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
@@ -158,6 +176,12 @@ class User {
     const ctx = 'Add-Tempat-Tinggal';
     const { siswa_id, alamat, no_telephone, tinggal_di, jarak_ke_sekolah } = payload;
 
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
+
     const tempat_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
@@ -186,6 +210,12 @@ class User {
   async addPendidikan(payload) {
     const ctx = 'Add-Pendidikan';
     const { siswa_id, tanggal_diterima, lulus_dari, tanggal_no_ijazah, tanggal_no_stl, lama_belajar, nilai_skhun } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
 
     const pendidikan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
@@ -218,6 +248,12 @@ class User {
     const ctx = 'Add-Kesehatan';
     const { siswa_id, gol_darah, kelainan_jasmani, tinggi_berat_badan, nama_penyakit, tahun_sakit, lama_sakit } = payload;
 
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
+
     const kesehatan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
@@ -248,6 +284,12 @@ class User {
   async addOrangTua(payload) {
     const ctx = 'Add-Orang-Tua';
     const { siswa_id, data } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
 
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
@@ -296,6 +338,12 @@ class User {
     const ctx = 'Add-Hobi';
     const { siswa_id, olahraga, seni, organisasi, lain } = payload;
 
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
+
     const hobi_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
@@ -324,6 +372,12 @@ class User {
   async addPindah(payload) {
     const ctx = 'Add-Pindah';
     const { siswa_id, pindah_sekolah, pindah_alasan, diterima_di, diterima_program, meninggalkan_di, meninggalkan_program, meninggalkan_alasan, akhir_tamat_belajar, akhir_sttb } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
 
     const pindah_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
@@ -357,23 +411,49 @@ class User {
 
   async addKompetensi(payload) {
     const ctx = 'Add-Kompetensi';
-    const { siswa_id, kelas_id, nilai, absen } = payload;
+    const { siswa_id, kelas_id, semester, kompetensi_id, kelompokA, kelompokB, kelompokC, kelompokCLintas, absen } = payload;
 
-    const pindah_id = uuid();
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new NotFoundError('Siswa Not Found'));
+    }
+
+    const validateKelas = await this.query.findOneClass({ kelas_id });
+    if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
+      logger.log(ctx, 'kelas tidak ada', 'validate kelas');
+      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+    }
+
+    let kompetensiId = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const data = {
 
+    let data = {
+      kelompokA,
+      kelompokB,
+      kelompokC,
+      kelompokCLintas,
+      absen,
     };
 
-    // const result = await this.command.insertOnePindah(data);
-    // if (result.err) {
-    //   logger.log(ctx, 'failed upload data', 'insert pindah');
-    //   return wrapper.error(new InternalServerError('internal server error'));
-    // }
+    let result = {};
 
-    logger.log(ctx, 'success add pindah siswa', 'insert pindah siswa');
+    if (kompetensi_id) {
+      data = { data: {...data, updatedAt}, kompetensi_id };
+      result = await this.command.updateOneKompetensi(data);
+    } else {
+      data = { kompetensi_id: kompetensiId, siswa_id, kelas_id, semester, ...data, createdAt, updatedAt };
+      result = await this.command.insertOneKompetensi(data);
+    }
+
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert kompetensi');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add kompetensi siswa', 'insert kompetensi siswa');
     return wrapper.data('success');
   }
 

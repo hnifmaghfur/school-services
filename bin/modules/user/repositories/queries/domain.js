@@ -494,9 +494,9 @@ class User {
 
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';
-    const { siswa_id, kelas_id } = payload;
+    const { siswa_id, kelas_id, semester } = payload;
 
-    const dataMapel = await this.query.findKompetensi({ siswa_id, kelas_id });
+    const dataMapel = await this.query.findKompetensi({ siswa_id, kelas_id, semester });
     if (dataMapel.err) {
       logger.log(ctx, 'Internal Server Error', 'mapel pengetahuan not found');
       return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));

@@ -14,7 +14,6 @@ const addClass = joi.object({
 
 const addTentangDiri = joi.object({
   kelas_id: joi.string().required(),
-  siswa_id: joi.string().required(),
   NIS: joi.string().required(),
   NISN: joi.string().required(),
   image: joi.string().required(),
@@ -111,7 +110,12 @@ const importSiswa = joi.object({
 const addKompetensi = joi.object({
   siswa_id: joi.string().required(),
   kelas_id: joi.string().required(),
-  nilai: joi.array().required(),
+  semester: joi.string().required(),
+  kompetensi_id: joi.string().allow(''),
+  kelompokA: joi.array().required(),
+  kelompokB: joi.array().required(),
+  kelompokC: joi.array().required(),
+  kelompokCLintas: joi.array().required(),
   absen: joi.object({
     alpha: joi.string().required(),
     sakit: joi.string().required(),

@@ -59,6 +59,20 @@ class Command {
     const result = await this.db.insertOne(document);
     return result;
   }
+
+  async insertOneKompetensi(document){
+    this.db.setCollection('kompetensi');
+    const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async updateOneKompetensi(document){
+    this.db.setCollection('kompetensi');
+    const result = await this.db.upsertOne({ kompetensi_id: document.kompetensi_id }, {
+      $set: document.data
+    });
+    return result;
+  }
 }
 
 module.exports = Command;

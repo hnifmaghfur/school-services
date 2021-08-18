@@ -31,6 +31,11 @@ const getSiswaId = joi.object({
 const getSiswaIdKelasId = joi.object({
   siswa_id: joi.string().required(),
   kelas_id: joi.string().required(),
+});
+
+const getSiswaKompetensi = joi.object({
+  siswa_id: joi.string().required(),
+  kelas_id: joi.string().required(),
   semester: joi.string().required(),
 });
 
@@ -50,4 +55,5 @@ module.exports = {
   getTenagaAhliId,
   getSiswaId,
   getSiswaIdKelasId,
+  getSiswaKompetensi,
 };

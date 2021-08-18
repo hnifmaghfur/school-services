@@ -382,7 +382,7 @@ const getSiswaKompetensi = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
     const payload = req.query;
-    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaIdKelasId);
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaKompetensi);
     const getRequest = async (result) => {
       if (result.err) {
         return result;
