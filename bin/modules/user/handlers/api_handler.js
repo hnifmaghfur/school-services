@@ -6,7 +6,7 @@ const queryHandler = require('../repositories/queries/query_handler');
 const queryModel = require('../repositories/queries/query_model');
 const logger = require('../../../helpers/utils/logger');
 const validator = require('../../../helpers/utils/validator');
-const { ERROR:httpError, SUCCESS:http } = require('../../../helpers/http-status/status_code');
+const { ERROR: httpError, SUCCESS: http } = require('../../../helpers/http-status/status_code');
 
 const postDataLogin = async (req, res) => {
   const payload = req.body;
@@ -413,7 +413,7 @@ const addClass = async (req, res) => {
       return commandHandler.addClass(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Class')
         : wrapper.response(res, 'success', result, 'Add Class', http.CREATED);
     };
@@ -436,7 +436,7 @@ const addTentangDiri = async (req, res) => {
       return commandHandler.addTentangDiri(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Tentang Diri')
         : wrapper.response(res, 'success', result, 'Add Tentang Diri', http.CREATED);
     };
@@ -459,7 +459,7 @@ const addTempatTinggal = async (req, res) => {
       return commandHandler.addTempatTinggal(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Tempat Tinggal')
         : wrapper.response(res, 'success', result, 'Add Tempat Tinggal', http.CREATED);
     };
@@ -481,7 +481,7 @@ const addPendidikan = async (req, res) => {
       return commandHandler.addPendidikan(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Pendidikan')
         : wrapper.response(res, 'success', result, 'Add Pendidikan', http.CREATED);
     };
@@ -503,7 +503,7 @@ const addKesehatan = async (req, res) => {
       return commandHandler.addKesehatan(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Kesehatan')
         : wrapper.response(res, 'success', result, 'Add Kesehatan', http.CREATED);
     };
@@ -525,7 +525,7 @@ const addHobi = async (req, res) => {
       return commandHandler.addHobi(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Hobi')
         : wrapper.response(res, 'success', result, 'Add Hobi', http.CREATED);
     };
@@ -547,7 +547,7 @@ const addOrangTua = async (req, res) => {
       return commandHandler.addOrangTua(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Orang Tua')
         : wrapper.response(res, 'success', result, 'Add Orang Tua', http.CREATED);
     };
@@ -569,7 +569,7 @@ const addPindah = async (req, res) => {
       return commandHandler.addPindah(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Pindah')
         : wrapper.response(res, 'success', result, 'Add Pindah', http.CREATED);
     };
@@ -591,9 +591,53 @@ const addKompetensi = async (req, res) => {
       return commandHandler.addKompetensi(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Add Kompetensi')
         : wrapper.response(res, 'success', result, 'Add Kompetensi', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const addGuru = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addGuru);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addGuru(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Guru')
+        : wrapper.response(res, 'success', result, 'Add Guru', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const addTenagaAhli = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addGuru);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addTenagaAhli(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add tenaga ahli')
+        : wrapper.response(res, 'success', result, 'Add tenaga ahli', http.CREATED);
     };
     sendResponse(await postRequest(validatePayload));
   } else {
@@ -614,7 +658,7 @@ const importSiswa = async (req, res) => {
       return commandHandler.importSiswa(result.data);
     };
     const sendResponse = async (result) => {
-    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Import Siswa')
         : wrapper.response(res, 'success', result, 'Import Siswa', http.CREATED);
     };
@@ -652,6 +696,8 @@ module.exports = {
   addOrangTua,
   addPindah,
   addKompetensi,
+  addGuru,
+  addTenagaAhli,
   registerUser,
   importSiswa
 };

@@ -20,13 +20,13 @@ class Query {
 
   async findAllClass(sorting, stat, parameter) {
     this.db.setCollection('class');
-    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    const recordset = await this.db.findAllData(sorting, stat.limit, stat.page, parameter);
     return recordset;
   }
 
   async findListKelas(parameter) {
     this.db.setCollection('class');
-    const recordset = await this.db.findMany( parameter );
+    const recordset = await this.db.findMany(parameter);
     return recordset;
   }
 
@@ -38,7 +38,7 @@ class Query {
 
   async findAllSiswa(sorting, stat, parameter) {
     this.db.setCollection('tentangDiri');
-    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    const recordset = await this.db.findAllData(sorting, stat.limit, stat.page, parameter);
     return recordset;
   }
 
@@ -106,49 +106,49 @@ class Query {
 
   async findManyOrangTua(parameter) {
     this.db.setCollection('orangTua');
-    const recordset = await this.db.findMany( parameter );
+    const recordset = await this.db.findMany(parameter);
     return recordset;
   }
 
   async findOnePindahan(parameter) {
     this.db.setCollection('pindah');
-    const recordset = await this.db.findOne( parameter );
+    const recordset = await this.db.findOne(parameter);
     return recordset;
   }
 
   async findKompetensi(parameter) {
     this.db.setCollection('kompetensi');
-    const recordset = await this.db.findOne( parameter );
+    const recordset = await this.db.findOne(parameter);
     return recordset;
   }
 
   async findAllGuru(sorting, stat, parameter) {
     this.db.setCollection('guru');
-    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    const recordset = await this.db.findAllData(sorting, stat.limit, stat.page, parameter);
     return recordset;
   }
 
   async findAllTenagaAhli(sorting, stat, parameter) {
     this.db.setCollection('tenagaAhli');
-    const recordset = await this.db.findAllData( sorting, stat.limit, stat.page, parameter );
+    const recordset = await this.db.findAllData(sorting, stat.limit, stat.page, parameter);
     return recordset;
   }
 
   async findOneGuru(parameter) {
     this.db.setCollection('guru');
-    const recordset = await this.db.findOne( parameter );
-    return recordset;
-  }
-
-  async findOneSiswa(parameter) {
-    this.db.setCollection('tentangDiri');
-    const recordset = await this.db.findOne( parameter );
+    const recordset = await this.db.findOne(parameter);
     return recordset;
   }
 
   async findOneTenagaAhli(parameter) {
     this.db.setCollection('tenagaAhli');
-    const recordset = await this.db.findOne( parameter );
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
+  }
+
+  async findOneSiswa(parameter) {
+    this.db.setCollection('tentangDiri');
+    const recordset = await this.db.findOne(parameter);
     return recordset;
   }
 
