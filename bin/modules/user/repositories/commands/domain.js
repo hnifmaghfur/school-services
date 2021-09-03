@@ -17,7 +17,7 @@ const secretKey = 'sekolahan@jambi1';
 
 class User {
 
-  constructor(db){
+  constructor(db) {
     this.command = new Command(db);
     this.query = new Query(db);
   }
@@ -120,7 +120,7 @@ class User {
     const ctx = 'Add-Tentang-Diri';
     const { kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ $or: [ { NIS }, { NISN } ] });
+    const validateSiswa = await this.query.findOneSiswa({ $or: [{ NIS }, { NISN }] });
     if (!validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa telah terdaftar', 'validate siswa');
       return wrapper.error(new ConflictError('NISN atau NIS siswa telah terdaftar'));
@@ -441,7 +441,7 @@ class User {
     let result = {};
 
     if (kompetensi_id) {
-      data = { data: {...data, updatedAt}, kompetensi_id };
+      data = { data: { ...data, updatedAt }, kompetensi_id };
       result = await this.command.updateOneKompetensi(data);
     } else {
       data = { kompetensi_id: kompetensiId, siswa_id, kelas_id, semester, ...data, createdAt, updatedAt };
@@ -459,24 +459,19 @@ class User {
 
   async addGuru(payload) {
     const ctx = 'Add-Guru';
-    const { nama, nip_karpeg } = payload;
+    const { nip_kapreg } = payload;
 
-    const validateGuru = await this.query.findOneGuru({ nama, nip_karpeg });
-    if (!validate.isEmpty(validateGuru.data)) {
-      logger.log(ctx, 'Guru already exist', 'validate Guru');
-      return wrapper.error(new NotFoundError('Guru telah terdaftar'));
+    const validateGuru = await this.query.findOneGuru({ nip_kapreg });
+    if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
+      logger.log(ctx, 'guru not found', 'validate guru');
+      return wrapper.error(new NotFoundError('guru Not Found'));
     }
 
     let guru_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    let data = {
-      guru_id,
-      ...payload,
-      createdAt,
-      updatedAt
-    };
+    const data = { guru_id, ...payload, createdAt, updatedAt };
 
     const result = await this.command.insertOneGuru(data);
     if (result.err) {
@@ -484,29 +479,25 @@ class User {
       return wrapper.error(new InternalServerError('internal server error'));
     }
 
+    logger.log(ctx, 'success add Guru siswa', 'insert Guru siswa');
     return wrapper.data('success');
   }
 
   async addTenagaAhli(payload) {
     const ctx = 'Add-Tenaga-Ahli';
-    const { nama, nip_karpeg } = payload;
+    const { nip_kapreg } = payload;
 
-    const validateTenagaAhli = await this.query.findOneTenagaAhli({ nama, nip_karpeg });
-    if (!validate.isEmpty(validateTenagaAhli.data)) {
-      logger.log(ctx, 'Tenaga Ahli already exist', 'validate Tenaga Ahli');
-      return wrapper.error(new NotFoundError('Tenaga Ahli telah terdaftar'));
+    const validateTenagaAhli = await this.query.findOneTenagaAhli({ nip_kapreg });
+    if (validateTenagaAhli.err || validate.isEmpty(validateTenagaAhli.data)) {
+      logger.log(ctx, 'Tenaga Ahli not found', 'validate Tenaga Ahli');
+      return wrapper.error(new NotFoundError('guru Not Found'));
     }
 
     let tenaga_ahli_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    let data = {
-      tenaga_ahli_id,
-      ...payload,
-      createdAt,
-      updatedAt
-    };
+    const data = { tenaga_ahli_id, ...payload, createdAt, updatedAt };
 
     const result = await this.command.insertOneTenagaAhli(data);
     if (result.err) {
@@ -514,6 +505,7 @@ class User {
       return wrapper.error(new InternalServerError('internal server error'));
     }
 
+    logger.log(ctx, 'success add Tenaga Ahli siswa', 'insert Tenaga Ahli siswa');
     return wrapper.data('success');
   }
 
@@ -538,7 +530,7 @@ class User {
 
     await Promise.all(sheetContent.map(async (item, index) => {
 
-      const checkUser = await this.query.findOneTentangDiri({ $or: { NISN: item.NISN, NIS: item.NIS }});
+      const checkUser = await this.query.findOneTentangDiri({ $or: { NISN: item.NISN, NIS: item.NIS } });
       if (!validate.isEmpty(checkUser.data)) {
         logger.log(ctx, 'validate data siswa', 'check siswa');
         return duplicate++;
@@ -563,7 +555,7 @@ class User {
         kelas_id: '',
         NISN: item.NISN,
         NIS: item.NIS,
-        image:'',
+        image: '',
         nama_lengkap: item.nama_lengkap,
         nama_panggilan: item.nama_panggilan,
         ttl: item.ttl,

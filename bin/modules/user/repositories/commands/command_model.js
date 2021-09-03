@@ -3,13 +3,13 @@ const joi = require('joi');
 const login = joi.object({
   username: joi.string().required(),
   password: joi.string().required(),
-  isActive : joi.boolean().default(true, 'Example If Need Default Value')
+  isActive: joi.boolean().default(true, 'Example If Need Default Value')
 });
 
 const addClass = joi.object({
   namaKelas: joi.string().required(),
   walikelas: joi.string().required(),
-  tahunAjaran : joi.string().required()
+  tahunAjaran: joi.string().required()
 });
 
 const addTentangDiri = joi.object({
@@ -17,8 +17,8 @@ const addTentangDiri = joi.object({
   NIS: joi.string().required(),
   NISN: joi.string().required(),
   image: joi.string().required(),
-  nama_lengkap : joi.string().required(),
-  nama_panggilan : joi.string().required(),
+  nama_lengkap: joi.string().required(),
+  nama_panggilan: joi.string().required(),
   ttl: joi.string().required(),
   jenis_kelamin: joi.string().required(),
   agama: joi.string().required(),
@@ -37,18 +37,18 @@ const addTempatTinggal = joi.object({
   siswa_id: joi.string().required(),
   alamat: joi.string().required(),
   no_telephone: joi.string().required(),
-  tinggal_di : joi.string().required(),
-  jarak_ke_sekolah : joi.string().required(),
+  tinggal_di: joi.string().required(),
+  jarak_ke_sekolah: joi.string().required(),
 });
 
 const addPendidikan = joi.object({
   siswa_id: joi.string().required(),
   tanggal_diterima: joi.string().required(),
   lulus_dari: joi.string().required(),
-  tanggal_no_ijazah : joi.string().required(),
-  tanggal_no_stl : joi.string().required(),
-  lama_belajar : joi.string().required(),
-  nilai_skhun : joi.string().required(),
+  tanggal_no_ijazah: joi.string().required(),
+  tanggal_no_stl: joi.string().required(),
+  lama_belajar: joi.string().required(),
+  nilai_skhun: joi.string().required(),
 });
 
 const addKesehatan = joi.object({
@@ -64,7 +64,7 @@ const addKesehatan = joi.object({
 const addOrangTua = joi.object({
   siswa_id: joi.string().required(),
   data: joi.array().items(joi.object({
-    type: joi.string().valid('ayah','ibu','wali').required(),
+    type: joi.string().valid('ayah', 'ibu', 'wali').required(),
     nama: joi.string().required(),
     TTL: joi.string().required(),
     agama: joi.string().required(),
@@ -127,19 +127,19 @@ const addGuru = joi.object({
   nama: joi.string().required(),
   jenis_kelamin: joi.string().required(),
   ttl: joi.string().required(),
-  nip_kapreg: joi.string().required(),
+  nip_karpeg: joi.string().allow(''),
   pendidikan: joi.string().required(),
-  mulai_tugas: joi.string().required(),
+  mulai_bertugas: joi.string().required(),
   jabatan: joi.string().required(),
   gol_pangkat: joi.string().required(),
   tmt_pangkat: joi.string().required(),
   sk_pertama: joi.string().required(),
-  gaji: joi.string().required(),
+  gaji_pokok: joi.string().required(),
   mk_gol_tahun: joi.string().required(),
   mk_gol_bulan: joi.string().required(),
   k_tk: joi.string().required(),
+  yad_pangkat: joi.string().required(),
   yad_gaji: joi.string().required(),
-  sertifikasi: joi.string().required(),
   nuptk: joi.string().required(),
 });
 
