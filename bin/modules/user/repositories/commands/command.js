@@ -12,6 +12,18 @@ class Command {
     return result;
   }
 
+  async insertOneGuru(document){
+    this.db.setCollection('guru');
+    const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async insertOneTenagaAhli(document){
+    this.db.setCollection('tenagaAhli');
+    const result = await this.db.insertOne(document);
+    return result;
+  }
+
   async insertOneClass(document){
     this.db.setCollection('class');
     const result = await this.db.insertOne(document);

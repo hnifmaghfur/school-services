@@ -601,6 +601,50 @@ const addKompetensi = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const addGuru = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addGuru);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addGuru(result.data);
+    };
+    const sendResponse = async (result) => {
+    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Guru')
+        : wrapper.response(res, 'success', result, 'Add Guru', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const addTenagaAhli = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addGuru);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addTenagaAhli(result.data);
+    };
+    const sendResponse = async (result) => {
+    /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Tenaga Ahli')
+        : wrapper.response(res, 'success', result, 'Add Tenaga Ahli', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 const importSiswa = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -652,6 +696,8 @@ module.exports = {
   addOrangTua,
   addPindah,
   addKompetensi,
+  addGuru,
+  addTenagaAhli,
   registerUser,
   importSiswa
 };

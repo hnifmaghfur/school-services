@@ -457,6 +457,66 @@ class User {
     return wrapper.data('success');
   }
 
+  async addGuru(payload) {
+    const ctx = 'Add-Guru';
+    const { nama, nip_karpeg } = payload;
+
+    const validateGuru = await this.query.findOneGuru({ nama, nip_karpeg });
+    if (!validate.isEmpty(validateGuru.data)) {
+      logger.log(ctx, 'Guru already exist', 'validate Guru');
+      return wrapper.error(new NotFoundError('Guru telah terdaftar'));
+    }
+
+    let guru_id = uuid();
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+
+    let data = {
+      guru_id,
+      ...payload,
+      createdAt,
+      updatedAt
+    };
+
+    const result = await this.command.insertOneGuru(data);
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Guru');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    return wrapper.data('success');
+  }
+
+  async addTenagaAhli(payload) {
+    const ctx = 'Add-Tenaga-Ahli';
+    const { nama, nip_karpeg } = payload;
+
+    const validateTenagaAhli = await this.query.findOneTenagaAhli({ nama, nip_karpeg });
+    if (!validate.isEmpty(validateTenagaAhli.data)) {
+      logger.log(ctx, 'Tenaga Ahli already exist', 'validate Tenaga Ahli');
+      return wrapper.error(new NotFoundError('Tenaga Ahli telah terdaftar'));
+    }
+
+    let tenaga_ahli_id = uuid();
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+
+    let data = {
+      tenaga_ahli_id,
+      ...payload,
+      createdAt,
+      updatedAt
+    };
+
+    const result = await this.command.insertOneTenagaAhli(data);
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Tenaga Ahli');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    return wrapper.data('success');
+  }
+
   async importSiswa(payload) {
     const ctx = 'Import-siswa';
     const { file } = payload;

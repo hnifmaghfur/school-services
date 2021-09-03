@@ -70,6 +70,18 @@ const addKompetensi = async (payload) => {
   return postCommand(payload);
 };
 
+const addGuru = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addGuru(payload);
+  return postCommand(payload);
+};
+
+const addTenagaAhli = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addTenagaAhli(payload);
+  return postCommand(payload);
+};
+
 const importSiswa = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.importSiswa(payload);
@@ -88,5 +100,7 @@ module.exports = {
   addHobi,
   addPindah,
   addKompetensi,
+  addGuru,
+  addTenagaAhli,
   importSiswa,
 };

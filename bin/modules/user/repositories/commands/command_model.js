@@ -123,6 +123,26 @@ const addKompetensi = joi.object({
   })
 });
 
+const addGuru = joi.object({
+  nama: joi.string().required(),
+  jenis_kelamin: joi.string().required(),
+  ttl: joi.string().required(),
+  nip_kapreg: joi.string().required(),
+  pendidikan: joi.string().required(),
+  mulai_tugas: joi.string().required(),
+  jabatan: joi.string().required(),
+  gol_pangkat: joi.string().required(),
+  tmt_pangkat: joi.string().required(),
+  sk_pertama: joi.string().required(),
+  gaji: joi.string().required(),
+  mk_gol_tahun: joi.string().required(),
+  mk_gol_bulan: joi.string().required(),
+  k_tk: joi.string().required(),
+  yad_gaji: joi.string().required(),
+  sertifikasi: joi.string().required(),
+  nuptk: joi.string().required(),
+});
+
 module.exports = {
   login,
   addClass,
@@ -134,5 +154,6 @@ module.exports = {
   addHobi,
   addPindah,
   addKompetensi,
+  addGuru,
   importSiswa,
 };
