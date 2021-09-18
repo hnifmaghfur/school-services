@@ -18,6 +18,9 @@ function AppServer() {
   this.server.use(restify.plugins.queryParser());
   this.server.use(restify.plugins.bodyParser());
   this.server.use(restify.plugins.authorizationParser());
+  this.server.get('/public/*', restify.plugins.serveStatic({
+    directory: __dirname
+  }));
 
   // required for CORS configuration
   const corsConfig = corsMiddleware({
@@ -81,7 +84,7 @@ function AppServer() {
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, userHandler.getSiswaData);
   this.server.get('/kelas/v1/list-kelas', jwtAuth.verifyToken, userHandler.getListKelas);
   this.server.post('/siswa/v1/import', jwtAuth.verifyToken, userHandler.importSiswa);
-
+  this.server.get('/kelas/v1/rekapitulasi/:type', jwtAuth.verifyToken, userHandler.getRekapitulasi);
 
   //Initiation
   mongoConnectionPooling.init();

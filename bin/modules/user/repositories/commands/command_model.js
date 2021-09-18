@@ -127,7 +127,7 @@ const addGuru = joi.object({
   nama: joi.string().required(),
   jenis_kelamin: joi.string().required(),
   ttl: joi.string().required(),
-  nip_karpeg: joi.string().allow(''),
+  nip_karpeg: joi.string().required(),
   pendidikan: joi.string().required(),
   mulai_bertugas: joi.string().required(),
   jabatan: joi.string().required(),

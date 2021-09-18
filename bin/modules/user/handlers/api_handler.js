@@ -170,6 +170,7 @@ const getGuru = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
   }
 };
+
 const getTenagaAhli = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -180,6 +181,29 @@ const getTenagaAhli = async (req, res) => {
         return result;
       }
       return queryHandler.getTenagaAhli(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Guru', httpError.UNAUTHORIZED);
+  }
+};
+
+const getRekapitulasi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getTenagaAhliId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getRekapitulasi(result.data);
     };
 
     const sendResponse = async (result) => {
@@ -687,6 +711,7 @@ module.exports = {
   getGuru,
   getAllTenagaAhli,
   getTenagaAhli,
+  getRekapitulasi,
   addClass,
   addTentangDiri,
   addTempatTinggal,

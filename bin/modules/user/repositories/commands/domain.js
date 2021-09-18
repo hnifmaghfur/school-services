@@ -8,9 +8,12 @@ const commonUtil = require('../../../../helpers/utils/common');
 const dateFormat = require('dateformat');
 const logger = require('../../../../helpers/utils/logger');
 const uuid = require('uuid').v4;
-const { NotFoundError, UnauthorizedError, ConflictError, InternalServerError, BadRequestError } = require('../../../../helpers/error');
+const { InternalServerError } = require('../../../../helpers/error');
 const xlsx = require('xlsx');
 const validate = require('validate.js');
+const fs = require('fs');
+const ba64 = require('ba64');
+const config = require('../../../../infra/configs/global_config');
 
 const algorithm = 'aes-256-cbc';
 const secretKey = 'sekolahan@jambi1';
@@ -28,14 +31,14 @@ class User {
     const user = await this.query.findOneUser({ username });
     if (validate.isEmpty(user.data)) {
       logger.log(ctx, 'failed get data user', 'user not found');
-      return wrapper.error(new NotFoundError('user not found'));
+      return wrapper.error(new InternalServerError('user not found'));
     }
     const userId = user.data.user_id;
     const userName = user.data.username;
     const pass = await commonUtil.decrypt(user.data.password, algorithm, secretKey);
     if (username !== userName || pass !== password) {
       logger.log(ctx, 'wrong password', 'verify password');
-      return wrapper.error(new UnauthorizedError('Password invalid!'));
+      return wrapper.error(new InternalServerError('Password invalid!'));
     }
     const data = {
       username,
@@ -53,7 +56,7 @@ class User {
     const user = await this.query.findOneUser({ username });
     if (!validate.isEmpty(user.data)) {
       logger.log(ctx, 'user already exist', 'check user');
-      return wrapper.error(new ConflictError('user already exist'));
+      return wrapper.error(new InternalServerError('user already exist'));
     }
 
     const chiperPwd = await commonUtil.encrypt(password, algorithm, secretKey);
@@ -82,7 +85,7 @@ class User {
     const validateKelas = await this.query.findOneClass({ namaKelas, tahunAjaran });
     if (!validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas telah ada', 'validate kelas');
-      return wrapper.error(new ConflictError('Kelas telah ada.'));
+      return wrapper.error(new InternalServerError('Kelas telah ada.'));
     }
 
     const searching = {
@@ -94,7 +97,7 @@ class User {
     const kelas = await this.query.findOneClass(searching);
     if (!validate.isEmpty(kelas.data)) {
       logger.log(ctx, 'kelas already exist', 'check kelas');
-      return wrapper.error(new ConflictError('Kelas sudah ada.'));
+      return wrapper.error(new InternalServerError('Kelas sudah ada.'));
     }
 
     const data = {
@@ -123,13 +126,13 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ $or: [{ NIS }, { NISN }] });
     if (!validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa telah terdaftar', 'validate siswa');
-      return wrapper.error(new ConflictError('NISN atau NIS siswa telah terdaftar'));
+      return wrapper.error(new InternalServerError('NISN atau NIS siswa telah terdaftar'));
     }
 
     const validateKelas = await this.query.findOneClass({ kelas_id });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
-      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+      return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
     }
 
     const siswa_id = uuid();
@@ -142,7 +145,7 @@ class User {
       kelas_id,
       NISN,
       NIS,
-      image,
+      image: this.uploadImage({ image }),
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -179,7 +182,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const tempat_id = uuid();
@@ -214,7 +217,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const pendidikan_id = uuid();
@@ -251,7 +254,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const kesehatan_id = uuid();
@@ -288,7 +291,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const createdAt = dateFormat(new Date(), 'isoDateTime');
@@ -341,7 +344,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const hobi_id = uuid();
@@ -376,7 +379,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const pindah_id = uuid();
@@ -416,13 +419,13 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const validateKelas = await this.query.findOneClass({ kelas_id });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
-      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+      return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
     }
 
     let kompetensiId = uuid();
@@ -464,7 +467,7 @@ class User {
     const validateGuru = await this.query.findOneGuru({ nip_kapreg });
     if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
       logger.log(ctx, 'guru not found', 'validate guru');
-      return wrapper.error(new NotFoundError('guru Not Found'));
+      return wrapper.error(new InternalServerError('guru Not Found'));
     }
 
     let guru_id = uuid();
@@ -490,7 +493,7 @@ class User {
     const validateTenagaAhli = await this.query.findOneTenagaAhli({ nip_kapreg });
     if (validateTenagaAhli.err || validate.isEmpty(validateTenagaAhli.data)) {
       logger.log(ctx, 'Tenaga Ahli not found', 'validate Tenaga Ahli');
-      return wrapper.error(new NotFoundError('guru Not Found'));
+      return wrapper.error(new InternalServerError('guru Not Found'));
     }
 
     let tenaga_ahli_id = uuid();
@@ -513,11 +516,11 @@ class User {
     const ctx = 'Import-siswa';
     const { file } = payload;
     if (validate.isEmpty(file.name)) {
-      return wrapper.error(new BadRequestError('Input file first, please!!'));
+      return wrapper.error(new InternalServerError('Input file first, please!!'));
     }
 
     if (file.name.slice(file.name.length - 5, file.name.length) != '.xlsx') {
-      return wrapper.error(new BadRequestError('Format tidak sesuai'));
+      return wrapper.error(new InternalServerError('Format tidak sesuai'));
     }
 
     const workbook = xlsx.readFile(file.path);
@@ -559,8 +562,8 @@ class User {
         nama_lengkap: item.nama_lengkap,
         nama_panggilan: item.nama_panggilan,
         ttl: item.ttl,
-        jenis_kelamin: item.jenis_kelamin,
-        agama: item.agama,
+        jenis_kelamin: item.jenis_kelamin.toUpperCase() == 'LAKI-LAKI' ? 1 : 2,
+        agama: item.agama.toUpperCase(),
         kewarganegaraan: item.kewarganegaraan,
         anak_ke: item.anak_ke,
         jml_sdr_kandung: item.jml_sdr_kandung,
@@ -760,6 +763,19 @@ class User {
 
     logger.log(ctx, 'success upload excel siswa', 'upload excel siswa');
     return wrapper.data(successMessage);
+  }
+
+  async uploadImage(data) {
+    const ctx = 'upload-image-minio';
+    const imgName = uuid();
+    const path = `./uploads/${imgName}`;
+    const rawImage = data.image;
+    const data_url = `data:image/png${rawImage}`;
+    ba64.writeImageSync(path, data_url);
+    let image = '';
+    const uImage = fs.createReadStream(`./uploads/${imgName}.png`);
+    image = `${config.get('/imageUrl')}/uploads/default_photo.png`;
+    return image;
   }
 
 }
