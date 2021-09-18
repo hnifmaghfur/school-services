@@ -73,12 +73,12 @@ function AppServer() {
   //guru
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);
   this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, userHandler.getGuru);
-  this.server.post('/guru/v1/', jwtAuth.verifyToken, userHandler.addGuru);
+  this.server.post('/guru/v1/add', jwtAuth.verifyToken, userHandler.addGuru);
 
   //tenaga ahli
   this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, userHandler.getAllTenagaAhli);
   this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, userHandler.getTenagaAhli);
-  this.server.post('/tenaga-ahli/v1/', jwtAuth.verifyToken, userHandler.addTenagaAhli);
+  this.server.post('/tenaga-ahli/v1/add', jwtAuth.verifyToken, userHandler.addTenagaAhli);
 
   //addOns
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, userHandler.getSiswaData);

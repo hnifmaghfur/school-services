@@ -541,28 +541,29 @@ class User {
 
       const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id });
       if (!validate.isEmpty(dSiswa.data)) {
-        await Promise.all(dSiswa.data.map(async item => {
-          if (item.jenis_kelamin.toLowerCase() == 'laki-laki') {
+        await Promise.all(dSiswa.data.map(async value => {
+          if (value.jenis_kelamin.toLowerCase() == 'laki-laki') {
             laki++;
           } else {
             perempuan++;
           }
 
-          if (item.agama.toLowerCase == 'islam') {
+          if (value.agama.toLowerCase == 'islam') {
             islam++;
-          } else if (item.agama.toLowerCase == 'khatoik') {
+          } else if (value.agama.toLowerCase == 'khatoik') {
             khatolik++;
-          } else if (item.agama.toLowerCase == 'protestan') {
+          } else if (!validate.isEmpty(value.agama.match(/kristen/i))) {
             protestan++;
-          } else if (item.agama.toLowerCase == 'hindu') {
+          } else if (value.agama.toLowerCase == 'hindu') {
             hindu++;
-          } else if (item.agama.toLowerCase == 'budha') {
+          } else if (value.agama.toLowerCase == 'budha') {
             budha++;
+          } else if (value.agama.toLowerCase == 'protestan') {
+            protestan++;
           }
-          tahun_lahir.push(item.ttl.substring(item.ttl.length - 4));
+          tahun_lahir.push(value.ttl.substring(value.ttl.length - 4));
         }));
       }
-
       const rekap_tahun = tahun_lahir.reduce((x, i) => { x[i] = (x[i] || 0) + 1; return x; }, {});
       const keyData = Object.keys(rekap_tahun);
       const temp = new Array(10);
