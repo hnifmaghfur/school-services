@@ -29,6 +29,7 @@ class User {
     }
 
     let searching = {
+      isActive: true,
       $or: [
         { 'nama_kelas': new RegExp(`${search || ''}`, 'i') },
         { 'wali_kelas': new RegExp(`${search || ''}`, 'i') },
@@ -74,7 +75,7 @@ class User {
   async viewListKelas() {
     const ctx = 'getListKelas';
 
-    const kelas = await this.query.findListKelas();
+    const kelas = await this.query.findListKelas({ isActive: true });
     if (kelas.err || validate.isEmpty(kelas.data)) {
       logger.log(ctx, 'error', 'user not found');
       return wrapper.error(new InternalServerError('Internal server error'));
@@ -136,7 +137,7 @@ class User {
     const data = await Promise.all(siswa.data.map(async item => {
       let nama_kelas = 'Belum ada kelas';
       let tahun_ajaran = 'Belum ada kelas';
-      const dataKelas = await this.query.findOneClass({ kelas_id: item.kelas_id });
+      const dataKelas = await this.query.findOneClass({ kelas_id: item.kelas_id, isActive: true });
       if (dataKelas.data) {
         nama_kelas = dataKelas.data.nama_kelas;
         tahun_ajaran = dataKelas.data.tahun_ajaran;
@@ -351,8 +352,6 @@ class User {
 
     const dataSiswa = siswa.data;
     delete dataSiswa._id;
-    delete dataSiswa.NISN;
-    delete dataSiswa.NIS;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -539,7 +538,7 @@ class User {
       let perempuan_mampu = 0;
       let jumlah_mampu = 0;
 
-      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id });
+      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, isActive: true });
       if (!validate.isEmpty(dSiswa.data)) {
         await Promise.all(dSiswa.data.map(async value => {
           if (value.jenis_kelamin.toLowerCase() == 'laki-laki') {

@@ -13,6 +13,7 @@ const addClass = joi.object({
 });
 
 const addTentangDiri = joi.object({
+  siswa_id: joi.string().allow(''),
   kelas_id: joi.string().required(),
   NIS: joi.string().required(),
   NISN: joi.string().required(),

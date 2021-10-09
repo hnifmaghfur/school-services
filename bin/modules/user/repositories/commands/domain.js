@@ -121,12 +121,15 @@ class User {
 
   async addTentangDiri(payload) {
     const ctx = 'Add-Tentang-Diri';
-    const { kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
+    const { siswa_id, kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ $or: [{ NIS }, { NISN }] });
-    if (!validate.isEmpty(validateSiswa.data)) {
-      logger.log(ctx, 'siswa telah terdaftar', 'validate siswa');
-      return wrapper.error(new InternalServerError('NISN atau NIS siswa telah terdaftar'));
+    let edit = false;
+    let idSiswa = uuid();
+
+    const checkSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (!validate.isEmpty(checkSiswa.data)) {
+      idSiswa = siswa_id;
+      edit = true;
     }
 
     const validateKelas = await this.query.findOneClass({ kelas_id });
@@ -135,13 +138,10 @@ class User {
       return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
     }
 
-    const siswa_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const dataTentangDiri = {
-      tentang_id: uuid(),
-      siswa_id,
+    let dataTentangDiri = {
       kelas_id,
       NISN,
       NIS,
@@ -160,11 +160,19 @@ class User {
       bahasa,
       pihak_dihubungi,
       penanggung_biaya,
-      createdAt,
       updatedAt,
     };
 
-    const tentang = await this.command.insertOneTentangDiri(dataTentangDiri);
+    let tentang;
+
+    if (edit) {
+      tentang = await this.command.patchOneTentangDiri({ siswa_id: idSiswa }, dataTentangDiri);
+    } else {
+      const tentang_id = uuid();
+      tentang = await this.command.insertOneTentangDiri({ tentang_id, ...dataTentangDiri, createdAt });
+
+    }
+
     if (tentang.err) {
       logger.log(ctx, 'failed upload data', 'insert tentang');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -172,7 +180,6 @@ class User {
 
     logger.log(ctx, 'success add siswa', 'insert siswa');
     return wrapper.data({ siswa_id });
-
   }
 
   async addTempatTinggal(payload) {
@@ -185,27 +192,31 @@ class User {
       return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const tempat_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const data = {
-      siswa_id,
-      tempat_id,
+    let data = {
       alamat,
       no_telephone,
       tinggal_di,
       jarak_ke_sekolah,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOneTempatTinggal(data);
+    let result;
+
+    const checkTempat = await this.query.findOneTempatTinggal({ siswa_id });
+    if (!checkTempat.data) {
+      result = await this.command.patchOneTempat({ siswa_id }, data);
+    } else {
+      const tempat_id = uuid();
+      result = await this.command.insertOneTempatTinggal({ tempat_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert tempat tinggal');
       return wrapper.error(new InternalServerError('Internal Server Error'));
     }
-
     logger.log(ctx, 'success add tempat tinggal siswa', 'insert tempat tinggal siswa');
     return wrapper.data({ siswa_id });
   }
@@ -220,24 +231,30 @@ class User {
       return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const pendidikan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
     const data = {
-      siswa_id,
-      pendidikan_id,
       tanggal_diterima,
       lulus_dari,
       tanggal_no_ijazah,
       tanggal_no_stl,
       lama_belajar,
       nilai_skhun,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOnePendidikan(data);
+
+    let result;
+
+    const checkPendidikan = await this.query.findOnePendidikan({ siswa_id });
+    if (!checkPendidikan.data) {
+      result = await this.command.patchOnePendidikan({ siswa_id }, data);
+    } else {
+      const pendidikan_id = uuid();
+      result = await this.command.insertOnePendidikan({ pendidikan_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert pendidikan');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -257,24 +274,29 @@ class User {
       return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const kesehatan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
     const data = {
-      siswa_id,
-      kesehatan_id,
       gol_darah,
       kelainan_jasmani,
       tinggi_berat_badan,
       nama_penyakit,
       tahun_sakit,
       lama_sakit,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOneKesehatan(data);
+    let result;
+
+    const checkKesehatan = await this.query.findOneKesehatan({ siswa_id });
+    if (!checkKesehatan.data) {
+      result = await this.command.patchOneKesehatan({ siswa_id }, data);
+    } else {
+      const kesehatan_id = uuid();
+      result = await this.command.insertOneKesehatan({ kesehatan_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert kesehatan');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -297,41 +319,69 @@ class User {
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const payloads = await Promise.all(data.map(async item => {
+    let edit = false;
+    let ayah;
+    let ibu;
+    let wali;
 
-      const ortu_id = uuid();
-      const type_ortu = item.type === 'ayah' ? '1' : item.type === 'ibu' ? '2' : '3';
-
-      const dataOrtu = {
-        siswa_id,
-        ortu_id,
-        type_ortu,
-        nama: item.nama,
-        TTL: item.TTL,
-        agama: item.agama,
-        kewarganegaraan: item.kewarganegaraan,
-        pendidikan: item.pendidikan,
-        pekerjaan: item.pekerjaan,
-        gol_pekerjaan: item.gol_pekerjaan,
-        penghasilan: item.penghasilan,
-        alamat: item.alamat,
-        no_telpon: item.no_telpon,
-        status: item.status,
-        status_nikah: item.status_nikah,
-        tahun_meninggal: item.tahun_meninggal,
-        hubungan_wali: validate.isEmpty(item.hubungan_wali) ? '' : item.hubungan_wali,
-        createdAt,
-        updatedAt
-      };
-
-      return dataOrtu;
-    }));
-
-    const result = await this.command.insertManyOrtu(payloads);
-    if (result.err) {
-      logger.log(ctx, 'failed upload data', 'insert orang tua');
-      return wrapper.error(new InternalServerError('internal server error'));
+    const checkOrtu = await this.query.findManyOrangTua({ siswa_id });
+    if (!validate.isEmpty(checkOrtu.data)) {
+      edit = true;
+      checkOrtu.data.map(item => {
+        if (item.type_ortu == '1') {
+          ayah = {
+            ortu_id: item.ortu_id,
+            type: 'ayah'
+          };
+        } else if (item.type_ortu == '2') {
+          ibu = {
+            ortu_id: item.ortu_id,
+            type: 'ibu'
+          };
+        } else {
+          wali = {
+            ortu_id: item.ortu_id,
+            type: 'wali'
+          };
+        }
+      });
     }
+
+    // const payloads = await Promise.all(data.map(item => {
+
+    //   const ortu_id = uuid();
+    //   const type_ortu = item.type === 'ayah' ? '1' : item.type === 'ibu' ? '2' : '3';
+
+    //   const dataOrtu = {
+    //     siswa_id,
+    //     ortu_id,
+    //     type_ortu,
+    //     nama: item.nama,
+    //     TTL: item.TTL,
+    //     agama: item.agama,
+    //     kewarganegaraan: item.kewarganegaraan,
+    //     pendidikan: item.pendidikan,
+    //     pekerjaan: item.pekerjaan,
+    //     gol_pekerjaan: item.gol_pekerjaan,
+    //     penghasilan: item.penghasilan,
+    //     alamat: item.alamat,
+    //     no_telpon: item.no_telpon,
+    //     status: item.status,
+    //     status_nikah: item.status_nikah,
+    //     tahun_meninggal: item.tahun_meninggal,
+    //     hubungan_wali: validate.isEmpty(item.hubungan_wali) ? '' : item.hubungan_wali,
+    //     createdAt,
+    //     updatedAt
+    //   };
+
+    //   return dataOrtu;
+    // }));
+
+    // const result = await this.command.insertManyOrtu(payloads);
+    // if (result.err) {
+    //   logger.log(ctx, 'failed upload data', 'insert orang tua');
+    //   return wrapper.error(new InternalServerError('internal server error'));
+    // }
 
     logger.log(ctx, 'success add orang tua siswa', 'insert orang tua siswa');
     return wrapper.data({ siswa_id });
