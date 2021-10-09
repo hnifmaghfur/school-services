@@ -2,14 +2,14 @@
 const Query = require('./query');
 const wrapper = require('../../../../helpers/utils/wrapper');
 const logger = require('../../../../helpers/utils/logger');
-const { NotFoundError, InternalServerError } = require('../../../../helpers/error');
+const { InternalServerError } = require('../../../../helpers/error');
 const validate = require('validate.js');
 const uuid = require('uuid').v4;
 const dateFormat = require('dateformat');
 
 class User {
 
-  constructor(db){
+  constructor(db) {
     this.query = new Query(db);
   }
 
@@ -40,14 +40,14 @@ class User {
     if (tab != 'all') {
       searching = {
         ...searching,
-        nama_kelas: {$in: [ new RegExp(`${tab || ''}`, 'i') ]}
+        nama_kelas: { $in: [new RegExp(`${tab || ''}`, 'i')] }
       };
     }
 
     const kelas = await this.query.findAllClass(sorting, stat, searching);
     if (kelas.err || validate.isEmpty(kelas.data)) {
       logger.log(ctx, kelas.err, 'user not found');
-      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+      return wrapper.paginationData([], { page: 0, data: 0, totalPage: 0, totalData: 0 });
     }
 
     const count = await this.query.countKelas(searching);
@@ -75,7 +75,7 @@ class User {
   async viewListKelas() {
     const ctx = 'getListKelas';
 
-    const kelas = await this.query.findListKelas();
+    const kelas = await this.query.findListKelas({ isActive: true });
     if (kelas.err || validate.isEmpty(kelas.data)) {
       logger.log(ctx, 'error', 'user not found');
       return wrapper.error(new InternalServerError('Internal server error'));
@@ -122,14 +122,14 @@ class User {
     if (tab != 'all') {
       searching = {
         ...searching,
-        jenis_kelamin: {$in: [ new RegExp(`${tab || ''}`, 'i') ]}
+        jenis_kelamin: { $in: [new RegExp(`${tab || ''}`, 'i')] }
       };
     }
 
     const siswa = await this.query.findAllSiswa(sorting, stat, searching);
     if (siswa.err || validate.isEmpty(siswa.data)) {
       logger.log(ctx, ('find siswa'), 'user not found');
-      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+      return wrapper.paginationData([], { page: 0, data: 0, totalPage: 0, totalData: 0 });
     }
 
     const count = await this.query.countSiswa(searching);
@@ -137,7 +137,7 @@ class User {
     const data = await Promise.all(siswa.data.map(async item => {
       let nama_kelas = 'Belum ada kelas';
       let tahun_ajaran = 'Belum ada kelas';
-      const dataKelas = await this.query.findOneClass({ kelas_id: item.kelas_id });
+      const dataKelas = await this.query.findOneClass({ kelas_id: item.kelas_id, isActive: true });
       if (dataKelas.data) {
         nama_kelas = dataKelas.data.nama_kelas;
         tahun_ajaran = dataKelas.data.tahun_ajaran;
@@ -197,7 +197,7 @@ class User {
     const guru = await this.query.findAllGuru(sorting, stat, searching);
     if (guru.err || validate.isEmpty(guru.data)) {
       logger.log(ctx, 'search guru', 'guru not found');
-      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+      return wrapper.paginationData([], { page: 0, data: 0, totalPage: 0, totalData: 0 });
     }
 
     const count = await this.query.countGuru(searching);
@@ -252,7 +252,7 @@ class User {
     const tenagaAhli = await this.query.findAllTenagaAhli(sorting, stat, searching);
     if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
       logger.log(ctx, 'search tenaga ahli', 'tenaga ahli not found');
-      return wrapper.paginationData([], {page: 0, data: 0, totalPage: 0, totalData:0} );
+      return wrapper.paginationData([], { page: 0, data: 0, totalPage: 0, totalData: 0 });
     }
 
     const count = await this.query.countTenagaAhli(searching);
@@ -284,7 +284,7 @@ class User {
     const guru = await this.query.findOneGuru({ guru_id });
     if (guru.err || validate.isEmpty(guru.data)) {
       logger.log(ctx, 'find guru', 'guru not found');
-      return wrapper.error(new NotFoundError('Guru not Found'));
+      return wrapper.error(new InternalServerError('Guru not Found'));
     }
 
     delete guru.data._id;
@@ -304,7 +304,7 @@ class User {
     const tenagaAhli = await this.query.findOneTenagaAhli({ tenaga_ahli_id });
     if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
       logger.log(ctx, 'find tenaga ahli', 'tenaga ahli not found');
-      return wrapper.error(new NotFoundError('Tenaga Ahli not Found'));
+      return wrapper.error(new InternalServerError('Tenaga Ahli not Found'));
     }
 
     delete tenagaAhli.data._id;
@@ -324,7 +324,7 @@ class User {
     const siswa = await this.query.findDataSiswa({ siswa_id, kelas_id });
     if (siswa.err || validate.isEmpty(siswa.data)) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const data = siswa.data[0];
@@ -347,13 +347,11 @@ class User {
     const siswa = await this.query.findOneTentangDiri({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Siswa tidak ditemukan'));
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
     }
 
     const dataSiswa = siswa.data;
     delete dataSiswa._id;
-    delete dataSiswa.NISN;
-    delete dataSiswa.NIS;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -368,7 +366,7 @@ class User {
     const siswa = await this.query.findOneTempatTinggal({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data;
@@ -384,10 +382,10 @@ class User {
     const ctx = 'getSiswaPendidikan';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findOnePendidikan({siswa_id});
+    const siswa = await this.query.findOnePendidikan({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data;
@@ -403,10 +401,10 @@ class User {
     const ctx = 'getSiswaKesehatan';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findOneKesehatan({siswa_id});
+    const siswa = await this.query.findOneKesehatan({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data;
@@ -422,10 +420,10 @@ class User {
     const ctx = 'getSiswaHobi';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findOneHobi({siswa_id});
+    const siswa = await this.query.findOneHobi({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data;
@@ -443,10 +441,10 @@ class User {
 
     //khusus orang tua ada wali juga, tolong cek lagi, type 1 = ayah 2=ibu 3=wali
 
-    const siswa = await this.query.findManyOrangTua({siswa_id});
+    const siswa = await this.query.findManyOrangTua({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data.map(item => {
@@ -478,10 +476,10 @@ class User {
     const ctx = 'getSiswaPindah';
     const { siswa_id } = payload;
 
-    const siswa = await this.query.findOnePindahan({siswa_id});
+    const siswa = await this.query.findOnePindahan({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new NotFoundError('Can not find siswa'));
+      return wrapper.error(new InternalServerError('Can not find siswa'));
     }
 
     const dataSiswa = siswa.data;
@@ -500,7 +498,7 @@ class User {
     const dataMapel = await this.query.findKompetensi({ siswa_id, kelas_id, semester });
     if (dataMapel.err) {
       logger.log(ctx, 'Internal Server Error', 'mapel pengetahuan not found');
-      return wrapper.error(new NotFoundError('Can not find mapel pengetahuan'));
+      return wrapper.error(new InternalServerError('Can not find mapel pengetahuan'));
     }
 
     const data = dataMapel.data;
@@ -509,6 +507,88 @@ class User {
     return wrapper.data(data);
   }
 
+  async viewRekapitulasi(payload) {
+    const ctx = 'getRekapitulasi';
+    const { type } = payload;
+
+    let searching = {};
+
+    if (type != 'all') {
+      searching = { kelas_id: type };
+    }
+
+    const dKelas = await this.query.findManyClass(searching);
+    if (dKelas.err) {
+      logger.log(ctx, 'Internal Server Error', 'Class not found');
+      return wrapper.error(new InternalServerError('Can not find Class'));
+    }
+
+    let kelas = [];
+
+    await Promise.all(dKelas.data.map(async item => {
+      let laki = 0;
+      let perempuan = 0;
+      let islam = 0;
+      let khatolik = 0;
+      let protestan = 0;
+      let hindu = 0;
+      let budha = 0;
+      let tahun_lahir = [];
+      let laki_mampu = 0;
+      let perempuan_mampu = 0;
+      let jumlah_mampu = 0;
+
+      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, isActive: true });
+      if (!validate.isEmpty(dSiswa.data)) {
+        await Promise.all(dSiswa.data.map(async value => {
+          if (value.jenis_kelamin.toLowerCase() == 'laki-laki') {
+            laki++;
+          } else {
+            perempuan++;
+          }
+
+          if (value.agama.toLowerCase == 'islam') {
+            islam++;
+          } else if (value.agama.toLowerCase == 'khatoik') {
+            khatolik++;
+          } else if (!validate.isEmpty(value.agama.match(/kristen/i))) {
+            protestan++;
+          } else if (value.agama.toLowerCase == 'hindu') {
+            hindu++;
+          } else if (value.agama.toLowerCase == 'budha') {
+            budha++;
+          } else if (value.agama.toLowerCase == 'protestan') {
+            protestan++;
+          }
+          tahun_lahir.push(value.ttl.substring(value.ttl.length - 4));
+        }));
+      }
+      const rekap_tahun = tahun_lahir.reduce((x, i) => { x[i] = (x[i] || 0) + 1; return x; }, {});
+      const keyData = Object.keys(rekap_tahun);
+      const temp = new Array(10);
+      const rKey = temp.length - keyData.length;
+      let rTahun_lahir = [];
+      for (let i = rKey - 2; i > 0; i--) {
+        const value = (parseInt(keyData[0]) - i).toString();
+        rTahun_lahir.push({ [value]: '' });
+      }
+
+      //get map data object
+      for (let [key, value] of Object.entries(rekap_tahun)) {
+        rTahun_lahir.push({ [key]: value });
+      }
+
+      rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 1).toString()]: '' });
+      rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 2).toString()]: '' });
+
+    }));
+
+    logger.log(ctx, 'success', 'get kompetensi siswa');
+    return wrapper.data();
+  }
+
 }
 
+
 module.exports = User;
+

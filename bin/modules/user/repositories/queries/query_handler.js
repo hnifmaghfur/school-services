@@ -133,6 +133,14 @@ const getSiswaKompetensi = async (payload) => {
   const result = await getData();
   return result;
 };
+const getRekapitulasi = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewRekapitulasi(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 
 module.exports = {
   getAllClass,
@@ -151,4 +159,5 @@ module.exports = {
   getSiswaOrangTua,
   getSiswaPindah,
   getSiswaKompetensi,
+  getRekapitulasi
 };

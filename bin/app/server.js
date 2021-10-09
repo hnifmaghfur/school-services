@@ -18,6 +18,9 @@ function AppServer() {
   this.server.use(restify.plugins.queryParser());
   this.server.use(restify.plugins.bodyParser());
   this.server.use(restify.plugins.authorizationParser());
+  this.server.get('/public/*', restify.plugins.serveStatic({
+    directory: __dirname
+  }));
 
   // required for CORS configuration
   const corsConfig = corsMiddleware({
@@ -70,18 +73,18 @@ function AppServer() {
   //guru
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, userHandler.getAllGuru);
   this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, userHandler.getGuru);
-  this.server.post('/guru/v1/', jwtAuth.verifyToken, userHandler.addGuru);
+  this.server.post('/guru/v1/add', jwtAuth.verifyToken, userHandler.addGuru);
 
   //tenaga ahli
   this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, userHandler.getAllTenagaAhli);
   this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, userHandler.getTenagaAhli);
-  this.server.post('/tenaga-ahli/v1/', jwtAuth.verifyToken, userHandler.addTenagaAhli);
+  this.server.post('/tenaga-ahli/v1/add', jwtAuth.verifyToken, userHandler.addTenagaAhli);
 
   //addOns
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, userHandler.getSiswaData);
   this.server.get('/kelas/v1/list-kelas', jwtAuth.verifyToken, userHandler.getListKelas);
   this.server.post('/siswa/v1/import', jwtAuth.verifyToken, userHandler.importSiswa);
-
+  this.server.get('/kelas/v1/rekapitulasi/:type', jwtAuth.verifyToken, userHandler.getRekapitulasi);
 
   //Initiation
   mongoConnectionPooling.init();

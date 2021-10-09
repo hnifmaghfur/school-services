@@ -24,9 +24,25 @@ class Command {
     return result;
   }
 
+  async patchOneTentangDiri(siswa_id, document) {
+    this.db.setCollection('tentangDiri');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
+    return result;
+  }
+
   async insertOneTempatTinggal(document) {
     this.db.setCollection('tempatTinggal');
     const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async patchOneTempat(siswa_id, document) {
+    this.db.setCollection('tempatTinggal');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
     return result;
   }
 
@@ -36,9 +52,25 @@ class Command {
     return result;
   }
 
+  async patchOnePendidikan(siswa_id, document) {
+    this.db.setCollection('pendidikan');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
+    return result;
+  }
+
   async insertOneKesehatan(document) {
     this.db.setCollection('kesehatan');
     const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async patchOneKesehatan(siswa_id, document) {
+    this.db.setCollection('kesehatan');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
     return result;
   }
 

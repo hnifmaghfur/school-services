@@ -60,24 +60,10 @@ class Query {
     return recordset;
   }
 
-  async findAllClassId(document) {
-    const validateData = [document.kelas_id];
-    const query = 'SELECT * FROM kelas WHERE kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
-  }
-
   async findOneTentangDiri(parameter) {
     this.db.setCollection('tentangDiri');
     const recordset = await this.db.findOne(parameter);
     return recordset;
-  }
-
-  async findDataSiswa(document) {
-    const validateData = [document.siswa_id, document.kelas_id];
-    const query = 'SELECT siswa.nama_siswa AS name, kelas.nama_kelas as kelas, siswa.NISN AS NISN, siswa.NIS AS NIS FROM siswa JOIN isi_kelas ON siswa.siswa_id = isi_kelas.siswa_id JOIN kelas ON isi_kelas.kelas_id = kelas.kelas_id WHERE isi_kelas.siswa_id = ? AND isi_kelas.kelas_id = ?';
-    const result = await this.db.findData(query, validateData);
-    return result;
   }
 
   async findOneTempatTinggal(parameter) {
@@ -106,6 +92,18 @@ class Query {
 
   async findManyOrangTua(parameter) {
     this.db.setCollection('orangTua');
+    const recordset = await this.db.findMany(parameter);
+    return recordset;
+  }
+
+  async findManyClass(parameter) {
+    this.db.setCollection('class');
+    const recordset = await this.db.findMany(parameter);
+    return recordset;
+  }
+
+  async findManySiswa(parameter) {
+    this.db.setCollection('tentangDiri');
     const recordset = await this.db.findMany(parameter);
     return recordset;
   }

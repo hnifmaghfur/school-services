@@ -8,9 +8,12 @@ const commonUtil = require('../../../../helpers/utils/common');
 const dateFormat = require('dateformat');
 const logger = require('../../../../helpers/utils/logger');
 const uuid = require('uuid').v4;
-const { NotFoundError, UnauthorizedError, ConflictError, InternalServerError, BadRequestError } = require('../../../../helpers/error');
+const { InternalServerError } = require('../../../../helpers/error');
 const xlsx = require('xlsx');
 const validate = require('validate.js');
+const fs = require('fs');
+const ba64 = require('ba64');
+const config = require('../../../../infra/configs/global_config');
 
 const algorithm = 'aes-256-cbc';
 const secretKey = 'sekolahan@jambi1';
@@ -28,14 +31,14 @@ class User {
     const user = await this.query.findOneUser({ username });
     if (validate.isEmpty(user.data)) {
       logger.log(ctx, 'failed get data user', 'user not found');
-      return wrapper.error(new NotFoundError('user not found'));
+      return wrapper.error(new InternalServerError('user not found'));
     }
     const userId = user.data.user_id;
     const userName = user.data.username;
     const pass = await commonUtil.decrypt(user.data.password, algorithm, secretKey);
     if (username !== userName || pass !== password) {
       logger.log(ctx, 'wrong password', 'verify password');
-      return wrapper.error(new UnauthorizedError('Password invalid!'));
+      return wrapper.error(new InternalServerError('Password invalid!'));
     }
     const data = {
       username,
@@ -53,7 +56,7 @@ class User {
     const user = await this.query.findOneUser({ username });
     if (!validate.isEmpty(user.data)) {
       logger.log(ctx, 'user already exist', 'check user');
-      return wrapper.error(new ConflictError('user already exist'));
+      return wrapper.error(new InternalServerError('user already exist'));
     }
 
     const chiperPwd = await commonUtil.encrypt(password, algorithm, secretKey);
@@ -81,10 +84,20 @@ class User {
 
     const validateKelas = await this.query.findOneClass({ namaKelas });
     if (!validate.isEmpty(validateKelas.data)) {
-      const cActive = await this.command.updateStatusClass({ kelas_Id: cActive.data.kelas_id });
-      if (cActive.err) {
-        logger.log(ctx, 'Failed update class', 'update class');
-      }
+      logger.log(ctx, 'kelas telah ada', 'validate kelas');
+      return wrapper.error(new InternalServerError('Kelas telah ada.'));
+    }
+
+    const searching = {
+      namaKelas,
+      walikelas,
+      tahunAjaran
+    };
+
+    const kelas = await this.query.findOneClass(searching);
+    if (!validate.isEmpty(kelas.data)) {
+      logger.log(ctx, 'kelas already exist', 'check kelas');
+      return wrapper.error(new InternalServerError('Kelas sudah ada.'));
     }
 
     const data = {
@@ -109,31 +122,31 @@ class User {
 
   async addTentangDiri(payload) {
     const ctx = 'Add-Tentang-Diri';
-    const { kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
+    const { siswa_id, kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ $or: [{ NIS }, { NISN }] });
-    if (!validate.isEmpty(validateSiswa.data)) {
-      logger.log(ctx, 'siswa telah terdaftar', 'validate siswa');
-      return wrapper.error(new ConflictError('NISN atau NIS siswa telah terdaftar'));
+    let edit = false;
+    let idSiswa = uuid();
+
+    const checkSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (!validate.isEmpty(checkSiswa.data)) {
+      idSiswa = siswa_id;
+      edit = true;
     }
 
     const validateKelas = await this.query.findOneClass({ kelas_id });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
-      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+      return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
     }
 
-    const siswa_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const dataTentangDiri = {
-      tentang_id: uuid(),
-      siswa_id,
+    let dataTentangDiri = {
       kelas_id,
       NISN,
       NIS,
-      image,
+      image: this.uploadImage({ image }),
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -148,11 +161,19 @@ class User {
       bahasa,
       pihak_dihubungi,
       penanggung_biaya,
-      createdAt,
       updatedAt,
     };
 
-    const tentang = await this.command.insertOneTentangDiri(dataTentangDiri);
+    let tentang;
+
+    if (edit) {
+      tentang = await this.command.patchOneTentangDiri({ siswa_id: idSiswa }, dataTentangDiri);
+    } else {
+      const tentang_id = uuid();
+      tentang = await this.command.insertOneTentangDiri({ tentang_id, ...dataTentangDiri, createdAt });
+
+    }
+
     if (tentang.err) {
       logger.log(ctx, 'failed upload data', 'insert tentang');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -160,7 +181,6 @@ class User {
 
     logger.log(ctx, 'success add siswa', 'insert siswa');
     return wrapper.data({ siswa_id });
-
   }
 
   async addTempatTinggal(payload) {
@@ -170,30 +190,34 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const tempat_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const data = {
-      siswa_id,
-      tempat_id,
+    let data = {
       alamat,
       no_telephone,
       tinggal_di,
       jarak_ke_sekolah,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOneTempatTinggal(data);
+    let result;
+
+    const checkTempat = await this.query.findOneTempatTinggal({ siswa_id });
+    if (!checkTempat.data) {
+      result = await this.command.patchOneTempat({ siswa_id }, data);
+    } else {
+      const tempat_id = uuid();
+      result = await this.command.insertOneTempatTinggal({ tempat_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert tempat tinggal');
       return wrapper.error(new InternalServerError('Internal Server Error'));
     }
-
     logger.log(ctx, 'success add tempat tinggal siswa', 'insert tempat tinggal siswa');
     return wrapper.data({ siswa_id });
   }
@@ -205,27 +229,33 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const pendidikan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
     const data = {
-      siswa_id,
-      pendidikan_id,
       tanggal_diterima,
       lulus_dari,
       tanggal_no_ijazah,
       tanggal_no_stl,
       lama_belajar,
       nilai_skhun,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOnePendidikan(data);
+
+    let result;
+
+    const checkPendidikan = await this.query.findOnePendidikan({ siswa_id });
+    if (!checkPendidikan.data) {
+      result = await this.command.patchOnePendidikan({ siswa_id }, data);
+    } else {
+      const pendidikan_id = uuid();
+      result = await this.command.insertOnePendidikan({ pendidikan_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert pendidikan');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -242,27 +272,32 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const kesehatan_id = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
     const data = {
-      siswa_id,
-      kesehatan_id,
       gol_darah,
       kelainan_jasmani,
       tinggi_berat_badan,
       nama_penyakit,
       tahun_sakit,
       lama_sakit,
-      createdAt,
       updatedAt
     };
 
-    const result = await this.command.insertOneKesehatan(data);
+    let result;
+
+    const checkKesehatan = await this.query.findOneKesehatan({ siswa_id });
+    if (!checkKesehatan.data) {
+      result = await this.command.patchOneKesehatan({ siswa_id }, data);
+    } else {
+      const kesehatan_id = uuid();
+      result = await this.command.insertOneKesehatan({ kesehatan_id, ...data, createdAt });
+    }
+
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert kesehatan');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -279,47 +314,75 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const payloads = await Promise.all(data.map(async item => {
+    let edit = false;
+    let ayah;
+    let ibu;
+    let wali;
 
-      const ortu_id = uuid();
-      const type_ortu = item.type === 'ayah' ? '1' : item.type === 'ibu' ? '2' : '3';
-
-      const dataOrtu = {
-        siswa_id,
-        ortu_id,
-        type_ortu,
-        nama: item.nama,
-        TTL: item.TTL,
-        agama: item.agama,
-        kewarganegaraan: item.kewarganegaraan,
-        pendidikan: item.pendidikan,
-        pekerjaan: item.pekerjaan,
-        gol_pekerjaan: item.gol_pekerjaan,
-        penghasilan: item.penghasilan,
-        alamat: item.alamat,
-        no_telpon: item.no_telpon,
-        status: item.status,
-        status_nikah: item.status_nikah,
-        tahun_meninggal: item.tahun_meninggal,
-        hubungan_wali: validate.isEmpty(item.hubungan_wali) ? '' : item.hubungan_wali,
-        createdAt,
-        updatedAt
-      };
-
-      return dataOrtu;
-    }));
-
-    const result = await this.command.insertManyOrtu(payloads);
-    if (result.err) {
-      logger.log(ctx, 'failed upload data', 'insert orang tua');
-      return wrapper.error(new InternalServerError('internal server error'));
+    const checkOrtu = await this.query.findManyOrangTua({ siswa_id });
+    if (!validate.isEmpty(checkOrtu.data)) {
+      edit = true;
+      checkOrtu.data.map(item => {
+        if (item.type_ortu == '1') {
+          ayah = {
+            ortu_id: item.ortu_id,
+            type: 'ayah'
+          };
+        } else if (item.type_ortu == '2') {
+          ibu = {
+            ortu_id: item.ortu_id,
+            type: 'ibu'
+          };
+        } else {
+          wali = {
+            ortu_id: item.ortu_id,
+            type: 'wali'
+          };
+        }
+      });
     }
+
+    // const payloads = await Promise.all(data.map(item => {
+
+    //   const ortu_id = uuid();
+    //   const type_ortu = item.type === 'ayah' ? '1' : item.type === 'ibu' ? '2' : '3';
+
+    //   const dataOrtu = {
+    //     siswa_id,
+    //     ortu_id,
+    //     type_ortu,
+    //     nama: item.nama,
+    //     TTL: item.TTL,
+    //     agama: item.agama,
+    //     kewarganegaraan: item.kewarganegaraan,
+    //     pendidikan: item.pendidikan,
+    //     pekerjaan: item.pekerjaan,
+    //     gol_pekerjaan: item.gol_pekerjaan,
+    //     penghasilan: item.penghasilan,
+    //     alamat: item.alamat,
+    //     no_telpon: item.no_telpon,
+    //     status: item.status,
+    //     status_nikah: item.status_nikah,
+    //     tahun_meninggal: item.tahun_meninggal,
+    //     hubungan_wali: validate.isEmpty(item.hubungan_wali) ? '' : item.hubungan_wali,
+    //     createdAt,
+    //     updatedAt
+    //   };
+
+    //   return dataOrtu;
+    // }));
+
+    // const result = await this.command.insertManyOrtu(payloads);
+    // if (result.err) {
+    //   logger.log(ctx, 'failed upload data', 'insert orang tua');
+    //   return wrapper.error(new InternalServerError('internal server error'));
+    // }
 
     logger.log(ctx, 'success add orang tua siswa', 'insert orang tua siswa');
     return wrapper.data({ siswa_id });
@@ -332,7 +395,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const hobi_id = uuid();
@@ -367,7 +430,7 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const pindah_id = uuid();
@@ -407,13 +470,13 @@ class User {
     const validateSiswa = await this.query.findOneSiswa({ siswa_id });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
-      return wrapper.error(new NotFoundError('Siswa Not Found'));
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
     const validateKelas = await this.query.findOneClass({ kelas_id });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
-      return wrapper.error(new NotFoundError('Kelas tidak terdaftar'));
+      return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
     }
 
     let kompetensiId = uuid();
@@ -455,7 +518,7 @@ class User {
     const validateGuru = await this.query.findOneGuru({ nip_kapreg });
     if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
       logger.log(ctx, 'guru not found', 'validate guru');
-      return wrapper.error(new NotFoundError('guru Not Found'));
+      return wrapper.error(new InternalServerError('guru Not Found'));
     }
 
     let guru_id = uuid();
@@ -481,7 +544,7 @@ class User {
     const validateTenagaAhli = await this.query.findOneTenagaAhli({ nip_kapreg });
     if (validateTenagaAhli.err || validate.isEmpty(validateTenagaAhli.data)) {
       logger.log(ctx, 'Tenaga Ahli not found', 'validate Tenaga Ahli');
-      return wrapper.error(new NotFoundError('guru Not Found'));
+      return wrapper.error(new InternalServerError('guru Not Found'));
     }
 
     let tenaga_ahli_id = uuid();
@@ -504,11 +567,11 @@ class User {
     const ctx = 'Import-siswa';
     const { file } = payload;
     if (validate.isEmpty(file.name)) {
-      return wrapper.error(new BadRequestError('Input file first, please!!'));
+      return wrapper.error(new InternalServerError('Input file first, please!!'));
     }
 
     if (file.name.slice(file.name.length - 5, file.name.length) != '.xlsx') {
-      return wrapper.error(new BadRequestError('Format tidak sesuai'));
+      return wrapper.error(new InternalServerError('Format tidak sesuai'));
     }
 
     const workbook = xlsx.readFile(file.path);
@@ -551,8 +614,8 @@ class User {
         nama_lengkap: item.nama_lengkap,
         nama_panggilan: item.nama_panggilan,
         ttl: item.ttl,
-        jenis_kelamin: item.jenis_kelamin,
-        agama: item.agama,
+        jenis_kelamin: item.jenis_kelamin.toUpperCase() == 'LAKI-LAKI' ? 1 : 2,
+        agama: item.agama.toUpperCase(),
         kewarganegaraan: item.kewarganegaraan,
         anak_ke: item.anak_ke,
         jml_sdr_kandung: item.jml_sdr_kandung,
@@ -752,6 +815,19 @@ class User {
 
     logger.log(ctx, 'success upload excel siswa', 'upload excel siswa');
     return wrapper.data(successMessage);
+  }
+
+  async uploadImage(data) {
+    const ctx = 'upload-image-minio';
+    const imgName = uuid();
+    const path = `./uploads/${imgName}`;
+    const rawImage = data.image;
+    const data_url = `data:image/png${rawImage}`;
+    ba64.writeImageSync(path, data_url);
+    let image = '';
+    const uImage = fs.createReadStream(`./uploads/${imgName}.png`);
+    image = `${config.get('/imageUrl')}/uploads/default_photo.png`;
+    return image;
   }
 
 }

@@ -44,7 +44,8 @@ const getGuruId = joi.object({
 });
 
 const getTenagaAhliId = joi.object({
-  tenaga_ahli_id: joi.string().required(),
+  tenaga_ahli_id: joi.string().allow(''),
+  type: joi.string().allow(''),
 });
 
 module.exports = {
