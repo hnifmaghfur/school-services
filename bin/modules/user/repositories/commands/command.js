@@ -86,9 +86,25 @@ class Command {
     return result;
   }
 
-  async insertOnePindah(document) {
+  async patchOneHobi(siswa_id, document) {
+    this.db.setCollection('hobi');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
+    return result;
+  }
+
+  async insertOnePindahan(document) {
     this.db.setCollection('pindah');
     const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async patchOnePindahan(siswa_id, document) {
+    this.db.setCollection('pindah');
+    const result = await this.db.upsertOne(siswa_id, {
+      $set: document
+    });
     return result;
   }
 
@@ -101,6 +117,15 @@ class Command {
   async insertOneGuru(document) {
     this.db.setCollection('guru');
     const result = await this.db.insertOne(document);
+    return result;
+  }
+
+
+  async updateOneGuru(parameter, document) {
+    this.db.setCollection('guru');
+    const result = await this.db.upsertOne(parameter, {
+      $set: document
+    });
     return result;
   }
 
@@ -127,6 +152,15 @@ class Command {
     });
     return result;
   }
+
+  async updateOneOrtu(parameter, document) {
+    this.db.setCollection('orangTua');
+    const result = await this.db.upsertOne(parameter, {
+      $set: document
+    });
+    return result;
+  }
+
 }
 
 module.exports = Command;

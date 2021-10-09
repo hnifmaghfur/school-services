@@ -125,6 +125,8 @@ const addKompetensi = joi.object({
 });
 
 const addGuru = joi.object({
+  guru_id: joi.string().optional(),
+  tenaga_ahli_id: joi.string().optional(),
   nama: joi.string().required(),
   jenis_kelamin: joi.string().required(),
   ttl: joi.string().required(),
@@ -144,6 +146,13 @@ const addGuru = joi.object({
   nuptk: joi.string().required(),
 });
 
+
+const exportRaport = joi.object({
+  siswa_id: joi.string().optional(),
+  kelas_id: joi.string().optional(),
+  semester: joi.string().optional(),
+});
+
 module.exports = {
   login,
   addClass,
@@ -157,4 +166,5 @@ module.exports = {
   addKompetensi,
   addGuru,
   importSiswa,
+  exportRaport
 };

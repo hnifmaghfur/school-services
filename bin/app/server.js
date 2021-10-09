@@ -84,6 +84,7 @@ function AppServer() {
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, userHandler.getSiswaData);
   this.server.get('/kelas/v1/list-kelas', jwtAuth.verifyToken, userHandler.getListKelas);
   this.server.post('/siswa/v1/import', jwtAuth.verifyToken, userHandler.importSiswa);
+  this.server.post('/siswa/v1/export-raport', jwtAuth.verifyToken, userHandler.exportRaport);
   this.server.get('/kelas/v1/rekapitulasi/:type', jwtAuth.verifyToken, userHandler.getRekapitulasi);
 
   //Initiation

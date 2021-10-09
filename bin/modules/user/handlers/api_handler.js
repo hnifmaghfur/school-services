@@ -692,6 +692,28 @@ const importSiswa = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const exportRaport = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.exportRaport);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.exportRaport(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Export Raport')
+        : wrapper.response(res, 'success', result, 'Export Raport', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 
 module.exports = {
   postDataLogin,
@@ -724,5 +746,6 @@ module.exports = {
   addGuru,
   addTenagaAhli,
   registerUser,
-  importSiswa
+  importSiswa,
+  exportRaport
 };

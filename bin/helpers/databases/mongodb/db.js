@@ -154,6 +154,36 @@ class DB {
 
   }
 
+  async upsertMany(parameter, updateQuery) {
+    const ctx = 'mongodb-upsertMany';
+    const dbName = await this.getDatabase();
+    const result = await mongoConnection.getConnection(this.config);
+    if (result.err) {
+      logger.log(ctx, result.err.message, 'Error mongodb connection');
+      return result;
+    }
+    try {
+      const cacheConnection = result.data.db;
+      const connection = cacheConnection.db(dbName);
+      const db = connection.collection(this.collectionName);
+      const data = await db.updateMany(parameter, updateQuery, { upsert: true });
+      if (data.result.nModified >= 0) {
+        const { result: { nModified } } = data;
+        const recordset = await this.findOne(parameter);
+        if (nModified === 0) {
+          return wrapper.data(recordset.data);
+        }
+        return wrapper.data(recordset.data);
+
+      }
+      return wrapper.error('Failed upsert data');
+    } catch (err) {
+      logger.log(ctx, err.message, 'Error upsert data in mongodb');
+      return wrapper.error(`Error Upsert Mongo ${err.message}`);
+    }
+
+  }
+
   async findAllData(sort, row, page, param) {
     const ctx = 'mongodb-findAllData';
     const dbName = await this.getDatabase();
