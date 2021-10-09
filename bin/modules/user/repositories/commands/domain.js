@@ -79,22 +79,12 @@ class User {
     const ctx = 'Add-Class';
     const { namaKelas, walikelas, tahunAjaran } = payload;
 
-    const validateKelas = await this.query.findOneClass({ namaKelas, tahunAjaran });
+    const validateKelas = await this.query.findOneClass({ namaKelas });
     if (!validate.isEmpty(validateKelas.data)) {
-      logger.log(ctx, 'kelas telah ada', 'validate kelas');
-      return wrapper.error(new ConflictError('Kelas telah ada.'));
-    }
-
-    const searching = {
-      namaKelas,
-      walikelas,
-      tahunAjaran
-    };
-
-    const kelas = await this.query.findOneClass(searching);
-    if (!validate.isEmpty(kelas.data)) {
-      logger.log(ctx, 'kelas already exist', 'check kelas');
-      return wrapper.error(new ConflictError('Kelas sudah ada.'));
+      const cActive = await this.command.updateStatusClass({ kelas_Id: cActive.data.kelas_id });
+      if (cActive.err) {
+        logger.log(ctx, 'Failed update class', 'update class');
+      }
     }
 
     const data = {
@@ -102,6 +92,7 @@ class User {
       nama_kelas: namaKelas,
       wali_kelas: walikelas,
       tahun_ajaran: tahunAjaran,
+      isActive: true,
       createdAt: dateFormat(new Date(), 'isoDateTime'),
       updatedAt: dateFormat(new Date(), 'isoDateTime'),
     };
@@ -546,6 +537,7 @@ class User {
       const ortu_id_ibu = uuid();
       const ortu_id_wali = uuid();
       const pindah_id = uuid();
+      const program_id = uuid();
       const createdAt = dateFormat(new Date(), 'isoDateTime');
       const updatedAt = dateFormat(new Date(), 'isoDateTime');
 

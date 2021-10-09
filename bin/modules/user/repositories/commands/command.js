@@ -85,6 +85,16 @@ class Command {
     });
     return result;
   }
+
+  async updateStatusClass(document) {
+    this.db.setCollection('class');
+    const result = await this.db.upsertOne({ kelas_id: document.kelas_id }, {
+      $set: {
+        isActive: false
+      }
+    });
+    return result;
+  }
 }
 
 module.exports = Command;

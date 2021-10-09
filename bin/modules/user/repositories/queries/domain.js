@@ -29,6 +29,7 @@ class User {
     }
 
     let searching = {
+      isActive: true,
       $or: [
         { 'nama_kelas': new RegExp(`${search || ''}`, 'i') },
         { 'wali_kelas': new RegExp(`${search || ''}`, 'i') },
