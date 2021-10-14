@@ -580,7 +580,6 @@ class User {
 
       rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 1).toString()]: '' });
       rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 2).toString()]: '' });
-
     }));
 
     logger.log(ctx, 'success', 'get kompetensi siswa');

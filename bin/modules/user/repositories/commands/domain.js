@@ -127,9 +127,7 @@ class User {
     let edit = false;
     let idSiswa = uuid();
 
-    const checkSiswa = await this.query.findOneSiswa({ siswa_id });
-    if (!validate.isEmpty(checkSiswa.data)) {
-      idSiswa = siswa_id;
+    if (siswa_id) {
       edit = true;
     }
 
@@ -170,8 +168,7 @@ class User {
       tentang = await this.command.patchOneTentangDiri({ siswa_id: idSiswa }, dataTentangDiri);
     } else {
       const tentang_id = uuid();
-      tentang = await this.command.insertOneTentangDiri({ tentang_id, ...dataTentangDiri, createdAt });
-
+      tentang = await this.command.insertOneTentangDiri({ tentang_id, ...dataTentangDiri, isActive: true, createdAt, updatedAt });
     }
 
     if (tentang.err) {
@@ -180,7 +177,7 @@ class User {
     }
 
     logger.log(ctx, 'success add siswa', 'insert siswa');
-    return wrapper.data({ siswa_id });
+    return wrapper.data({ siswa_id: siswa_id || idSiswa });
   }
 
   async addTempatTinggal(payload) {
@@ -668,6 +665,7 @@ class User {
         kps: item.kps,
         pkh: item.pkh,
         kks: item.kks,
+        isActive: true,
         createdAt,
         updatedAt,
       };

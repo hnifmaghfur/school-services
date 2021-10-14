@@ -197,7 +197,7 @@ const getTenagaAhli = async (req, res) => {
 const getRekapitulasi = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getTenagaAhliId);
     const getRequest = async (result) => {
       if (result.err) {
