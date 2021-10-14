@@ -318,7 +318,7 @@ class User {
   }
 
   async viewSiswaData(payload) {
-    const ctx = 'getSiswaTentangDiri';
+    const ctx = 'getSiswa';
     const { siswa_id, kelas_id } = payload;
 
     const siswa = await this.query.findDataSiswa({ siswa_id, kelas_id });
@@ -350,7 +350,10 @@ class User {
       return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
     }
 
+    const kelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
+
     const dataSiswa = siswa.data;
+    dataSiswa.nama_kelas = kelas.data.nama_kelas || '';
     delete dataSiswa._id;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;

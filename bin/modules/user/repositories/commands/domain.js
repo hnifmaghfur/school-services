@@ -242,7 +242,6 @@ class User {
       updatedAt
     };
 
-
     let result;
 
     const checkPendidikan = await this.query.findOnePendidikan({ siswa_id });
