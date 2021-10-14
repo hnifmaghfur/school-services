@@ -144,7 +144,7 @@ class User {
       kelas_id,
       NISN,
       NIS,
-      image: this.uploadImage({ image }),
+      image,
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -165,10 +165,10 @@ class User {
     let tentang;
 
     if (edit) {
-      tentang = await this.command.patchOneTentangDiri({ siswa_id: idSiswa }, dataTentangDiri);
+      tentang = await this.command.patchOneTentangDiri({ siswa_id }, dataTentangDiri);
     } else {
       const tentang_id = uuid();
-      tentang = await this.command.insertOneTentangDiri({ tentang_id, ...dataTentangDiri, isActive: true, createdAt, updatedAt });
+      tentang = await this.command.insertOneTentangDiri({ tentang_id, siswa_id: idSiswa, ...dataTentangDiri, isActive: true, createdAt, updatedAt });
     }
 
     if (tentang.err) {
