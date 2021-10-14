@@ -520,7 +520,7 @@ class User {
     let searching = {};
 
     if (type != 'all') {
-      searching = { kelas_id: type };
+      searching = { kelas_id: type, tahun_ajaran };
     }
 
     const dKelas = await this.query.findManyClass(searching);
@@ -529,9 +529,7 @@ class User {
       return wrapper.error(new InternalServerError('Can not find Class'));
     }
 
-    let kelas = [];
-
-    await Promise.all(dKelas.data.map(async item => {
+    const data = await Promise.all(dKelas.data.map(async item => {
       let laki = 0;
       let perempuan = 0;
       let islam = 0;
@@ -543,14 +541,33 @@ class User {
       let laki_mampu = 0;
       let perempuan_mampu = 0;
       let jumlah_mampu = 0;
+      let kps = 0;
+      let non_kps = 0;
 
-      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, tahun_ajaran, isActive: true });
+      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, isActive: true });
       if (!validate.isEmpty(dSiswa.data)) {
         await Promise.all(dSiswa.data.map(async value => {
+          let mampu = false;
           if (value.jenis_kelamin.toLowerCase() == 'laki-laki') {
             laki++;
+            if (value.pkh.length > 1 || value.kks.length > 1 || value.kps.toLowerCase() === 'ada') {
+              laki_mampu++;
+              mampu = true;
+            }
           } else {
             perempuan++;
+            if (value.pkh.length > 1 || value.kks.length > 1 || value.kps.toLowerCase() === 'ada') {
+              perempuan_mampu++;
+              mampu = true;
+            }
+          }
+
+          if (mampu) {
+            if (value.kps.toLowerCase() === 'ada') {
+              kps++;
+            } else {
+              non_kps++;
+            }
           }
 
           if (value.agama.toLowerCase == 'islam') {
@@ -569,6 +586,7 @@ class User {
           tahun_lahir.push(value.ttl.substring(value.ttl.length - 4));
         }));
       }
+
       const rekap_tahun = tahun_lahir.reduce((x, i) => { x[i] = (x[i] || 0) + 1; return x; }, {});
       const keyData = Object.keys(rekap_tahun);
       const temp = new Array(10);
@@ -586,10 +604,51 @@ class User {
 
       rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 1).toString()]: '' });
       rTahun_lahir.push({ [(parseInt(keyData[keyData.length - 1]) + 2).toString()]: '' });
+
+      return {
+        kelas_id: item.kelas_id,
+        nama_kelas: item.nama_kelas,
+        data: laki + perempuan > 0 ? true : false,
+        kelamin: { L: laki, P: perempuan, total: laki + perempuan },
+        agama: {
+          islam,
+          khatolik,
+          protestan,
+          hindu,
+          budha
+        },
+        tahun_kelahiran: rTahun_lahir,
+        tidak_mampu: {
+          L: laki_mampu,
+          P: perempuan_mampu,
+          total: laki_mampu + perempuan_mampu,
+          kps,
+          non_kps
+        }
+      };
     }));
 
+    const cError = !data.includes(item => item.data === true);
+    if (cError) {
+      logger.log(ctx, 'Internal Server Error', 'Siswa not found');
+      return wrapper.error(new InternalServerError('Can not find Siswa'));
+    }
+
+    const tahun = data[data.findIndex(item => item.data === true)].tahun_kelahiran;
+
+    const result = data.map(item => {
+      if (!item.data) {
+        item.tahun_kelahiran = tahun.flatMap(item => {
+          return { [Object.keys(item)]: '' };
+        });
+      }
+
+      delete item.data;
+      return item;
+    });
+
     logger.log(ctx, 'success', 'get kompetensi siswa');
-    return wrapper.data();
+    return wrapper.data(result);
   }
 
 }
