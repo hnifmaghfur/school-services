@@ -577,6 +577,7 @@ class User {
         rTahun_lahir.push({ [value]: '' });
       }
 
+
       //get map data object
       for (let [key, value] of Object.entries(rekap_tahun)) {
         rTahun_lahir.push({ [key]: value });

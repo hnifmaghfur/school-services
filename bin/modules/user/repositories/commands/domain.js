@@ -556,7 +556,7 @@ class User {
     if (guru_id) {
       result = await this.command.updateOneGuru({ guru_id }, { ...payload, updatedAt });
     } else {
-      const data = { guruId, ...payload, createdAt, updatedAt };
+      const data = { guru_id: guruId, ...payload, createdAt, updatedAt };
       result = await this.command.insertOneGuru(data);
     }
 
@@ -621,7 +621,7 @@ class User {
 
     await Promise.all(sheetContent.map(async (item, index) => {
 
-      const checkUser = await this.query.findOneTentangDiri({ $or: { NISN: item.NISN, NIS: item.NIS } });
+      const checkUser = await this.query.findOneTentangDiri({ $or: [{ NISN: item.NISN }, { NIS: item.NIS }] });
       if (!validate.isEmpty(checkUser.data)) {
         logger.log(ctx, 'validate data siswa', 'check siswa');
         return duplicate++;
@@ -644,13 +644,13 @@ class User {
         tentang_id,
         siswa_id,
         kelas_id: '',
-        NISN: item.NISN,
-        NIS: item.NIS,
+        NISN: item.nisn,
+        NIS: item.nis,
         image: '',
         nama_lengkap: item.nama_lengkap,
         nama_panggilan: item.nama_panggilan,
         ttl: item.ttl,
-        jenis_kelamin: item.jenis_kelamin.toUpperCase() == 'LAKI-LAKI' ? 1 : 2,
+        jenis_kelamin: item.jenis_kelamin.toUpperCase() == 'LAKI-LAKI' ? 'Laki-Laki' : 'Perempuan',
         agama: item.agama.toUpperCase(),
         kewarganegaraan: item.kewarganegaraan,
         anak_ke: item.anak_ke,
@@ -665,6 +665,7 @@ class User {
         pkh: item.pkh,
         kks: item.kks,
         isActive: true,
+        isDelete: false,
         createdAt,
         updatedAt,
       };
@@ -834,7 +835,7 @@ class User {
         return errorData++;
       }
 
-      const pindah = await this.command.insertOnePindah(dataPindah);
+      const pindah = await this.command.insertOnePindahan(dataPindah);
       if (pindah.err) {
         logger.log(ctx, 'failed upload data', 'insert pindah');
         return errorData++;
