@@ -353,8 +353,10 @@ class User {
     const kelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
 
     const dataSiswa = siswa.data;
-    dataSiswa.nama_kelas = kelas.data.nama_kelas || '';
+    dataSiswa.nama_kelas = validate.isEmpty(kelas.err) ? kelas.data.nama_kelas : 'Belum ada kelas';
     delete dataSiswa._id;
+    delete dataSiswa.isActive;
+    delete dataSiswa.isDelete;
     delete dataSiswa.createdAt;
     delete dataSiswa.updatedAt;
 
@@ -513,7 +515,7 @@ class User {
 
   async viewRekapitulasi(payload) {
     const ctx = 'getRekapitulasi';
-    const { type } = payload;
+    const { type, tahun_ajaran } = payload;
 
     let searching = {};
 
@@ -542,7 +544,7 @@ class User {
       let perempuan_mampu = 0;
       let jumlah_mampu = 0;
 
-      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, isActive: true });
+      const dSiswa = await this.query.findManySiswa({ kelas_id: item.kelas_id, tahun_ajaran, isActive: true });
       if (!validate.isEmpty(dSiswa.data)) {
         await Promise.all(dSiswa.data.map(async value => {
           if (value.jenis_kelamin.toLowerCase() == 'laki-laki') {
@@ -576,7 +578,6 @@ class User {
         const value = (parseInt(keyData[0]) - i).toString();
         rTahun_lahir.push({ [value]: '' });
       }
-
 
       //get map data object
       for (let [key, value] of Object.entries(rekap_tahun)) {
