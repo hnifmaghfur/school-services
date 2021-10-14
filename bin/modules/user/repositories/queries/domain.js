@@ -449,19 +449,20 @@ class User {
 
     const dataSiswa = siswa.data.map(item => {
       if (item.type_ortu === '1') {
-        item.type_ortu = 'ayah';
+        item.type = 'ayah';
         delete item.hubungan_wali;
       } else if (item.type_ortu === '2') {
-        item.type_ortu = 'ibu';
+        item.typ = 'ibu';
         delete item.hubungan_wali;
       } else {
-        item.type_ortu = 'wali';
+        item.type = 'wali';
         delete item.status;
         delete item.status_nikah;
         delete item.tahun_meninggal;
       }
 
       delete item.ortu_id;
+      delete item.type_ortu;
       delete item._id;
       delete item.createdAt;
       delete item.updatedAt;

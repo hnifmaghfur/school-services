@@ -168,7 +168,7 @@ class User {
       tentang = await this.command.patchOneTentangDiri({ siswa_id }, dataTentangDiri);
     } else {
       const tentang_id = uuid();
-      tentang = await this.command.insertOneTentangDiri({ tentang_id, siswa_id: idSiswa, ...dataTentangDiri, isActive: true, createdAt, updatedAt });
+      tentang = await this.command.insertOneTentangDiri({ tentang_id, siswa_id: idSiswa, ...dataTentangDiri, isActive: true, isDelete: false, createdAt, updatedAt });
     }
 
     if (tentang.err) {
@@ -184,7 +184,7 @@ class User {
     const ctx = 'Add-Tempat-Tinggal';
     const { siswa_id, alamat, no_telephone, tinggal_di, jarak_ke_sekolah } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -223,7 +223,7 @@ class User {
     const ctx = 'Add-Pendidikan';
     const { siswa_id, tanggal_diterima, lulus_dari, tanggal_no_ijazah, tanggal_no_stl, lama_belajar, nilai_skhun } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -266,7 +266,7 @@ class User {
     const ctx = 'Add-Kesehatan';
     const { siswa_id, gol_darah, kelainan_jasmani, tinggi_berat_badan, nama_penyakit, tahun_sakit, lama_sakit } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -308,7 +308,7 @@ class User {
     const ctx = 'Add-Orang-Tua';
     const { siswa_id, data } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -409,7 +409,7 @@ class User {
     const ctx = 'Add-Hobi';
     const { siswa_id, olahraga, seni, organisasi, lain } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -449,7 +449,7 @@ class User {
     const ctx = 'Add-Pindah';
     const { siswa_id, pindah_sekolah, pindah_alasan, diterima_di, diterima_program, meninggalkan_di, meninggalkan_program, meninggalkan_alasan, akhir_tamat_belajar, akhir_sttb } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -495,7 +495,7 @@ class User {
     const ctx = 'Add-Kompetensi';
     const { siswa_id, kelas_id, semester, kompetensi_id, kelompokA, kelompokB, kelompokC, kelompokCLintas, absen } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
