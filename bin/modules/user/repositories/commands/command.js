@@ -120,9 +120,16 @@ class Command {
     return result;
   }
 
-
   async updateOneGuru(parameter, document) {
     this.db.setCollection('guru');
+    const result = await this.db.upsertOne(parameter, {
+      $set: document
+    });
+    return result;
+  }
+
+  async updateOneTenagaAhli(parameter, document) {
+    this.db.setCollection('tenagaAhli');
     const result = await this.db.upsertOne(parameter, {
       $set: document
     });

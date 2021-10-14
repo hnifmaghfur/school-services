@@ -585,7 +585,7 @@ class User {
 
     let result;
     if (tenaga_ahli_id) {
-      result = await this.command.updateOneGuru({ tenaga_ahli_id }, { ...payload, updatedAt });
+      result = await this.command.updateOneTenagaAhli({ tenaga_ahli_id }, { ...payload, updatedAt });
     } else {
       const data = { tenaga_ahli_id: tenaga_id, ...payload, createdAt, updatedAt };
       result = await this.command.insertOneTenagaAhli(data);
