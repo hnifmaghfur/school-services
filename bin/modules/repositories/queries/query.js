@@ -102,6 +102,12 @@ class Query {
     return recordset;
   }
 
+  async findManyKompetensi(parameter) {
+    this.db.setCollection('kompetensi');
+    const recordset = await this.db.findMany(parameter);
+    return recordset;
+  }
+
   async findManySiswa(parameter) {
     this.db.setCollection('tentangDiri');
     const recordset = await this.db.findMany(parameter);

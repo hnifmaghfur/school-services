@@ -148,9 +148,7 @@ const addGuru = joi.object({
 
 
 const exportRaport = joi.object({
-  siswa_id: joi.string().optional(),
-  kelas_id: joi.string().optional(),
-  semester: joi.string().optional(),
+  siswa_id: joi.string().required(),
 });
 
 module.exports = {

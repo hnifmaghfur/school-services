@@ -2,18 +2,19 @@
 
 const Query = require('../queries/query');
 const Command = require('./command');
-const wrapper = require('../../../../helpers/utils/wrapper');
-const jwtAuth = require('../../../../auth/jwt_auth_helper');
-const commonUtil = require('../../../../helpers/utils/common');
+const wrapper = require('../../../helpers/utils/wrapper');
+const jwtAuth = require('../../../auth/jwt_auth_helper');
+const commonUtil = require('../../../helpers/utils/common');
 const dateFormat = require('dateformat');
-const logger = require('../../../../helpers/utils/logger');
+const logger = require('../../../helpers/utils/logger');
 const uuid = require('uuid').v4;
-const { InternalServerError } = require('../../../../helpers/error');
+const { InternalServerError, ConflictError, NotFoundError } = require('../../../helpers/error');
 const xlsx = require('xlsx');
 const validate = require('validate.js');
 const fs = require('fs');
 const ba64 = require('ba64');
-const config = require('../../../../infra/configs/global_config');
+const config = require('../../../infra/configs/global_config');
+const templateExcel = require('../../../helpers/utils/excel');
 
 const algorithm = 'aes-256-cbc';
 const secretKey = 'sekolahan@jambi1';
@@ -525,6 +526,11 @@ class User {
       data = { data: { ...data, updatedAt }, kompetensi_id };
       result = await this.command.updateOneKompetensi(data);
     } else {
+      const cKomp = await this.query.findKompetensi({ siswa_id, kelas_id, semester });
+      if (!validate.isEmpty(cKomp.data)) {
+        logger.error(ctx, 'data already exist', 'insert new kompetensi');
+        return wrapper.error(new ConflictError('data telah ada, silahkan ganti kelas atau semester.'));
+      }
       data = { kompetensi_id: kompetensiId, siswa_id, kelas_id, semester, ...data, createdAt, updatedAt };
       result = await this.command.insertOneKompetensi(data);
     }
@@ -850,6 +856,7 @@ class User {
     }
 
     let successMessage = `${countData} berhasil ditambahkan.`;
+
     if (duplicate > 0) {
       successMessage = `${countData} berhasil ditambahkan & ${duplicate} data sama.`;
     }
@@ -859,11 +866,40 @@ class User {
   }
 
   async exportRaport(payload) {
-    const { kelas_id, semester, siswa_id } = payload;
+    const ctx = 'Export-Report';
+    const { siswa_id } = payload;
+    const fData = await this.query.findManyKompetensi({ siswa_id });
+    if (fData.err) {
+      logger.error(ctx, 'failed get data', 'get data kompetensi');
+      return wrapper.error(new InternalServerError('data not found'));
+    }
+
+    const dSiswa = await this.query.findOneSiswa({ siswa_id });
+    if (dSiswa.err) {
+      logger.error(ctx, 'failed get data', 'get data siswa');
+      return wrapper.error(new InternalServerError('data not found'));
+    }
+
+    const data = fData.data;
+
+    const excel = await templateExcel.templateExcel();
+
+    return await new Promise((resolve, reject) => {
+      const excelName = `${dSiswa.data.NISN + dSiswa.data.nama_panggilan.toLowerCase()}.xlsx`;
+      excel.write(excelName, async (err, result) => {
+        if (result) {
+          fs.createReadStream(excelName);
+          resolve(wrapper.data(excelName, '', 200));
+        } else {
+          reject(wrapper.data(err, '', 500));
+        }
+      });
+    });
+
   }
 
   async uploadImage(data) {
-    const ctx = 'upload-image-minio';
+    const ctx = 'upload-image';
     const imgName = uuid();
     const path = `./uploads/${imgName}`;
     const rawImage = data.image;

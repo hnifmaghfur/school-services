@@ -1,8 +1,8 @@
 
 const Query = require('./query');
-const wrapper = require('../../../../helpers/utils/wrapper');
-const logger = require('../../../../helpers/utils/logger');
-const { InternalServerError } = require('../../../../helpers/error');
+const wrapper = require('../../../helpers/utils/wrapper');
+const logger = require('../../../helpers/utils/logger');
+const { InternalServerError } = require('../../../helpers/error');
 const validate = require('validate.js');
 const uuid = require('uuid').v4;
 const dateFormat = require('dateformat');
