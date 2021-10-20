@@ -526,12 +526,18 @@ class User {
       data = { data: { ...data, updatedAt }, kompetensi_id };
       result = await this.command.updateOneKompetensi(data);
     } else {
+
       const cKomp = await this.query.findKompetensi({ siswa_id, kelas_id, semester });
       if (!validate.isEmpty(cKomp.data)) {
         logger.error(ctx, 'data already exist', 'insert new kompetensi');
-        return wrapper.error(new ConflictError('data telah ada, silahkan ganti kelas atau semester.'));
+        return wrapper.error(new InternalServerError('data telah ada, silahkan ganti semester.'));
       }
-      data = { kompetensi_id: kompetensiId, siswa_id, kelas_id, semester, ...data, createdAt, updatedAt };
+      const cKompClass = await this.query.countKompetensi({ siswa_id, kelas_id });
+      if (cKompClass > 2) {
+        logger.error(ctx, 'data already exist', 'insert new kompetensi');
+        return wrapper.error(new InternalServerError('data telah ada, silahkan ganti kelas'));
+      }
+      data = { kompetensi_id: kompetensiId, siswa_id, kelas_id, namaKelas: validateKelas.data.nama_kelas, semester, ...data, createdAt, updatedAt };
       result = await this.command.insertOneKompetensi(data);
     }
 

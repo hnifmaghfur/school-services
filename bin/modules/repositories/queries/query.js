@@ -102,6 +102,12 @@ class Query {
     return recordset;
   }
 
+  async countKompetensi(parameter) {
+    this.db.setCollection('kompetensi');
+    const recordset = await this.db.countData(parameter);
+    return recordset;
+  }
+
   async findManyKompetensi(parameter) {
     this.db.setCollection('kompetensi');
     const recordset = await this.db.findMany(parameter);
