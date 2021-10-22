@@ -91,6 +91,28 @@ class User {
     return wrapper.data(data);
   }
 
+  async viewKelasKompetensi(payload) {
+    const ctx = 'getKelasKompetensi';
+
+    const kelas = await this.query.findManyKompetensi(payload);
+    if (kelas.err || validate.isEmpty(kelas.data)) {
+      logger.log(ctx, 'error', 'user not found');
+      return wrapper.error(new InternalServerError('Internal server error'));
+    }
+    let data = [];
+
+    kelas.data.map((item, index) => {
+      if (item.nama_kelas) {
+        return data.push({
+          kelas_id: item.kelas_id,
+          kelas: item.nama_kelas,
+        });
+      }
+    });
+
+    return wrapper.data(data);
+  }
+
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
     const { search, page, limit, kelas_id, sort, tab } = payload;

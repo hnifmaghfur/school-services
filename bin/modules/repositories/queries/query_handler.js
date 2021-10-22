@@ -21,6 +21,14 @@ const getListKelas = async () => {
   const result = await getData();
   return result;
 };
+const getKelasKompetensi = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewKelasKompetensi(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getAllSiswa = async (payload) => {
   const getData = async () => {
     const result = await user.viewAllSiswa(payload);
@@ -145,6 +153,7 @@ const getRekapitulasi = async (payload) => {
 module.exports = {
   getAllClass,
   getListKelas,
+  getKelasKompetensi,
   getAllGuru,
   getGuru,
   getTenagaAhli,

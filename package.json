@@ -23,6 +23,7 @@
     "dotenv": "^6.1.0",
     "events": "1.1.1",
     "excel4node": "^1.7.2",
+    "exceljs": "^4.3.0",
     "joi": "^14.0.1",
     "jsftp": "2.0.0",
     "jsonwebtoken": "^8.3.0",
