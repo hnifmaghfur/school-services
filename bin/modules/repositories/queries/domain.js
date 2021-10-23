@@ -94,31 +94,34 @@ class User {
   async viewKelasKompetensi(payload) {
     const ctx = 'getKelasKompetensi';
 
-    const kelas = await this.query.findManyKompetensi(payload);
-    if (kelas.err || validate.isEmpty(kelas.data)) {
-      logger.log(ctx, 'error', 'user not found');
-      return wrapper.error(new InternalServerError('Internal server error'));
-    }
-
     const siswa = await this.query.findOneSiswa(payload);
     if (siswa.err) {
       logger.log(ctx, 'error', 'siswa not found');
       return wrapper.error(new InternalServerError('Siswa not found'));
     }
 
+    const addKelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
+    if (addKelas.err || validate.isEmpty(addKelas.data)) {
+      logger.log(ctx, 'error', 'kelas not found');
+      return wrapper.error(new InternalServerError('Internal server error'));
+    }
+
+    const kelas = await this.query.findManyKompetensi(payload);
+    if (kelas.err || validate.isEmpty(kelas.data)) {
+      logger.log(ctx, 'error', 'kelas di Kompetensi not found');
+      return wrapper.data([{ kelas_id: addKelas.data.kelas_id, kelas: addKelas.data.nama_kelas }]);
+    }
+
     let data = [];
 
-    kelas.data.map((item, index) => {
-      if (item.namaKelas) {
-        return data.push({
-          kelas_id: item.kelas_id,
-          kelas: item.namaKelas,
-        });
-      }
+    kelas.data.map(item => {
+      return data.push({
+        kelas_id: item.kelas_id,
+        kelas: item.namaKelas,
+      });
     });
 
     if (validate.isEmpty(data.find(item => item.kelas_id == siswa.data.kelas_id))) {
-      const addKelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
       data.push({
         kelas_id: siswa.data.kelas_id,
         kelas: addKelas.data.nama_kelas || 'Kelas tidak ada'
