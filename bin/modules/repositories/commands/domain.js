@@ -873,7 +873,7 @@ class User {
 
   async exportRaport(payload) {
     const ctx = 'Export-Report';
-    const { siswa_id } = payload;
+    const { siswa_id, kelas_id, type } = payload;
     const fData = await this.query.findManyKompetensi({ siswa_id });
     if (fData.err) {
       logger.error(ctx, 'failed get data', 'get data kompetensi');

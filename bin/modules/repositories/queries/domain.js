@@ -613,17 +613,17 @@ class User {
             }
           }
 
-          if (value.agama.toLowerCase == 'islam') {
+          if (value.agama.toLowerCase() == 'islam') {
             islam++;
-          } else if (value.agama.toLowerCase == 'khatoik') {
+          } else if (value.agama.toLowerCase() == 'khatoik') {
             khatolik++;
           } else if (!validate.isEmpty(value.agama.match(/kristen/i))) {
             protestan++;
-          } else if (value.agama.toLowerCase == 'hindu') {
+          } else if (value.agama.toLowerCase() == 'hindu') {
             hindu++;
-          } else if (value.agama.toLowerCase == 'budha') {
+          } else if (value.agama.toLowerCase() == 'budha') {
             budha++;
-          } else if (value.agama.toLowerCase == 'protestan') {
+          } else if (value.agama.toLowerCase() == 'protestan') {
             protestan++;
           }
           tahun_lahir.push(value.ttl.substring(value.ttl.length - 4));
@@ -658,7 +658,8 @@ class User {
           khatolik,
           protestan,
           hindu,
-          budha
+          budha,
+          total: islam + khatolik + protestan + hindu + budha
         },
         tahun_kelahiran: rTahun_lahir,
         tidak_mampu: {
