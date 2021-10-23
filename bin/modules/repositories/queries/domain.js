@@ -102,10 +102,10 @@ class User {
     let data = [];
 
     kelas.data.map((item, index) => {
-      if (item.nama_kelas) {
+      if (item.namaKelas) {
         return data.push({
           kelas_id: item.kelas_id,
-          kelas: item.nama_kelas,
+          kelas: item.namaKelas,
         });
       }
     });
@@ -479,7 +479,7 @@ class User {
         item.type = 'ayah';
         delete item.hubungan_wali;
       } else if (item.type_ortu === '2') {
-        item.typ = 'ibu';
+        item.type = 'ibu';
         delete item.hubungan_wali;
       } else {
         item.type = 'wali';
