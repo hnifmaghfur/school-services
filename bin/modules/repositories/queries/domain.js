@@ -99,6 +99,13 @@ class User {
       logger.log(ctx, 'error', 'user not found');
       return wrapper.error(new InternalServerError('Internal server error'));
     }
+
+    const siswa = await this.query.findOneSiswa(payload);
+    if (siswa.err) {
+      logger.log(ctx, 'error', 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa not found'));
+    }
+
     let data = [];
 
     kelas.data.map((item, index) => {
@@ -110,7 +117,18 @@ class User {
       }
     });
 
-    return wrapper.data(data);
+    if (validate.isEmpty(data.find(item => item.kelas_id == siswa.data.kelas_id))) {
+      const addKelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
+      data.push({
+        kelas_id: siswa.data.kelas_id,
+        kelas: addKelas.data.nama_kelas || 'Kelas tidak ada'
+      });
+    }
+
+    const ids = data.map(o => o.kelas_id);
+    const filtered = data.filter(({ kelas_id }, index) => !ids.includes(kelas_id, index + 1));
+
+    return wrapper.data(filtered);
   }
 
   async viewAllSiswa(payload) {
