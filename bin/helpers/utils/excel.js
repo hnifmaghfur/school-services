@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 const excel4node = require('excel4node');
+const excelJs = require('exceljs');
 const style = require('./excelStyle');
 
 const templateExcel = async (payload) => {
@@ -66,7 +67,17 @@ const templateExcel = async (payload) => {
   return wb;
 };
 
+const templateExcelJs = async (payload) => {
+  // console.log(payload);
+  const template = './excel/template_raport.xlsx';
+  let wb = new excelJs.Workbook();
+  await wb.xlsx.readFile(template);
+  let ws = wb.getWorksheet('Raport');
+  let rowNama = ws.getRow(3);
+};
+
 
 module.exports = {
-  templateExcel
+  templateExcel,
+  templateExcelJs,
 };

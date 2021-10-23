@@ -671,7 +671,7 @@ class User {
       };
     }));
 
-    const cError = !data.includes(item => item.data === true);
+    const cError = data.includes(item => item.data === true);
     if (cError) {
       logger.log(ctx, 'Internal Server Error', 'Siswa not found');
       return wrapper.error(new InternalServerError('Can not find Siswa'));

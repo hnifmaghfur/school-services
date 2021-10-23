@@ -886,21 +886,25 @@ class User {
       return wrapper.error(new InternalServerError('data not found'));
     }
 
-    const data = fData.data;
+    const data = await Promise.all(fData.data.map(async item => {
 
-    const excel = await templateExcel.templateExcel();
+    }));
 
-    return await new Promise((resolve, reject) => {
-      const excelName = `${dSiswa.data.NISN + dSiswa.data.nama_panggilan.toLowerCase()}.xlsx`;
-      excel.write(excelName, async (err, result) => {
-        if (result) {
-          fs.createReadStream(excelName);
-          resolve(wrapper.data(excelName, '', 200));
-        } else {
-          reject(wrapper.data(err, '', 500));
-        }
-      });
-    });
+    const excel = await templateExcel.templateExcelJs(data);
+
+    return wrapper.data('success');
+
+    // return await new Promise((resolve, reject) => {
+    //   const excelName = `${dSiswa.data.NISN + dSiswa.data.nama_panggilan.toLowerCase()}.xlsx`;
+    //   excel.write(excelName, async (err, result) => {
+    //     if (result) {
+    //       fs.createReadStream(excelName);
+    //       resolve(wrapper.data(excelName, '', 200));
+    //     } else {
+    //       reject(wrapper.data(err, '', 500));
+    //     }
+    //   });
+    // });
 
   }
 
