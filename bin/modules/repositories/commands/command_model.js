@@ -33,6 +33,9 @@ const addTentangDiri = joi.object({
   bahasa: joi.string().required(),
   pihak_dihubungi: joi.string().required(),
   penanggung_biaya: joi.string().required(),
+  pkh: joi.number().required(),
+  kks: joi.number().required(),
+  kps: joi.string().required(),
 });
 
 const addTempatTinggal = joi.object({

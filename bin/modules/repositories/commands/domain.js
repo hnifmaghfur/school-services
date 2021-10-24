@@ -127,7 +127,7 @@ class User {
 
   async addTentangDiri(payload) {
     const ctx = 'Add-Tentang-Diri';
-    const { siswa_id, kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya } = payload;
+    const { siswa_id, kelas_id, NIS, NISN, image, nama_lengkap, nama_panggilan, ttl, jenis_kelamin, agama, kewarganegaraan, anak_ke, jml_sdr_kandung, jml_sdr_tiri, jml_sdr_angkat, status_anak, bahasa, pihak_dihubungi, penanggung_biaya, pkh, kks, kps } = payload;
 
     let edit = false;
     let idSiswa = uuid();
@@ -164,6 +164,9 @@ class User {
       bahasa,
       pihak_dihubungi,
       penanggung_biaya,
+      pkh,
+      kks,
+      kps,
       updatedAt,
     };
 
