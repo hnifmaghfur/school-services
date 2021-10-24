@@ -562,7 +562,13 @@ class User {
 
     let searching = {};
 
-    if (type != 'X') {
+    if (type === 'X') {
+      searching = { jenis_kelas: 10 };
+    } else if (type === 'XI') {
+      searching = { jenis_kelas: 11 };
+    } else if (type === 'XII') {
+      searching = { jenis_kelas: 12 };
+    } else {
       searching = { kelas_id: type };
     }
 
