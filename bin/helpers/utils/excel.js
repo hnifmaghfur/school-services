@@ -68,12 +68,31 @@ const templateExcel = async (payload) => {
 };
 
 const templateExcelJs = async (payload) => {
-  // console.log(payload);
+  const { data, siswaData } = payload;
   const template = './excel/template_raport.xlsx';
-  let wb = new excelJs.Workbook();
-  await wb.xlsx.readFile(template);
-  let ws = wb.getWorksheet('Raport');
-  let rowNama = ws.getRow(3);
+  const saveFile = `./excel/download/${siswaData.nisn + '_' + siswaData.nama}.xlsx`;
+  try {
+
+    let wb = new excelJs.Workbook();
+    await wb.xlsx.readFile(template);
+    let ws = wb.getWorksheet('Raport');
+    //konten row 3
+    ws.mergeCells('F3:K3');
+    ws.mergeCells('Q3:S3');
+    ws.mergeCells('X3:AA3');
+    ws.getCell('F3').value = siswaData.nama;
+    ws.getCell('Q3').value = siswaData.nis;
+    ws.getCell('X3').value = siswaData.nisn;
+    ws.getRow(3).commit();
+
+    wb.xlsx.writeFile(saveFile);
+
+    return { data: saveFile, err: '' };
+
+  } catch (err) {
+    return { data: '', err };
+  }
+
 };
 
 

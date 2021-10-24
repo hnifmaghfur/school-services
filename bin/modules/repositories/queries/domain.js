@@ -558,12 +558,12 @@ class User {
 
   async viewRekapitulasi(payload) {
     const ctx = 'getRekapitulasi';
-    const { type, tahun_ajaran } = payload;
+    const { type } = payload;
 
     let searching = {};
 
-    if (type != 'all') {
-      searching = { kelas_id: type, tahun_ajaran };
+    if (type != 'X') {
+      searching = { kelas_id: type };
     }
 
     const dKelas = await this.query.findManyClass(searching);

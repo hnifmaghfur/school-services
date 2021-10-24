@@ -8,6 +8,7 @@ const login = joi.object({
 
 const addClass = joi.object({
   namaKelas: joi.string().required(),
+  jurusan: joi.string().required(),
   walikelas: joi.string().required(),
   tahunAjaran: joi.string().required()
 });
@@ -148,8 +149,8 @@ const addGuru = joi.object({
 
 
 const exportRaport = joi.object({
-  siswa_id: joi.string().optional(),
-  kelas_id: joi.string().optional(),
+  siswa_id: joi.string().allow(''),
+  kelas_id: joi.string().allow(''),
   type: joi.string().required().valid('siswa', 'kelas'),
 });
 

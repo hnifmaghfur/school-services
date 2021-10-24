@@ -81,16 +81,19 @@ class User {
 
   async addClass(payload) {
     const ctx = 'Add-Class';
-    const { namaKelas, walikelas, tahunAjaran } = payload;
+    const { namaKelas, jurusan, walikelas, tahunAjaran } = payload;
 
-    const validateKelas = await this.query.findOneClass({ namaKelas });
-    if (!validate.isEmpty(validateKelas.data)) {
-      logger.log(ctx, 'kelas telah ada', 'validate kelas');
-      return wrapper.error(new InternalServerError('Kelas telah ada.'));
+    let name = 'kelas';
+    if (namaKelas == 10) {
+      name = `X ${jurusan}`;
+    } else if (namaKelas == 11) {
+      name = `XI ${jurusan}`;
+    } else {
+      name = `XII ${jurusan}`;
     }
 
     const searching = {
-      namaKelas,
+      namaKelas: name,
       walikelas,
       tahunAjaran
     };
@@ -103,7 +106,8 @@ class User {
 
     const data = {
       kelas_id: uuid(),
-      nama_kelas: namaKelas,
+      jenis_kelas: namaKelas,
+      nama_kelas: name,
       wali_kelas: walikelas,
       tahun_ajaran: tahunAjaran,
       isActive: true,
@@ -886,13 +890,20 @@ class User {
       return wrapper.error(new InternalServerError('data not found'));
     }
 
-    const data = await Promise.all(fData.data.map(async item => {
+    const data = fData.data;
+    const siswaData = {
+      nama: dSiswa.data.nama_lengkap,
+      nisn: dSiswa.data.NISN,
+      nis: dSiswa.data.NIS,
+    };
 
-    }));
+    const excel = await templateExcel.templateExcelJs({ data, siswaData });
+    if (excel.err) {
+      logger.error(ctx, 'failed create excel', 'create excel');
+      return wrapper.error(new InternalServerError('Gagal memuat raport'));
+    }
 
-    const excel = await templateExcel.templateExcelJs(data);
-
-    return wrapper.data('success');
+    return wrapper.data(excel.data);
 
     // return await new Promise((resolve, reject) => {
     //   const excelName = `${dSiswa.data.NISN + dSiswa.data.nama_panggilan.toLowerCase()}.xlsx`;
