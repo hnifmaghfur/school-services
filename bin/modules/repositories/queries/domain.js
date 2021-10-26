@@ -589,7 +589,6 @@ class User {
       let tahun_lahir = [];
       let laki_mampu = 0;
       let perempuan_mampu = 0;
-      let jumlah_mampu = 0;
       let kps = 0;
       let non_kps = 0;
 

@@ -76,6 +76,7 @@ const templateExcelJs = async (payload) => {
     let wb = new excelJs.Workbook();
     await wb.xlsx.readFile(template);
     let ws = wb.getWorksheet('Raport');
+    let tempWS = wb.getWorksheet('option');
     //konten row 3
     ws.mergeCells('F3:K3');
     ws.mergeCells('Q3:S3');
@@ -85,9 +86,20 @@ const templateExcelJs = async (payload) => {
     ws.getCell('X3').value = siswaData.nisn;
     ws.getRow(3).commit();
 
-    wb.xlsx.writeFile(saveFile);
+    // //content
+    // data.map((item, index) => {
+    //   const rPengetahuan = 8 + (index * 3);
+    //   const rKeterampilan = 9 + (index * 4);
+    //   const rSikap = 9 + (index * 5);
 
-    return { data: saveFile, err: '' };
+    //   //kelompok A
+
+
+    // });
+
+    const buffer = await wb.xlsx.writeBuffer();
+
+    return { data: buffer, err: '' };
 
   } catch (err) {
     return { data: '', err };
