@@ -81,7 +81,7 @@ class User {
 
   async addClass(payload) {
     const ctx = 'Add-Class';
-    const { namaKelas, jurusan, walikelas, tahunAjaran } = payload;
+    const { kelas_id, namaKelas, jurusan, walikelas, tahunAjaran } = payload;
 
     let name = 'kelas';
     if (namaKelas == 10) {
@@ -104,18 +104,24 @@ class User {
       return wrapper.error(new InternalServerError('Kelas sudah ada.'));
     }
 
+    const kelasId = uuid();
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+
     const data = {
-      kelas_id: uuid(),
       jenis_kelas: namaKelas,
       nama_kelas: name,
       wali_kelas: walikelas,
       tahun_ajaran: tahunAjaran,
       isActive: true,
-      createdAt: dateFormat(new Date(), 'isoDateTime'),
-      updatedAt: dateFormat(new Date(), 'isoDateTime'),
     };
 
-    const result = await this.command.insertOneClass(data);
+    let result;
+    if (kelas_id) {
+      result = await this.command.patchOneClass({ kelas_id }, { ...data, updatedAt });
+    } else {
+      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, createdAt, updatedAt });
+    }
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert user');
       return wrapper.error(new InternalServerError('Internal Server Error'));
@@ -907,18 +913,6 @@ class User {
     }
 
     return wrapper.data(excel.data);
-
-    // return await new Promise((resolve, reject) => {
-    //   const excelName = `${dSiswa.data.NISN + dSiswa.data.nama_panggilan.toLowerCase()}.xlsx`;
-    //   excel.write(excelName, async (err, result) => {
-    //     if (result) {
-    //       fs.createReadStream(excelName);
-    //       resolve(wrapper.data(excelName, '', 200));
-    //     } else {
-    //       reject(wrapper.data(err, '', 500));
-    //     }
-    //   });
-    // });
 
   }
 

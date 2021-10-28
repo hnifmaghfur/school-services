@@ -70,9 +70,7 @@ const templateExcel = async (payload) => {
 const templateExcelJs = async (payload) => {
   const { data, siswaData } = payload;
   const template = './excel/template_raport.xlsx';
-  const saveFile = `./excel/download/${siswaData.nisn + '_' + siswaData.nama}.xlsx`;
   try {
-
     let wb = new excelJs.Workbook();
     await wb.xlsx.readFile(template);
     let ws = wb.getWorksheet('Raport');
@@ -86,19 +84,46 @@ const templateExcelJs = async (payload) => {
     ws.getCell('X3').value = siswaData.nisn;
     ws.getRow(3).commit();
 
-    // //content
-    // data.map((item, index) => {
-    //   const rPengetahuan = 8 + (index * 3);
-    //   const rKeterampilan = 9 + (index * 4);
-    //   const rSikap = 9 + (index * 5);
+    //content nilai
+    data.map((item, index) => {
+      const rPengetahuan = 8 + (index * 3);
+      const rKeterampilan = 9 + (index * 3);
+      const rSikap = 10 + (index * 3);
 
-    //   //kelompok A
+      //kelompok A
+      for (let i = 3; i <= 8; i++) {
+        const name = tempWS.getCell(`A${i}`).value;
+        item.kelompokA.map(value => {
+          if (value.mapel == name) {
+            const row = ws.getRow(parseInt(tempWS.getCell(`B${i}`).value));
+            const peng = row.getCell(rPengetahuan);
+            const ket = row.getCell(rKeterampilan);
+            const sik = row.getCell(rSikap);
+            peng.value = value.nilai;
+            ket.value = value.keterangan.charAt(0);
+            sik.value = value.sikap.charAt(0);
+            peng.alignment = { vertical: 'middle', horizontal: 'center' };
+            peng.font = { bold: true };
+            ket.alignment = { vertical: 'middle', horizontal: 'center' };
+            ket.font = { bold: true };
+            sik.alignment = { vertical: 'middle', horizontal: 'center' };
+            sik.font = { bold: true };
+            row.commit();
+          }
+        });
+      }
 
+      //kelompok B
+    });
 
-    // });
+    wb.removeWorksheet('option');
+
+    //local
+    // const saveFile = `./excel/download/${siswaData.nisn + '_' + siswaData.nama}.xlsx`;
+    // wb.xlsx.writeFile(saveFile);
+    // return { data: saveFile, err: '' };
 
     const buffer = await wb.xlsx.writeBuffer();
-
     return { data: buffer, err: '' };
 
   } catch (err) {

@@ -722,6 +722,8 @@ const exportRaport = async (req, res) => {
       /* eslint no-unused-expressions: [2, { allowTernary: true }] */
       (result.err) ? wrapper.response(res, 'fail', result, 'Export Raport')
         : wrapper.responseBuffer(res, result);
+      //local
+      // : wrapper.response(res, 'success', result, 'export siswa', http.CREATED);
     };
     sendResponse(await postRequest(validatePayload));
   } else {

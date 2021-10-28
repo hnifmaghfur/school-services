@@ -18,6 +18,14 @@ class Command {
     return result;
   }
 
+  async patchOneClass(kelas_id, document) {
+    this.db.setCollection('class');
+    const result = await this.db.upsertOne(kelas_id, {
+      $set: document
+    });
+    return result;
+  }
+
   async insertOneTentangDiri(document) {
     this.db.setCollection('tentangDiri');
     const result = await this.db.insertOne(document);

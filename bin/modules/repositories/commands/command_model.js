@@ -10,7 +10,8 @@ const addClass = joi.object({
   namaKelas: joi.string().required(),
   jurusan: joi.string().required(),
   walikelas: joi.string().required(),
-  tahunAjaran: joi.string().required()
+  tahunAjaran: joi.string().required(),
+  kelas_id: joi.string().allow(''),
 });
 
 const addTentangDiri = joi.object({
