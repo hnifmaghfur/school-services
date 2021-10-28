@@ -72,6 +72,39 @@ class User {
     return wrapper.paginationData(data, meta);
   }
 
+  async viewOneClass(payload) {
+    const ctx = 'getOneClass';
+    const { kelas_id } = payload;
+
+    const kelas = await this.query.findOneClass({ kelas_id, isActive: true });
+    if (kelas.err || validate.isEmpty(kelas.data)) {
+      logger.log(ctx, 'error', 'kelas not found');
+      return wrapper.error(new InternalServerError('Internal server error'));
+    }
+
+    const data = kelas.data;
+    data.jurusan = data.nama_kelas.split(' ')[1] + ' ' + data.nama_kelas.split(' ')[2];
+    data.tahun_ajaran_awal = data.tahun_ajaran.split('-')[0];
+    data.tahun_ajaran_akhir = data.tahun_ajaran.split('-')[1];
+
+    if (data.jenis_kelas == 10) {
+      data.nama_kelas = 'X';
+    } else if (data.jenis_kelas == 11) {
+      data.nama_kelas = 'XI';
+    } else {
+      data.nama_kelas = 'XII';
+    }
+
+    delete data._id;
+    delete data.tahun_ajaran;
+    delete data.jenis_kelas;
+    delete data.isActive;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    return wrapper.data(data);
+  }
+
   async viewListKelas() {
     const ctx = 'getListKelas';
 

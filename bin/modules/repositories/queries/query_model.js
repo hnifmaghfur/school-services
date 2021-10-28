@@ -8,6 +8,10 @@ const getAllClass = joi.object({
   tab: joi.string().required().valid('all', 'mipa', 'ips')
 });
 
+const getOneClass = joi.object({
+  kelas_id: joi.string().allow(''),
+});
+
 const getAllSiswa = joi.object({
   search: joi.string().allow(''),
   kelas_id: joi.string().allow(''),
@@ -51,6 +55,7 @@ const getTenagaAhliId = joi.object({
 
 module.exports = {
   getAllClass,
+  getOneClass,
   getAllSiswa,
   getAllGuru,
   getGuruId,

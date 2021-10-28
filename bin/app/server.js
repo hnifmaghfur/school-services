@@ -48,6 +48,7 @@ function AppServer() {
   //kelas
   this.server.post('/kelas/v1/add', jwtAuth.verifyToken, handler.addClass);
   this.server.get('/kelas/v1/all', jwtAuth.verifyToken, handler.getAllClass);
+  this.server.get('/kelas/v1/one/:kelas_id', jwtAuth.verifyToken, handler.getOneClass);
 
   //siswa Get
   this.server.get('/siswa/v1/all', jwtAuth.verifyToken, handler.getAllSiswa);
@@ -59,6 +60,7 @@ function AppServer() {
   this.server.get('/siswa/v1/orang-tua/:siswa_id', jwtAuth.verifyToken, handler.getSiswaOrangTua);
   this.server.get('/siswa/v1/pindah/:siswa_id', jwtAuth.verifyToken, handler.getSiswaPindah);
   this.server.get('/siswa/v1/kompetensi', jwtAuth.verifyToken, handler.getSiswaKompetensi);
+  // this.server.get('/siswa/v1/bantuan/:siswa_id', jwtAuth.verifyToken, handler.getSiswaBantuan);
 
   //siswa post
   this.server.post('/siswa/v1/tentang-diri', jwtAuth.verifyToken, handler.addTentangDiri);

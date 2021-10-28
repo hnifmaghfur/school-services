@@ -65,6 +65,29 @@ const getAllClass = async (req, res) => {
   }
 };
 
+const getOneClass = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getOneClass);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getOneClass(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get one data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const getListKelas = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -735,6 +758,7 @@ const exportRaport = async (req, res) => {
 module.exports = {
   postDataLogin,
   getAllClass,
+  getOneClass,
   getListKelas,
   getKelasKompetensi,
   getAllSiswa,

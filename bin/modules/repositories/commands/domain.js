@@ -81,7 +81,7 @@ class User {
 
   async addClass(payload) {
     const ctx = 'Add-Class';
-    const { kelas_id, namaKelas, jurusan, walikelas, tahunAjaran } = payload;
+    const { kelas_id, guru_id, namaKelas, jurusan, walikelas, tahunAjaran } = payload;
 
     let name = 'kelas';
     if (namaKelas == 10) {
@@ -95,6 +95,7 @@ class User {
     const searching = {
       namaKelas: name,
       walikelas,
+      guru_id,
       tahunAjaran
     };
 
@@ -109,18 +110,18 @@ class User {
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
     const data = {
+      guru_id,
       jenis_kelas: namaKelas,
       nama_kelas: name,
       wali_kelas: walikelas,
       tahun_ajaran: tahunAjaran,
-      isActive: true,
     };
 
     let result;
     if (kelas_id) {
       result = await this.command.patchOneClass({ kelas_id }, { ...data, updatedAt });
     } else {
-      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, createdAt, updatedAt });
+      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, isActive: true, createdAt, updatedAt });
     }
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert user');

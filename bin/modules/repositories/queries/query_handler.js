@@ -13,6 +13,14 @@ const getAllClass = async (payload) => {
   const result = await getData();
   return result;
 };
+const getOneClass = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewOneClass(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getListKelas = async () => {
   const getData = async () => {
     const result = await user.viewListKelas();
@@ -61,6 +69,7 @@ const getGuru = async (payload) => {
   const result = await getData();
   return result;
 };
+
 const getTenagaAhli = async (payload) => {
   const getData = async () => {
     const result = await user.viewTenagaAhli(payload);
@@ -151,6 +160,7 @@ const getRekapitulasi = async (payload) => {
 };
 
 module.exports = {
+  getOneClass,
   getAllClass,
   getListKelas,
   getKelasKompetensi,

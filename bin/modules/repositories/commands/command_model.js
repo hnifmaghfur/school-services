@@ -11,6 +11,7 @@ const addClass = joi.object({
   jurusan: joi.string().required(),
   walikelas: joi.string().required(),
   tahunAjaran: joi.string().required(),
+  guru_id: joi.string().required(),
   kelas_id: joi.string().allow(''),
 });
 
