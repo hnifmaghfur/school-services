@@ -13,6 +13,7 @@ const getOneClass = joi.object({
 });
 
 const getAllSiswa = joi.object({
+  alumni: joi.string().allow(''),
   search: joi.string().allow(''),
   kelas_id: joi.string().allow(''),
   page: joi.string().required(),
@@ -30,6 +31,7 @@ const getAllGuru = joi.object({
 
 const getSiswaId = joi.object({
   siswa_id: joi.string().required(),
+  alumni: joi.string().allow(''),
 });
 
 const getSiswaIdKelasId = joi.object({
@@ -51,6 +53,7 @@ const getTenagaAhliId = joi.object({
   tenaga_ahli_id: joi.string().allow(''),
   type: joi.string().allow(''),
   tahun_ajaran: joi.string().allow(''),
+  alumni: joi.string().allow(''),
 });
 
 module.exports = {

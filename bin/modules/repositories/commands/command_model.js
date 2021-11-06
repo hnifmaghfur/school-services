@@ -16,6 +16,7 @@ const addClass = joi.object({
 });
 
 const addTentangDiri = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().allow(''),
   kelas_id: joi.string().required(),
   NIS: joi.string().required(),
@@ -41,6 +42,7 @@ const addTentangDiri = joi.object({
 });
 
 const addTempatTinggal = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   alamat: joi.string().required(),
   no_telephone: joi.string().required(),
@@ -49,6 +51,7 @@ const addTempatTinggal = joi.object({
 });
 
 const addPendidikan = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   tanggal_diterima: joi.string().required(),
   lulus_dari: joi.string().required(),
@@ -59,6 +62,7 @@ const addPendidikan = joi.object({
 });
 
 const addKesehatan = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   gol_darah: joi.string().required(),
   kelainan_jasmani: joi.string().required(),
@@ -69,6 +73,7 @@ const addKesehatan = joi.object({
 });
 
 const addOrangTua = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   data: joi.array().items(joi.object({
     type: joi.string().valid('ayah', 'ibu', 'wali').required(),
@@ -90,6 +95,7 @@ const addOrangTua = joi.object({
 });
 
 const addHobi = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   olahraga: joi.string().required(),
   seni: joi.string().required(),
@@ -98,6 +104,7 @@ const addHobi = joi.object({
 });
 
 const addPindah = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   pindah_sekolah: joi.string().required(),
   pindah_alasan: joi.string().required(),
@@ -115,6 +122,7 @@ const importSiswa = joi.object({
 });
 
 const addKompetensi = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   kelas_id: joi.string().required(),
   semester: joi.string().required(),
@@ -154,6 +162,7 @@ const addGuru = joi.object({
 
 
 const exportRaport = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().allow(''),
   kelas_id: joi.string().allow(''),
   type: joi.string().required().valid('siswa', 'kelas'),
@@ -161,9 +170,6 @@ const exportRaport = joi.object({
 
 const idSiswa = joi.object({
   siswa_id: joi.string().allow(''),
-  pkh: joi.number().required(),
-  kks: joi.number().required(),
-  kps: joi.string().required(),
 });
 const addBantuan = joi.object({
   siswa_id: joi.string().required(),

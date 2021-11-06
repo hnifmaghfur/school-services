@@ -127,7 +127,7 @@ class User {
   async viewKelasKompetensi(payload) {
     const ctx = 'getKelasKompetensi';
 
-    const siswa = await this.query.findOneSiswa(payload);
+    const siswa = await this.query.findOneSiswa({ ...payload, isDelete: false, isActive: true });
     if (siswa.err) {
       logger.log(ctx, 'error', 'siswa not found');
       return wrapper.error(new InternalServerError('Siswa not found'));
@@ -169,7 +169,7 @@ class User {
 
   async viewAllSiswa(payload) {
     const ctx = 'getAllSiswa';
-    const { search, page, limit, kelas_id, sort, tab } = payload;
+    const { search, page, limit, kelas_id, sort, tab, alumni } = payload;
 
     const stat = {
       limit: parseInt(limit),
@@ -184,6 +184,7 @@ class User {
     }
 
     let searching = {
+      isDelete: false,
       $or: [
         { 'nama_lengkap': new RegExp(`${search || ''}`, 'i') },
         { 'NISN': new RegExp(`${search || ''}`, 'i') },
@@ -200,6 +201,12 @@ class User {
         ...searching,
         jenis_kelamin: { $in: [new RegExp(`${tab || ''}`, 'i')] }
       };
+    }
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
     }
 
     const siswa = await this.query.findAllSiswa(sorting, stat, searching);
@@ -263,6 +270,7 @@ class User {
     }
 
     let searching = {
+      isDelete: false,
       $or: [
         { 'nama': new RegExp(`${search || ''}`, 'i') },
         { 'nip_karpeg': new RegExp(`${search || ''}`, 'i') },
@@ -319,6 +327,7 @@ class User {
     }
 
     let searching = {
+      isDelete: false,
       $or: [
         { 'nama': new RegExp(`${search || ''}`, 'i') },
         { 'nip_karpeg': new RegExp(`${search || ''}`, 'i') },
@@ -357,7 +366,7 @@ class User {
     const ctx = 'getGuru';
     const { guru_id } = payload;
 
-    const guru = await this.query.findOneGuru({ guru_id });
+    const guru = await this.query.findOneGuru({ guru_id, isDelete: false });
     if (guru.err || validate.isEmpty(guru.data)) {
       logger.log(ctx, 'find guru', 'guru not found');
       return wrapper.error(new InternalServerError('Guru not Found'));
@@ -377,7 +386,7 @@ class User {
     const ctx = 'getTenagaAhli';
     const { tenaga_ahli_id } = payload;
 
-    const tenagaAhli = await this.query.findOneTenagaAhli({ tenaga_ahli_id });
+    const tenagaAhli = await this.query.findOneTenagaAhli({ tenaga_ahli_id, isDelete: false });
     if (tenagaAhli.err || validate.isEmpty(tenagaAhli.data)) {
       logger.log(ctx, 'find tenaga ahli', 'tenaga ahli not found');
       return wrapper.error(new InternalServerError('Tenaga Ahli not Found'));
@@ -397,7 +406,7 @@ class User {
     const ctx = 'getSiswa';
     const { siswa_id, kelas_id } = payload;
 
-    const siswa = await this.query.findDataSiswa({ siswa_id, kelas_id });
+    const siswa = await this.query.findDataSiswa({ siswa_id, kelas_id, isActive: true, isDelete: true });
     if (siswa.err || validate.isEmpty(siswa.data)) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new InternalServerError('Can not find siswa'));
@@ -418,9 +427,17 @@ class User {
 
   async viewSiswaTentangDiri(payload) {
     const ctx = 'getSiswaTentangDiri';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
 
-    const siswa = await this.query.findOneTentangDiri({ siswa_id });
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const siswa = await this.query.findOneTentangDiri(searching);
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
       return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
@@ -442,7 +459,21 @@ class User {
 
   async viewSiswaTempatTinggal(payload) {
     const ctx = 'getSiswaTempatTinggal';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const siswa = await this.query.findOneTempatTinggal({ siswa_id });
     if (siswa.err) {
@@ -461,7 +492,21 @@ class User {
 
   async viewSiswaPendidikan(payload) {
     const ctx = 'getSiswaPendidikan';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const siswa = await this.query.findOnePendidikan({ siswa_id });
     if (siswa.err) {
@@ -480,7 +525,21 @@ class User {
 
   async viewSiswaKesehatan(payload) {
     const ctx = 'getSiswaKesehatan';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const siswa = await this.query.findOneKesehatan({ siswa_id });
     if (siswa.err) {
@@ -499,7 +558,21 @@ class User {
 
   async viewSiswaHobi(payload) {
     const ctx = 'getSiswaHobi';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const siswa = await this.query.findOneHobi({ siswa_id });
     if (siswa.err) {
@@ -518,7 +591,21 @@ class User {
 
   async viewSiswaOrangTua(payload) {
     const ctx = 'getSiswaOrangTua';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     //khusus orang tua ada wali juga, tolong cek lagi, type 1 = ayah 2=ibu 3=wali
 
@@ -556,7 +643,21 @@ class User {
   }
   async viewSiswaPindah(payload) {
     const ctx = 'getSiswaPindah';
-    const { siswa_id } = payload;
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const siswa = await this.query.findOnePindahan({ siswa_id });
     if (siswa.err) {
@@ -575,7 +676,21 @@ class User {
 
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';
-    const { siswa_id, kelas_id, semester } = payload;
+    const { siswa_id, kelas_id, semester, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
 
     const dataMapel = await this.query.findKompetensi({ siswa_id, kelas_id, semester });
     if (dataMapel.err) {
