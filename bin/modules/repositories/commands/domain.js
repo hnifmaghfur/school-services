@@ -199,7 +199,7 @@ class User {
     const ctx = 'Add-Tempat-Tinggal';
     const { siswa_id, alamat, no_telephone, tinggal_di, jarak_ke_sekolah } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -238,7 +238,7 @@ class User {
     const ctx = 'Add-Pendidikan';
     const { siswa_id, tanggal_diterima, lulus_dari, tanggal_no_ijazah, tanggal_no_stl, lama_belajar, nilai_skhun } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -280,7 +280,7 @@ class User {
     const ctx = 'Add-Kesehatan';
     const { siswa_id, gol_darah, kelainan_jasmani, tinggi_berat_badan, nama_penyakit, tahun_sakit, lama_sakit } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -322,7 +322,7 @@ class User {
     const ctx = 'Add-Orang-Tua';
     const { siswa_id, data } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -423,7 +423,7 @@ class User {
     const ctx = 'Add-Hobi';
     const { siswa_id, olahraga, seni, organisasi, lain } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -463,7 +463,7 @@ class User {
     const ctx = 'Add-Pindah';
     const { siswa_id, pindah_sekolah, pindah_alasan, diterima_di, diterima_program, meninggalkan_di, meninggalkan_program, meninggalkan_alasan, akhir_tamat_belajar, akhir_sttb } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -509,7 +509,7 @@ class User {
     const ctx = 'Add-Kompetensi';
     const { siswa_id, kelas_id, semester, kompetensi_id, kelompokA, kelompokB, kelompokC, kelompokCLintas, absen } = payload;
 
-    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
     if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
       logger.log(ctx, 'siswa not found', 'validate siswa');
       return wrapper.error(new InternalServerError('Siswa Not Found'));
@@ -561,6 +561,29 @@ class User {
     }
 
     logger.log(ctx, 'success add kompetensi siswa', 'insert kompetensi siswa');
+    return wrapper.data('success');
+  }
+
+  async addBantuan(payload) {
+    const ctx = 'Add-Bantuan';
+    const { siswa_id, pkh, kks, kps } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
+    }
+
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+
+
+    const result = await this.command.patchOneTentangDiri(siswa_id, { pkh, kks, kps, updatedAt });
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Bantuan');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Bantuan siswa', 'insert Bantuan siswa');
     return wrapper.data('success');
   }
 
@@ -907,14 +930,46 @@ class User {
       nis: dSiswa.data.NIS,
     };
 
-    const excel = await templateExcel.templateExcelJs({ data, siswaData });
+    const dataKelas = await Promise.all(data.map(async item => {
+      const kelas = await this.query.findOneClass({ kelas_id: item.kelas_id });
+      if (validate.isEmpty(kelas.err)) {
+        return {
+          namaKelas: item.namaKelas,
+          tahunAjaran: kelas.data.tahun_ajaran
+        };
+      }
+      return {
+        namaKelas: item.namaKelas,
+        tahunAjaran: '-'
+      };
+    }));
+
+    const ids = dataKelas.map(i => i.namaKelas);
+    const kelasData = dataKelas.filter(({ namaKelas }, index) => !ids.includes(namaKelas, index + 1));
+
+    const excel = await templateExcel.templateExcelJs({ data, siswaData, kelasData });
     if (excel.err) {
       logger.error(ctx, 'failed create excel', 'create excel');
       return wrapper.error(new InternalServerError('Gagal memuat raport'));
     }
 
     return wrapper.data(excel.data);
+  }
 
+  async toAlumni(payload) {
+    const { siswa_id } = payload;
+
+    const cSiswa = await this.query.findOneSiswa({ siswa_id, isActive: true });
+    if (cSiswa.err) {
+      return wrapper.error(new NotFoundError('siswa not found'));
+    }
+
+    const result = await this.command.updateAlumni({ siswa_id });
+    if (result.err) {
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    return wrapper.data('success change alumni');
   }
 
   async uploadImage(data) {

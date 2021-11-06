@@ -70,6 +70,12 @@ const addKompetensi = async (payload) => {
   return postCommand(payload);
 };
 
+const addBantuan = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addBantuan(payload);
+  return postCommand(payload);
+};
+
 const addGuru = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.addGuru(payload);
@@ -85,6 +91,12 @@ const addTenagaAhli = async (payload) => {
 const importSiswa = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.importSiswa(payload);
+  return postCommand(payload);
+};
+
+const toAlumni = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.toAlumni(payload);
   return postCommand(payload);
 };
 
@@ -106,8 +118,10 @@ module.exports = {
   addHobi,
   addPindah,
   addKompetensi,
+  addBantuan,
   addGuru,
   addTenagaAhli,
   importSiswa,
-  exportRaport
+  exportRaport,
+  toAlumni
 };

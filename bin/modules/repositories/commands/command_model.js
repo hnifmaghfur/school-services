@@ -159,6 +159,19 @@ const exportRaport = joi.object({
   type: joi.string().required().valid('siswa', 'kelas'),
 });
 
+const idSiswa = joi.object({
+  siswa_id: joi.string().allow(''),
+  pkh: joi.number().required(),
+  kks: joi.number().required(),
+  kps: joi.string().required(),
+});
+const addBantuan = joi.object({
+  siswa_id: joi.string().required(),
+  pkh: joi.number().required(),
+  kks: joi.number().required(),
+  kps: joi.string().required(),
+});
+
 module.exports = {
   login,
   addClass,
@@ -170,7 +183,9 @@ module.exports = {
   addHobi,
   addPindah,
   addKompetensi,
+  addBantuan,
   addGuru,
   importSiswa,
-  exportRaport
+  exportRaport,
+  idSiswa
 };

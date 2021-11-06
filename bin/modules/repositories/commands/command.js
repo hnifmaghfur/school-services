@@ -168,6 +168,16 @@ class Command {
     return result;
   }
 
+  async updateAlumni(document) {
+    this.db.setCollection('tentangDiri');
+    const result = await this.db.upsertOne({ siswa_id: document.siswa_id }, {
+      $set: {
+        isActive: false
+      }
+    });
+    return result;
+  }
+
   async updateOneOrtu(parameter, document) {
     this.db.setCollection('orangTua');
     const result = await this.db.upsertOne(parameter, {

@@ -68,13 +68,15 @@ const templateExcel = async (payload) => {
 };
 
 const templateExcelJs = async (payload) => {
-  const { data, siswaData } = payload;
+  const { data, siswaData, kelasData } = payload;
   const template = './excel/template_raport.xlsx';
   try {
+    let tempData = [];
     let wb = new excelJs.Workbook();
     await wb.xlsx.readFile(template);
     let ws = wb.getWorksheet('Raport');
     let tempWS = wb.getWorksheet('option');
+
     //konten row 3
     ws.mergeCells('F3:K3');
     ws.mergeCells('Q3:S3');
@@ -84,11 +86,17 @@ const templateExcelJs = async (payload) => {
     ws.getCell('X3').value = siswaData.nisn;
     ws.getRow(3).commit();
 
+
     //content nilai
     data.map((item, index) => {
       const rPengetahuan = 8 + (index * 3);
       const rKeterampilan = 9 + (index * 3);
       const rSikap = 10 + (index * 3);
+
+      tempData.push({
+        position: rPengetahuan,
+        namaKelas: item.namaKelas
+      });
 
       //kelompok A
       for (let i = 3; i <= 8; i++) {
@@ -114,6 +122,104 @@ const templateExcelJs = async (payload) => {
       }
 
       //kelompok B
+      for (let i = 11; i <= 13; i++) {
+        const name = tempWS.getCell(`A${i}`).value;
+        item.kelompokB.map(value => {
+          if (value.mapel == name) {
+            const row = ws.getRow(parseInt(tempWS.getCell(`B${i}`).value));
+            const peng = row.getCell(rPengetahuan);
+            const ket = row.getCell(rKeterampilan);
+            const sik = row.getCell(rSikap);
+            peng.value = value.nilai;
+            ket.value = value.keterangan.charAt(0);
+            sik.value = value.sikap.charAt(0);
+            peng.alignment = { vertical: 'middle', horizontal: 'center' };
+            peng.font = { bold: true };
+            ket.alignment = { vertical: 'middle', horizontal: 'center' };
+            ket.font = { bold: true };
+            sik.alignment = { vertical: 'middle', horizontal: 'center' };
+            sik.font = { bold: true };
+            row.commit();
+          }
+        });
+      }
+
+      //kelompok C
+      for (let i = 16; i <= 23; i++) {
+        const name = tempWS.getCell(`A${i}`).value;
+        item.kelompokC.map(value => {
+          if (value.mapel == name) {
+            const row = ws.getRow(parseInt(tempWS.getCell(`B${i}`).value));
+            const peng = row.getCell(rPengetahuan);
+            const ket = row.getCell(rKeterampilan);
+            const sik = row.getCell(rSikap);
+            peng.value = value.nilai;
+            ket.value = value.keterangan.charAt(0);
+            sik.value = value.sikap.charAt(0);
+            peng.alignment = { vertical: 'middle', horizontal: 'center' };
+            peng.font = { bold: true };
+            ket.alignment = { vertical: 'middle', horizontal: 'center' };
+            ket.font = { bold: true };
+            sik.alignment = { vertical: 'middle', horizontal: 'center' };
+            sik.font = { bold: true };
+            row.commit();
+          }
+        });
+      }
+
+      //kelompok C Lintas
+      for (let i = 26; i <= 37; i++) {
+        const name = tempWS.getCell(`A${i}`).value;
+        item.kelompokCLintas.map(value => {
+          if (value.mapel == name) {
+            const row = ws.getRow(parseInt(tempWS.getCell(`B${i}`).value));
+            const peng = row.getCell(rPengetahuan);
+            const ket = row.getCell(rKeterampilan);
+            const sik = row.getCell(rSikap);
+            peng.value = value.nilai;
+            ket.value = value.keterangan.charAt(0);
+            sik.value = value.sikap.charAt(0);
+            peng.alignment = { vertical: 'middle', horizontal: 'center' };
+            peng.font = { bold: true };
+            ket.alignment = { vertical: 'middle', horizontal: 'center' };
+            ket.font = { bold: true };
+            sik.alignment = { vertical: 'middle', horizontal: 'center' };
+            sik.font = { bold: true };
+            row.commit();
+          }
+        });
+      }
+
+      //Absen
+      const alpha = ws.getRow(42);
+      const izin = ws.getRow(43);
+      const sakit = ws.getRow(44);
+
+      alpha.getCell(rPengetahuan).value = item.absen.alpha + ' Hari';
+      izin.getCell(rPengetahuan).value = item.absen.izin + ' Hari';
+      sakit.getCell(rPengetahuan).value = item.absen.sakit + ' Hari';
+
+      alpha.commit();
+      izin.commit();
+      sakit.commit();
+
+    });
+
+    //semester dan kelas
+    const ids = tempData.map(i => i.namaKelas);
+    const tempKelas = tempData.filter(({ namaKelas }, index) => !ids.includes(namaKelas, index + 1));
+
+    tempKelas.map(item => {
+      kelasData.map(value => {
+        if (item.namaKelas == value.namaKelas) {
+          const tahunAjaran = ws.getRow(5);
+          const namaKelas = ws.getRow(6);
+          tahunAjaran.getCell(item.position).value = value.tahunAjaran;
+          namaKelas.getCell(item.position).value = value.namaKelas;
+          tahunAjaran.commit();
+          namaKelas.commit();
+        }
+      });
     });
 
     wb.removeWorksheet('option');
@@ -131,7 +237,6 @@ const templateExcelJs = async (payload) => {
   }
 
 };
-
 
 module.exports = {
   templateExcel,

@@ -663,6 +663,28 @@ const addKompetensi = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const addBantuan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addBantuan);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addBantuan(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Bantuan')
+        : wrapper.response(res, 'success', result, 'Add Bantuan', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 const addGuru = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -754,6 +776,28 @@ const exportRaport = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const switchAlumni = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.idSiswa);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.toAlumni(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Export Raport')
+        : wrapper.response(res, 'success', result, 'export siswa', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 
 module.exports = {
   postDataLogin,
@@ -785,9 +829,11 @@ module.exports = {
   addOrangTua,
   addPindah,
   addKompetensi,
+  addBantuan,
   addGuru,
   addTenagaAhli,
   registerUser,
   importSiswa,
-  exportRaport
+  exportRaport,
+  switchAlumni
 };
