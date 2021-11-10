@@ -282,7 +282,7 @@ const getSiswaData = async (req, res) => {
 const getSiswaTentangDiri = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -305,7 +305,7 @@ const getSiswaTentangDiri = async (req, res) => {
 const getSiswaTempatTinggal = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -328,7 +328,7 @@ const getSiswaTempatTinggal = async (req, res) => {
 const getSiswaPendidikan = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -351,7 +351,7 @@ const getSiswaPendidikan = async (req, res) => {
 const getSiswaKesehatan = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -374,7 +374,7 @@ const getSiswaKesehatan = async (req, res) => {
 const getSiswaHobi = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -397,7 +397,7 @@ const getSiswaHobi = async (req, res) => {
 const getSiswaOrangTua = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {
@@ -420,7 +420,7 @@ const getSiswaOrangTua = async (req, res) => {
 const getSiswaPindah = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
-    const payload = req.params;
+    const payload = req.query;
     const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
     const getRequest = async (result) => {
       if (result.err) {

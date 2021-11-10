@@ -52,13 +52,13 @@ function AppServer() {
 
   //siswa Get
   this.server.get('/siswa/v1/all', jwtAuth.verifyToken, handler.getAllSiswa);
-  this.server.get('/siswa/v1/tentang-diri/:siswa_id', jwtAuth.verifyToken, handler.getSiswaTentangDiri);
-  this.server.get('/siswa/v1/tempat-tinggal/:siswa_id', jwtAuth.verifyToken, handler.getSiswaTempatTinggal);
-  this.server.get('/siswa/v1/pendidikan/:siswa_id', jwtAuth.verifyToken, handler.getSiswaPendidikan);
-  this.server.get('/siswa/v1/kesehatan/:siswa_id', jwtAuth.verifyToken, handler.getSiswaKesehatan);
-  this.server.get('/siswa/v1/hobi/:siswa_id', jwtAuth.verifyToken, handler.getSiswaHobi);
-  this.server.get('/siswa/v1/orang-tua/:siswa_id', jwtAuth.verifyToken, handler.getSiswaOrangTua);
-  this.server.get('/siswa/v1/pindah/:siswa_id', jwtAuth.verifyToken, handler.getSiswaPindah);
+  this.server.get('/siswa/v1/tentang-diri', jwtAuth.verifyToken, handler.getSiswaTentangDiri);
+  this.server.get('/siswa/v1/tempat-tinggal', jwtAuth.verifyToken, handler.getSiswaTempatTinggal);
+  this.server.get('/siswa/v1/pendidikan', jwtAuth.verifyToken, handler.getSiswaPendidikan);
+  this.server.get('/siswa/v1/kesehatan', jwtAuth.verifyToken, handler.getSiswaKesehatan);
+  this.server.get('/siswa/v1/hobi', jwtAuth.verifyToken, handler.getSiswaHobi);
+  this.server.get('/siswa/v1/orang-tua', jwtAuth.verifyToken, handler.getSiswaOrangTua);
+  this.server.get('/siswa/v1/pindah', jwtAuth.verifyToken, handler.getSiswaPindah);
   // this.server.get('/siswa/v1/bantuan/:siswa_id', jwtAuth.verifyToken, handler.getSiswaBantuan);
   this.server.get('/siswa/v1/kompetensi', jwtAuth.verifyToken, handler.getSiswaKompetensi);
 
