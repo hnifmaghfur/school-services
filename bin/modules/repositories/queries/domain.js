@@ -127,7 +127,7 @@ class User {
   async viewKelasKompetensi(payload) {
     const ctx = 'getKelasKompetensi';
 
-    const siswa = await this.query.findOneSiswa({ ...payload, isDelete: false, isActive: true });
+    const siswa = await this.query.findOneSiswa({ ...payload, isDelete: false });
     if (siswa.err) {
       logger.log(ctx, 'error', 'siswa not found');
       return wrapper.error(new InternalServerError('Siswa not found'));
