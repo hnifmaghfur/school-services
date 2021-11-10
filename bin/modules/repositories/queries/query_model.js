@@ -43,6 +43,7 @@ const getSiswaKompetensi = joi.object({
   siswa_id: joi.string().required(),
   kelas_id: joi.string().required(),
   semester: joi.string().required(),
+  alumni: joi.string().allow(''),
 });
 
 const getGuruId = joi.object({
