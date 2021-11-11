@@ -20,7 +20,7 @@ class Command {
 
   async patchOneClass(kelas_id, document) {
     this.db.setCollection('class');
-    const result = await this.db.upsertOne(kelas_id, {
+    const result = await this.db.upsertOne({ kelas_id }, {
       $set: document
     });
     return result;
@@ -34,8 +34,21 @@ class Command {
 
   async patchOneTentangDiri(siswa_id, document) {
     this.db.setCollection('tentangDiri');
-    const result = await this.db.upsertOne(siswa_id, {
+    const result = await this.db.upsertOne({ siswa_id }, {
       $set: document
+    });
+    return result;
+  }
+
+  async patchOneBantuan(siswa_id, document) {
+    this.db.setCollection('tentangDiri');
+    const result = await this.db.upsertOne({ siswa_id }, {
+      $set: {
+        pkh: document.pkh,
+        kks: document.kks,
+        kps: document.kps,
+        updatedAt: document.updatedAt,
+      }
     });
     return result;
   }
@@ -48,7 +61,7 @@ class Command {
 
   async patchOneTempat(siswa_id, document) {
     this.db.setCollection('tempatTinggal');
-    const result = await this.db.upsertOne(siswa_id, {
+    const result = await this.db.upsertOne({ siswa_id }, {
       $set: document
     });
     return result;
@@ -76,7 +89,7 @@ class Command {
 
   async patchOneKesehatan(siswa_id, document) {
     this.db.setCollection('kesehatan');
-    const result = await this.db.upsertOne(siswa_id, {
+    const result = await this.db.upsertOne({ siswa_id }, {
       $set: document
     });
     return result;
@@ -96,7 +109,7 @@ class Command {
 
   async patchOneHobi(siswa_id, document) {
     this.db.setCollection('hobi');
-    const result = await this.db.upsertOne(siswa_id, {
+    const result = await this.db.upsertOne({ siswa_id }, {
       $set: document
     });
     return result;
@@ -110,7 +123,7 @@ class Command {
 
   async patchOnePindahan(siswa_id, document) {
     this.db.setCollection('pindah');
-    const result = await this.db.upsertOne(siswa_id, {
+    const result = await this.db.upsertOne({ siswa_id }, {
       $set: document
     });
     return result;
@@ -128,17 +141,17 @@ class Command {
     return result;
   }
 
-  async updateOneGuru(parameter, document) {
+  async updateOneGuru(guru_id, document) {
     this.db.setCollection('guru');
-    const result = await this.db.upsertOne(parameter, {
+    const result = await this.db.upsertOne({ guru_id }, {
       $set: document
     });
     return result;
   }
 
-  async updateOneTenagaAhli(parameter, document) {
+  async updateOneTenagaAhli(tenaga_ahli_id, document) {
     this.db.setCollection('tenagaAhli');
-    const result = await this.db.upsertOne(parameter, {
+    const result = await this.db.upsertOne({ tenaga_ahli_id }, {
       $set: document
     });
     return result;
@@ -178,10 +191,21 @@ class Command {
     return result;
   }
 
-  async updateOneOrtu(parameter, document) {
+  async updateOneOrtu(ortu_id, document) {
     this.db.setCollection('orangTua');
-    const result = await this.db.upsertOne(parameter, {
+    const result = await this.db.upsertOne({ ortu_id }, {
       $set: document
+    });
+    return result;
+  }
+
+  async deleteData(parameter) {
+    const { type, id } = parameter;
+    this.db.setCollection(type);
+    const result = await this.db.upsertOne({ ...id }, {
+      $set: {
+        isDelete: true
+      }
     });
     return result;
   }

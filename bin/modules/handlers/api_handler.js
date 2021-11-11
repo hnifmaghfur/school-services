@@ -1,4 +1,3 @@
-
 const wrapper = require('../../helpers/utils/wrapper');
 const commandHandler = require('../repositories/commands/command_handler');
 const commandModel = require('../repositories/commands/command_model');
@@ -798,6 +797,28 @@ const switchAlumni = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const deleteData = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.deleteData);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.deleteData(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'delete data')
+        : wrapper.response(res, 'success', result, 'delete data', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 
 module.exports = {
   postDataLogin,
@@ -835,5 +856,6 @@ module.exports = {
   registerUser,
   importSiswa,
   exportRaport,
-  switchAlumni
+  switchAlumni,
+  deleteData
 };

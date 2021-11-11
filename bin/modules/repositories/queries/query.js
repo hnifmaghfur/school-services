@@ -162,6 +162,13 @@ class Query {
     return recordset;
   }
 
+  async findOneDelete(parameter) {
+    const { type, id } = parameter;
+    this.db.setCollection(type);
+    const recordset = await this.db.findOne({ ...id, isDelete: false });
+    return recordset;
+  }
+
   async findAllIsiKelas(document) {
     const validateData = [document.siswa_id];
     const query = 'SELECT * FROM isi_kelas WHERE siswa_id = ?';

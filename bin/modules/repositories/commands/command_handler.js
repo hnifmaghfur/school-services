@@ -100,6 +100,12 @@ const toAlumni = async (payload) => {
   return postCommand(payload);
 };
 
+const deleteData = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.deleteData(payload);
+  return postCommand(payload);
+};
+
 const exportRaport = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.exportRaport(payload);
@@ -123,5 +129,6 @@ module.exports = {
   addTenagaAhli,
   importSiswa,
   exportRaport,
-  toAlumni
+  toAlumni,
+  deleteData
 };

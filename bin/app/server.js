@@ -85,6 +85,7 @@ function AppServer() {
 
   //addOns
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, handler.getSiswaData);
+  this.server.patch('/item/v1/delete', jwtAuth.verifyToken, handler.deleteData);
   this.server.post('/siswa/v1/alumni', jwtAuth.verifyToken, handler.switchAlumni);
   this.server.get('/kelas/v1/list-kelas', jwtAuth.verifyToken, handler.getListKelas);
   this.server.get('/kelas/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, handler.getKelasKompetensi);

@@ -121,7 +121,7 @@ class User {
     if (kelas_id) {
       result = await this.command.patchOneClass({ kelas_id }, { ...data, updatedAt });
     } else {
-      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, isActive: true, createdAt, updatedAt });
+      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, isActive: true, isDelete: false, createdAt, updatedAt });
     }
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert user');
@@ -576,8 +576,7 @@ class User {
 
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-
-    const result = await this.command.patchOneTentangDiri(siswa_id, { pkh, kks, kps, updatedAt });
+    const result = await this.command.patchOneBantuan(siswa_id, { pkh, kks, kps, updatedAt });
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert Bantuan');
       return wrapper.error(new InternalServerError('internal server error'));
@@ -605,7 +604,7 @@ class User {
     if (guru_id) {
       result = await this.command.updateOneGuru({ guru_id }, { ...payload, updatedAt });
     } else {
-      const data = { guru_id: guruId, ...payload, createdAt, updatedAt };
+      const data = { guru_id: guruId, ...payload, createdAt, updatedAt, isDelete: false };
       result = await this.command.insertOneGuru(data);
     }
 
@@ -636,7 +635,7 @@ class User {
     if (tenaga_ahli_id) {
       result = await this.command.updateOneTenagaAhli({ tenaga_ahli_id, isDelete: false }, { ...payload, updatedAt });
     } else {
-      const data = { tenaga_ahli_id: tenaga_id, ...payload, createdAt, updatedAt };
+      const data = { tenaga_ahli_id: tenaga_id, ...payload, createdAt, updatedAt, isDelete: false };
       result = await this.command.insertOneTenagaAhli(data);
     }
 
@@ -970,6 +969,24 @@ class User {
     }
 
     return wrapper.data('success change alumni');
+  }
+
+  async deleteData(payload) {
+    const { id, type } = payload;
+
+    const tipe = type === 'tenaga_ahli' ? 'tenagaAhli' : type === 'kelas' ? 'class' : type === 'siswa' ? 'tentangDiri' : 'guru';
+
+    const cSiswa = await this.query.findOneDelete({ [`${type}_id`]: id, type: tipe });
+    if (cSiswa.err) {
+      return wrapper.error(new NotFoundError('siswa not found'));
+    }
+
+    const result = await this.command.deleteData({ [`${type}_id`]: id, type: tipe });
+    if (result.err) {
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    return wrapper.data(`success delete ${type}`);
   }
 
   async uploadImage(data) {

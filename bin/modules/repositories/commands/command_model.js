@@ -171,6 +171,11 @@ const exportRaport = joi.object({
 const idSiswa = joi.object({
   siswa_id: joi.string().allow(''),
 });
+
+const deleteData = joi.object({
+  id: joi.string().required(),
+  type: joi.string().required().valid('siswa', 'kelas', 'guru', 'tenaga_ahli'),
+});
 const addBantuan = joi.object({
   siswa_id: joi.string().required(),
   pkh: joi.number().required(),
@@ -193,5 +198,6 @@ module.exports = {
   addGuru,
   importSiswa,
   exportRaport,
-  idSiswa
+  idSiswa,
+  deleteData
 };
