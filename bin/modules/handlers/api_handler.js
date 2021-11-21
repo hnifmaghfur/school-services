@@ -462,6 +462,29 @@ const getSiswaKompetensi = async (req, res) => {
   }
 };
 
+const getSiswaPrestasi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getSiswaId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaPrestasi(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const addClass = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -684,6 +707,50 @@ const addBantuan = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const addPrestasi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addPrestasi);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addPrestasi(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Prestasi')
+        : wrapper.response(res, 'success', result, 'Add Prestasi', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const deletePrestasi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, commandModel.deletePrestasi);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.deletePrestasi(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Delete Prestasi')
+        : wrapper.response(res, 'success', result, 'Delete Prestasi', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 const addGuru = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -836,6 +903,7 @@ module.exports = {
   getSiswaOrangTua,
   getSiswaPindah,
   getSiswaKompetensi,
+  getSiswaPrestasi,
   getAllGuru,
   getGuru,
   getAllTenagaAhli,
@@ -851,6 +919,8 @@ module.exports = {
   addPindah,
   addKompetensi,
   addBantuan,
+  addPrestasi,
+  deletePrestasi,
   addGuru,
   addTenagaAhli,
   registerUser,

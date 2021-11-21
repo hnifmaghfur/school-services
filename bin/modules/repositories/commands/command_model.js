@@ -177,10 +177,23 @@ const deleteData = joi.object({
   type: joi.string().required().valid('siswa', 'kelas', 'guru', 'tenaga_ahli'),
 });
 const addBantuan = joi.object({
+  alumni: joi.string().allow(''),
   siswa_id: joi.string().required(),
   pkh: joi.number().required(),
   kks: joi.number().required(),
   kps: joi.string().required(),
+});
+
+const addPrestasi = joi.object({
+  prestasi_id: joi.string().allow(''),
+  siswa_id: joi.string().required(),
+  judul: joi.string().required(),
+  deskripsi: joi.string().required(),
+  file: joi.string().required(),
+});
+
+const deletePrestasi = joi.object({
+  prestasi_id: joi.string().required(),
 });
 
 module.exports = {
@@ -195,6 +208,8 @@ module.exports = {
   addPindah,
   addKompetensi,
   addBantuan,
+  addPrestasi,
+  deletePrestasi,
   addGuru,
   importSiswa,
   exportRaport,

@@ -96,6 +96,12 @@ class Query {
     return recordset;
   }
 
+  async findManyPrestasi(parameter) {
+    this.db.setCollection('prestasi');
+    const recordset = await this.db.findMany(parameter);
+    return recordset;
+  }
+
   async findManyClass(parameter) {
     this.db.setCollection('class');
     const recordset = await this.db.findMany(parameter);
@@ -152,6 +158,12 @@ class Query {
 
   async findOneTenagaAhli(parameter) {
     this.db.setCollection('tenagaAhli');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
+  }
+
+  async findOnePrestasi(parameter) {
+    this.db.setCollection('prestasi');
     const recordset = await this.db.findOne(parameter);
     return recordset;
   }

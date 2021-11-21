@@ -76,6 +76,18 @@ const addBantuan = async (payload) => {
   return postCommand(payload);
 };
 
+const addPrestasi = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addPrestasi(payload);
+  return postCommand(payload);
+};
+
+const deletePrestasi = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.deletePrestasi(payload);
+  return postCommand(payload);
+};
+
 const addGuru = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.addGuru(payload);
@@ -125,6 +137,8 @@ module.exports = {
   addPindah,
   addKompetensi,
   addBantuan,
+  addPrestasi,
+  deletePrestasi,
   addGuru,
   addTenagaAhli,
   importSiswa,
