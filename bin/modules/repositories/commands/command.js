@@ -18,9 +18,9 @@ class Command {
     return result;
   }
 
-  async patchOneClass(kelas_id, document) {
+  async patchOneClass(data, document) {
     this.db.setCollection('class');
-    const result = await this.db.upsertOne({ kelas_id }, {
+    const result = await this.db.upsertOne({ kelas_id: data.kelas_id }, {
       $set: document
     });
     return result;
@@ -32,17 +32,17 @@ class Command {
     return result;
   }
 
-  async patchOneTentangDiri(siswa_id, document) {
+  async patchOneTentangDiri(data, document) {
     this.db.setCollection('tentangDiri');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: document
     });
     return result;
   }
 
-  async patchOneBantuan(siswa_id, document) {
+  async patchOneBantuan(data, document) {
     this.db.setCollection('tentangDiri');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: {
         pkh: document.pkh,
         kks: document.kks,
@@ -59,9 +59,9 @@ class Command {
     return result;
   }
 
-  async patchOneTempat(siswa_id, document) {
+  async patchOneTempat(data, document) {
     this.db.setCollection('tempatTinggal');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: document
     });
     return result;
@@ -87,9 +87,9 @@ class Command {
     return result;
   }
 
-  async patchOneKesehatan(siswa_id, document) {
+  async patchOneKesehatan(data, document) {
     this.db.setCollection('kesehatan');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: document
     });
     return result;
@@ -107,9 +107,9 @@ class Command {
     return result;
   }
 
-  async patchOneHobi(siswa_id, document) {
+  async patchOneHobi(data, document) {
     this.db.setCollection('hobi');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: document
     });
     return result;
@@ -121,9 +121,9 @@ class Command {
     return result;
   }
 
-  async patchOnePindahan(siswa_id, document) {
+  async patchOnePindahan(data, document) {
     this.db.setCollection('pindah');
-    const result = await this.db.upsertOne({ siswa_id }, {
+    const result = await this.db.upsertOne({ siswa_id: data.siswa_id }, {
       $set: document
     });
     return result;
@@ -141,17 +141,17 @@ class Command {
     return result;
   }
 
-  async updateOneGuru(guru_id, document) {
+  async updateOneGuru(data, document) {
     this.db.setCollection('guru');
-    const result = await this.db.upsertOne({ guru_id }, {
+    const result = await this.db.upsertOne({ guru_id: data.guru_id }, {
       $set: document
     });
     return result;
   }
 
-  async updateOneTenagaAhli(tenaga_ahli_id, document) {
+  async updateOneTenagaAhli(data, document) {
     this.db.setCollection('tenagaAhli');
-    const result = await this.db.upsertOne({ tenaga_ahli_id }, {
+    const result = await this.db.upsertOne({ tenaga_ahli_id: data.tenaga_ahli_id }, {
       $set: document
     });
     return result;
@@ -191,9 +191,9 @@ class Command {
     return result;
   }
 
-  async updateOneOrtu(ortu_id, document) {
+  async updateOneOrtu(data, document) {
     this.db.setCollection('orangTua');
-    const result = await this.db.upsertOne({ ortu_id }, {
+    const result = await this.db.upsertOne({ ortu_id: data.ortu_id }, {
       $set: document
     });
     return result;
