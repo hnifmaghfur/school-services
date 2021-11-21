@@ -18,7 +18,7 @@ const config = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
   },
-  imageUrl: process.env.IMAGE_URL
+  fileUrl: process.env.FILE_URL
 };
 
 const store = new confidence.Store(config);

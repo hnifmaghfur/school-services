@@ -17,6 +17,7 @@
   "homepage": "https://github.com/hnifmaghfur",
   "dependencies": {
     "ba64": "^3.0.9",
+    "compress-images": "^2.0.2",
     "confidence": "^4.0.2",
     "crypto": "^1.0.1",
     "dateformat": "^4.5.1",

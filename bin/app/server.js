@@ -18,9 +18,7 @@ function AppServer() {
   this.server.use(restify.plugins.queryParser());
   this.server.use(restify.plugins.bodyParser());
   this.server.use(restify.plugins.authorizationParser());
-  this.server.get('/public/*', restify.plugins.serveStatic({
-    directory: __dirname
-  }));
+  this.server.get('/files/*', restify.plugins.serveStaticFiles('./files'));
 
   // required for CORS configuration
   const corsConfig = corsMiddleware({

@@ -157,7 +157,7 @@ class User {
       kelas_id,
       NISN,
       NIS,
-      image: await this.uploadImage({ image }),
+      image: await this.uploadData({ file: image, type: 'image' }),
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -181,7 +181,7 @@ class User {
     let tentang;
 
     if (edit) {
-      tentang = await this.command.patchOneTentangDiri({ siswa_id, isActive: alumni ? false : true }, dataTentangDiri);
+      tentang = await this.command.patchOneTentangDiri({ siswa_id }, dataTentangDiri);
     } else {
       const tentang_id = uuid();
       tentang = await this.command.insertOneTentangDiri({ tentang_id, siswa_id: idSiswa, ...dataTentangDiri, isActive: alumni ? false : true, isDelete: false, createdAt, updatedAt });
@@ -990,15 +990,17 @@ class User {
     return wrapper.data(`success delete ${type}`);
   }
 
-  async uploadImage(data) {
-    const ctx = 'upload-image';
+  async uploadData(data) {
+    const ctx = 'upload-data';
+    const { type, file } = data;
+    const createFile = type === 'image' ? 'images/original' : type;
     const imgName = uuid();
-    const path = `./files/images/original/${imgName}`;
-    const rawImage = data.image;
-    const data_url = `data:image/png${rawImage}`;
+    const path = `./files/${createFile}/${imgName}`;
+    const image = config.get('/fileUrl') + `${createFile}/${imgName}.${type === 'image' ? 'png' : 'pdf'}`;
+    const rawData = file;
+    const data_url = `data:image/png${rawData}`;
     ba64.writeImageSync(path, data_url);
-    let image = '';
-    image = fs.createReadStream(`./files/images/original/${imgName}.png`);
+    fs.createReadStream(`./files/${createFile}/${imgName}.${type === 'image' ? 'png' : 'pdf'}`);
     return image;
   }
 
