@@ -53,6 +53,27 @@ class Command {
     return result;
   }
 
+  async insertOnePrestasi(document) {
+    this.db.setCollection('prestasi');
+    const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async deletePrestasi(document) {
+    this.db.setCollection('prestasi');
+    const result = await this.db.delete(document);
+    return result;
+  }
+
+  async patchOnePrestasi(data, document) {
+    this.db.setCollection('prestasi');
+    const result = await this.db.upsertOne({ prestasi_id: data.prestasi_id }, {
+      $set: document
+    });
+    return result;
+  }
+
+
   async insertOneTempatTinggal(document) {
     this.db.setCollection('tempatTinggal');
     const result = await this.db.insertOne(document);

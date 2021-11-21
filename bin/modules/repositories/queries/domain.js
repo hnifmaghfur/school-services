@@ -673,6 +673,41 @@ class User {
     logger.log(ctx, 'success', 'get tentang siswa');
     return wrapper.data(dataSiswa);
   }
+  async viewSiswaPrestasi(payload) {
+    const ctx = 'getSiswaPrestasi';
+    const { siswa_id, alumni } = payload;
+
+    let searching = { siswa_id, isDelete: false };
+
+    if (alumni) {
+      searching = { ...searching, isActive: false };
+    } else {
+      searching = { ...searching, isActive: true };
+    }
+
+    const cSiswa = await this.query.findOneTentangDiri(searching);
+    if (cSiswa.err) {
+      logger.log(ctx, cSiswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
+
+    const siswa = await this.query.findManyPrestasi({ siswa_id });
+    if (siswa.err) {
+      logger.log(ctx, siswa.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Can not find siswa'));
+    }
+
+    const data = siswa.data.map(item => {
+      delete item._id;
+      delete item.updatedAt;
+      delete item.createdAt;
+
+      return item;
+    });
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.paginationData(data);
+  }
 
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';

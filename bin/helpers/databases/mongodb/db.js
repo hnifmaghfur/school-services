@@ -237,6 +237,31 @@ class DB {
 
 
   }
+
+  async delete(param) {
+    const ctx = 'mongodb-delete';
+    const dbName = await this.getDatabase();
+    const result = await mongoConnection.getConnection(this.config);
+    if (result.err) {
+      logger.log(ctx, result.err.message, 'Error mongodb connection');
+      return result;
+    }
+    try {
+      const cacheConnection = result.data.db;
+      const connection = cacheConnection.db(dbName);
+      const db = connection.collection(this.collectionName);
+      const deleteData = await db.deleteOne(param);
+      if (validate.isEmpty(deleteData)) {
+        return wrapper.error('Data Not Found', 'Please Try Another Input', 404);
+      }
+      const recordset = await this.findOne(param);
+
+      return wrapper.data(recordset.data, 'deleted', 204);
+    } catch (err) {
+      logger.log(ctx, err.message, 'Error delete data in mongodb');
+      return wrapper.error(`Error delete Mongo ${err.message}`, `${err.message}`, 409);
+    }
+  }
 }
 
 module.exports = DB;

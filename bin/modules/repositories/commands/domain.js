@@ -12,7 +12,6 @@ const { InternalServerError, ConflictError, NotFoundError } = require('../../../
 const xlsx = require('xlsx');
 const validate = require('validate.js');
 const fs = require('fs');
-const ba64 = require('ba64');
 const config = require('../../../infra/configs/global_config');
 const templateExcel = require('../../../helpers/utils/excel');
 
@@ -157,7 +156,7 @@ class User {
       kelas_id,
       NISN,
       NIS,
-      image: await this.uploadData({ file: image, type: 'image' }),
+      image: image.includes('http') ? image : await this.uploadData({ file: image, type: 'image' }),
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -585,6 +584,63 @@ class User {
 
     logger.log(ctx, 'success add Bantuan siswa', 'insert Bantuan siswa');
     return wrapper.data('success');
+
+  }
+
+  async addPrestasi(payload) {
+    const ctx = 'Add-Prestasi';
+    const { siswa_id, prestasi_id, judul, deskripsi, file } = payload;
+
+    const validateSiswa = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'siswa not found', 'validate siswa');
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
+    }
+
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const prestasiId = uuid();
+    const data = {
+      judul,
+      deskripsi,
+      file: await this.uploadData({ file, type: 'pdf' }),
+      updatedAt
+    };
+
+    let result;
+
+    if (prestasi_id) {
+      result = await this.command.patchOnePrestasi({ prestasi_id }, data);
+    } else {
+      result = await this.command.insertOnePrestasi({ prestasi_id: prestasiId, siswa_id, ...data, createdAt });
+    }
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Prestasi');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Prestasi siswa', 'insert Prestasi siswa');
+    return wrapper.data('success');
+  }
+
+  async deletePrestasi(payload) {
+    const ctx = 'Delete-Prestasi';
+    const { prestasi_id } = payload;
+
+    const validateSiswa = await this.query.findOnePrestasi({ prestasi_id });
+    if (validateSiswa.err || validate.isEmpty(validateSiswa.data)) {
+      logger.log(ctx, 'prestasi not found', 'validate siswa');
+      return wrapper.error(new InternalServerError('prestasi Not Found'));
+    }
+
+    const result = await this.command.deletePrestasi({ prestasi_id });
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'delete Prestasi');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Prestasi siswa', 'delete Prestasi siswa');
+    return wrapper.data('success');
   }
 
   async addGuru(payload) {
@@ -995,11 +1051,9 @@ class User {
     const { type, file } = data;
     const createFile = type === 'image' ? 'images/original' : type;
     const imgName = uuid();
-    const path = `./files/${createFile}/${imgName}`;
+    const path = `./files/${createFile}/${imgName}.${type === 'image' ? 'png' : 'pdf'}`;
     const image = config.get('/fileUrl') + `${createFile}/${imgName}.${type === 'image' ? 'png' : 'pdf'}`;
-    const rawData = file;
-    const data_url = `data:image/png${rawData}`;
-    ba64.writeImageSync(path, data_url);
+    fs.writeFileSync(path, file.split(';base64,')[1], { encoding: 'base64' });
     fs.createReadStream(`./files/${createFile}/${imgName}.${type === 'image' ? 'png' : 'pdf'}`);
     return image;
   }
