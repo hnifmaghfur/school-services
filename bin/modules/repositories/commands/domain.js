@@ -976,12 +976,12 @@ class User {
 
     const tipe = type === 'tenaga_ahli' ? 'tenagaAhli' : type === 'kelas' ? 'class' : type === 'siswa' ? 'tentangDiri' : 'guru';
 
-    const cSiswa = await this.query.findOneDelete({ [`${type}_id`]: id, type: tipe });
+    const cSiswa = await this.query.findOneDelete({ [`${type}_id`]: id }, { type: tipe });
     if (cSiswa.err) {
       return wrapper.error(new NotFoundError('siswa not found'));
     }
 
-    const result = await this.command.deleteData({ [`${type}_id`]: id, type: tipe });
+    const result = await this.command.deleteData({ [`${type}_id`]: id }, { type: tipe });
     if (result.err) {
       return wrapper.error(new InternalServerError('internal server error'));
     }
@@ -992,13 +992,12 @@ class User {
   async uploadImage(data) {
     const ctx = 'upload-image';
     const imgName = uuid();
-    const path = `./uploads/${imgName}`;
+    const path = `./files/images/original/${imgName}`;
     const rawImage = data.image;
     const data_url = `data:image/png${rawImage}`;
     ba64.writeImageSync(path, data_url);
     let image = '';
-    const uImage = fs.createReadStream(`./uploads/${imgName}.png`);
-    image = `${config.get('/imageUrl')}/uploads/default_photo.png`;
+    image = fs.createReadStream(`./files/images/original/${imgName}.png`);
     return image;
   }
 

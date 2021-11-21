@@ -162,10 +162,10 @@ class Query {
     return recordset;
   }
 
-  async findOneDelete(parameter) {
-    const { type, id } = parameter;
+  async findOneDelete(parameter, data) {
+    const { type } = data;
     this.db.setCollection(type);
-    const recordset = await this.db.findOne({ ...id, isDelete: false });
+    const recordset = await this.db.findOne({ ...parameter, isDelete: false });
     return recordset;
   }
 
