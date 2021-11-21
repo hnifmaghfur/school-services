@@ -727,6 +727,9 @@ class User {
     }
 
     const data = prestasi.data;
+    delete data._id;
+    delete data.createdAt;
+    delete data.updatedAt;
 
     logger.log(ctx, 'success', 'get tentang siswa');
     return wrapper.data(data);
