@@ -60,6 +60,7 @@ function AppServer() {
   // this.server.get('/siswa/v1/bantuan/:siswa_id', jwtAuth.verifyToken, handler.getSiswaBantuan);
   this.server.get('/siswa/v1/kompetensi', jwtAuth.verifyToken, handler.getSiswaKompetensi);
   this.server.get('/siswa/v1/prestasi', jwtAuth.verifyToken, handler.getSiswaPrestasi);
+  this.server.get('/siswa/v1/one-prestasi/prestasi_id', jwtAuth.verifyToken, handler.getSiswaOnePrestasi);
 
   //siswa post
   this.server.post('/siswa/v1/tentang-diri', jwtAuth.verifyToken, handler.addTentangDiri);

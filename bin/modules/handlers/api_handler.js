@@ -485,6 +485,29 @@ const getSiswaPrestasi = async (req, res) => {
   }
 };
 
+const getSiswaOnePrestasi = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, commandModel.deletePrestasi);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getSiswaOnePrestasi(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const addClass = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -904,6 +927,7 @@ module.exports = {
   getSiswaPindah,
   getSiswaKompetensi,
   getSiswaPrestasi,
+  getSiswaOnePrestasi,
   getAllGuru,
   getGuru,
   getAllTenagaAhli,
