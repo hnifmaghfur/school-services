@@ -164,8 +164,9 @@ class Query {
 
   async findOneDelete(parameter, data) {
     const { type } = data;
+    const document = type === 'class' ? { isActive: true } : { isDelete: false };
     this.db.setCollection(type);
-    const recordset = await this.db.findOne({ ...parameter, isDelete: false });
+    const recordset = await this.db.findOne({ ...parameter, ...document });
     return recordset;
   }
 

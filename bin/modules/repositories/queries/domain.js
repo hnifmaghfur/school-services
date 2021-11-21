@@ -133,7 +133,7 @@ class User {
       return wrapper.error(new InternalServerError('Siswa not found'));
     }
 
-    const addKelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
+    const addKelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id, isActive: true });
     if (addKelas.err || validate.isEmpty(addKelas.data)) {
       logger.log(ctx, 'error', 'kelas not found');
       return wrapper.error(new InternalServerError('Internal server error'));
@@ -443,7 +443,7 @@ class User {
       return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
     }
 
-    const kelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id });
+    const kelas = await this.query.findOneClass({ kelas_id: siswa.data.kelas_id, isActive: true });
 
     const dataSiswa = siswa.data;
     dataSiswa.nama_kelas = validate.isEmpty(kelas.err) ? kelas.data.nama_kelas : 'Belum ada kelas';

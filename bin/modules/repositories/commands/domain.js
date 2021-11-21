@@ -96,7 +96,8 @@ class User {
       namaKelas: name,
       walikelas,
       guru_id,
-      tahunAjaran
+      tahunAjaran,
+      isActive: true
     };
 
     const kelas = await this.query.findOneClass(searching);
@@ -121,7 +122,7 @@ class User {
     if (kelas_id) {
       result = await this.command.patchOneClass({ kelas_id }, { ...data, updatedAt });
     } else {
-      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, isActive: true, isDelete: false, createdAt, updatedAt });
+      result = await this.command.insertOneClass({ kelas_id: kelasId, ...data, isActive: true, createdAt, updatedAt });
     }
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert user');
@@ -143,7 +144,7 @@ class User {
       edit = true;
     }
 
-    const validateKelas = await this.query.findOneClass({ kelas_id });
+    const validateKelas = await this.query.findOneClass({ kelas_id, isActive: true });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
       return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
@@ -156,7 +157,7 @@ class User {
       kelas_id,
       NISN,
       NIS,
-      image,
+      image: await this.uploadImage({ image }),
       nama_lengkap,
       nama_panggilan,
       ttl,
@@ -515,7 +516,7 @@ class User {
       return wrapper.error(new InternalServerError('Siswa Not Found'));
     }
 
-    const validateKelas = await this.query.findOneClass({ kelas_id });
+    const validateKelas = await this.query.findOneClass({ kelas_id, isActive: true });
     if (validateKelas.err || validate.isEmpty(validateKelas.data)) {
       logger.log(ctx, 'kelas tidak ada', 'validate kelas');
       return wrapper.error(new InternalServerError('Kelas tidak terdaftar'));
@@ -930,7 +931,7 @@ class User {
     };
 
     const dataKelas = await Promise.all(data.map(async item => {
-      const kelas = await this.query.findOneClass({ kelas_id: item.kelas_id });
+      const kelas = await this.query.findOneClass({ kelas_id: item.kelas_id, isActive: true });
       if (validate.isEmpty(kelas.err)) {
         return {
           namaKelas: item.namaKelas,
@@ -978,7 +979,7 @@ class User {
 
     const cSiswa = await this.query.findOneDelete({ [`${type}_id`]: id }, { type: tipe });
     if (cSiswa.err) {
-      return wrapper.error(new NotFoundError('siswa not found'));
+      return wrapper.error(new NotFoundError(`${type} not found`));
     }
 
     const result = await this.command.deleteData({ [`${type}_id`]: id }, { type: tipe });

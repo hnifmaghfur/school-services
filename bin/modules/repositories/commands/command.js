@@ -201,11 +201,10 @@ class Command {
 
   async deleteData(parameter, data) {
     const { type } = data;
+    const document = type === 'class' ? { isActive: false } : { isDelete: true };
     this.db.setCollection(type);
     const result = await this.db.upsertOne(parameter, {
-      $set: {
-        isDelete: true
-      }
+      $set: document
     });
     return result;
   }
