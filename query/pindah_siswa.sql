@@ -1,0 +1,1 @@
+select * from pindah_siswa;

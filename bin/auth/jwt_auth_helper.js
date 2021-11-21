@@ -8,7 +8,8 @@ const { UnauthorizedError, ForbiddenError } = require('../helpers/error');
 const generateToken = async (payload) => {
   const privateKey = config.get('/privateKey');
   const verifyOptions = {
-    expiresIn: '100m'
+    // expiresIn: '480m'
+    expiresIn: '100d'
   };
   const token = jwt.sign(payload, privateKey, verifyOptions);
   return token;

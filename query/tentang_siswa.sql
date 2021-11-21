@@ -1,0 +1,1 @@
+select * from tentang_siswa;
