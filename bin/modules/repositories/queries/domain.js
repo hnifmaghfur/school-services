@@ -691,6 +691,12 @@ class User {
       return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
     }
 
+    const kelas = await this.query.findOneClass({ kelas_id: cSiswa.data.kelas_id });
+    if (kelas.err) {
+      logger.log(ctx, cSiswa.err, 'kelas not found');
+      return wrapper.error(new InternalServerError('kelas tidak ditemukan'));
+    }
+
     const siswa = await this.query.findManyPrestasi({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
@@ -705,8 +711,26 @@ class User {
       return item;
     });
 
+    const result = { nama: cSiswa.data.nama_lengkap, kelas: kelas.data.nama_kelas, data };
+
     logger.log(ctx, 'success', 'get tentang siswa');
-    return wrapper.paginationData(data);
+    return wrapper.paginationData(result);
+  }
+  async viewSiswaOnePrestasi(payload) {
+    const ctx = 'getSiswaPrestasi';
+    const { prestasi_id } = payload;
+
+    const prestasi = await this.query.findOnePrestasi({ prestasi_id });
+    if (prestasi.err) {
+      logger.log(ctx, prestasi.err, 'prestasi not found');
+      return wrapper.error(new InternalServerError('Can not find prestasi'));
+    }
+
+    const data = prestasi.data;
+
+    logger.log(ctx, 'success', 'get tentang siswa');
+    return wrapper.data(data);
+
   }
 
   async viewSiswaKompetensi(payload) {
