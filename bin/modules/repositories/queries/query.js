@@ -168,6 +168,12 @@ class Query {
     return recordset;
   }
 
+  async findOneJabatan(parameter) {
+    this.db.setCollection('jabatan');
+    const recordset = await this.db.findOne(parameter);
+    return recordset;
+  }
+
   async findOneSiswa(parameter) {
     this.db.setCollection('tentangDiri');
     const recordset = await this.db.findOne(parameter);

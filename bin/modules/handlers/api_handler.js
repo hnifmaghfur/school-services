@@ -774,6 +774,72 @@ const deletePrestasi = async (req, res) => {
     wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
   }
 };
+const addJabatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addJabatan);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addJabatan(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Jabatan')
+        : wrapper.response(res, 'success', result, 'Add Jabatan', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const addJabatanAhli = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.body;
+    const validatePayload = validator.isValidPayload(payload, commandModel.addJabatan);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.addJabatanAhli(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Add Jabatan')
+        : wrapper.response(res, 'success', result, 'Add Jabatan', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
+const deleteJabatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, commandModel.deleteJabatan);
+    const postRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return commandHandler.deleteJabatan(result.data);
+    };
+    const sendResponse = async (result) => {
+      /* eslint no-unused-expressions: [2, { allowTernary: true }] */
+      (result.err) ? wrapper.response(res, 'fail', result, 'Delete Prestasi')
+        : wrapper.response(res, 'success', result, 'Delete Prestasi', http.CREATED);
+    };
+    sendResponse(await postRequest(validatePayload));
+  } else {
+    logger.log('AddClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Add Class', httpError.UNAUTHORIZED);
+  }
+};
 const addGuru = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -945,6 +1011,9 @@ module.exports = {
   addBantuan,
   addPrestasi,
   deletePrestasi,
+  addJabatan,
+  addJabatanAhli,
+  deleteJabatan,
   addGuru,
   addTenagaAhli,
   registerUser,

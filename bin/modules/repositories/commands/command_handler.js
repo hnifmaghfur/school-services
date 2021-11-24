@@ -88,6 +88,24 @@ const deletePrestasi = async (payload) => {
   return postCommand(payload);
 };
 
+const addJabatan = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addJabatan(payload);
+  return postCommand(payload);
+};
+
+const addJabatanAhli = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.addJabatanAhli(payload);
+  return postCommand(payload);
+};
+
+const deleteJabatan = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.deleteJabatan(payload);
+  return postCommand(payload);
+};
+
 const addGuru = async (payload) => {
   const user = new User(db);
   const postCommand = async payload => user.addGuru(payload);
@@ -139,6 +157,9 @@ module.exports = {
   addBantuan,
   addPrestasi,
   deletePrestasi,
+  addJabatan,
+  addJabatanAhli,
+  deleteJabatan,
   addGuru,
   addTenagaAhli,
   importSiswa,

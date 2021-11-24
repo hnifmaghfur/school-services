@@ -73,6 +73,26 @@ class Command {
     return result;
   }
 
+  async insertOneJabatan(document) {
+    this.db.setCollection('jabatan');
+    const result = await this.db.insertOne(document);
+    return result;
+  }
+
+  async deleteJabatan(document) {
+    this.db.setCollection('jabatan');
+    const result = await this.db.delete(document);
+    return result;
+  }
+
+  async patchOneJabatan(data, document) {
+    this.db.setCollection('jabatan');
+    const result = await this.db.upsertOne({ jabatan_id: data.jabatan_id }, {
+      $set: document
+    });
+    return result;
+  }
+
 
   async insertOneTempatTinggal(document) {
     this.db.setCollection('tempatTinggal');
