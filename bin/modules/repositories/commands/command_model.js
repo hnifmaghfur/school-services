@@ -142,6 +142,7 @@ const addGuru = joi.object({
   guru_id: joi.string().optional(),
   tenaga_ahli_id: joi.string().optional(),
   nama: joi.string().required(),
+  image: joi.string().required(),
   jenis_kelamin: joi.string().required(),
   ttl: joi.string().required(),
   nip_karpeg: joi.string().required(),
@@ -196,6 +197,19 @@ const deletePrestasi = joi.object({
   prestasi_id: joi.string().required(),
 });
 
+const addJabatan = joi.object({
+  jabatan_id: joi.string().allow(''),
+  guru_id: joi.string().allow(''),
+  tenaga_ahli_id: joi.string().allow(''),
+  judul: joi.string().required(),
+  deskripsi: joi.string().required(),
+  file: joi.string().required(),
+});
+
+const deleteJabatan = joi.object({
+  jabatan_id: joi.string().required(),
+});
+
 module.exports = {
   login,
   addClass,
@@ -210,6 +224,8 @@ module.exports = {
   addBantuan,
   addPrestasi,
   deletePrestasi,
+  addJabatan,
+  deleteJabatan,
   addGuru,
   importSiswa,
   exportRaport,

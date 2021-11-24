@@ -643,9 +643,104 @@ class User {
     return wrapper.data('success');
   }
 
+  async addJabatan(payload) {
+    const ctx = 'Add-Jabatan';
+    const { guru_id, jabatan_id, judul, deskripsi, file } = payload;
+
+    const validateGuru = await this.query.findOneGuru({ guru_id, isDelete: false });
+    if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
+      logger.log(ctx, 'guru not found', 'validate guru');
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
+    }
+
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const jabatanId = uuid();
+    const data = {
+      judul,
+      deskripsi,
+      file: await this.uploadData({ file, type: 'pdf' }),
+      updatedAt
+    };
+
+    let result;
+
+    if (jabatan_id) {
+      result = await this.command.patchOneJabatan({ jabatan_id }, data);
+    } else {
+      result = await this.command.insertOneJabatan({ jabatan_id: jabatanId, guru_id, ...data, createdAt });
+    }
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Jabatan');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Jabatan', 'insert Jabatan');
+    return wrapper.data('success');
+  }
+
+  async addJabatanAhli(payload) {
+    const ctx = 'Add-Jabatan';
+    const { tenaga_ahli_id, jabatan_id, judul, deskripsi, file } = payload;
+
+    const validateGuru = await this.query.findOneTenagaAhli({ tenaga_ahli_id, isDelete: false });
+    if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
+      logger.log(ctx, 'guru not found', 'validate guru');
+      return wrapper.error(new InternalServerError('Siswa Not Found'));
+    }
+
+    const updatedAt = dateFormat(new Date(), 'isoDateTime');
+    const createdAt = dateFormat(new Date(), 'isoDateTime');
+    const jabatanId = uuid();
+    const data = {
+      judul,
+      deskripsi,
+      file: await this.uploadData({ file, type: 'pdf' }),
+      updatedAt
+    };
+
+    let result;
+
+    if (jabatan_id) {
+      result = await this.command.patchOneJabatan({ jabatan_id }, data);
+    } else {
+      result = await this.command.insertOneJabatan({ jabatan_id: jabatanId, tenaga_ahli_id, ...data, createdAt });
+    }
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'insert Jabatan');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Jabatan', 'insert Jabatan');
+    return wrapper.data('success');
+  }
+
+  async deleteJabatan(payload) {
+    const ctx = 'Delete-Jabatan';
+    const { jabatan_id } = payload;
+
+    const validateGuru = await this.query.findOneJabatan({ jabatan_id });
+    if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
+      logger.log(ctx, 'jabatan not found', 'validate guru');
+      return wrapper.error(new InternalServerError('jabatan Not Found'));
+    }
+
+    const result = await this.command.deleteJabatan({ jabatan_id });
+    if (result.err) {
+      logger.log(ctx, 'failed upload data', 'delete Jabatan');
+      return wrapper.error(new InternalServerError('internal server error'));
+    }
+
+    logger.log(ctx, 'success add Jabatan', 'delete Jabatan');
+    return wrapper.data('success');
+  }
+
   async addGuru(payload) {
     const ctx = 'Add-Guru';
     const { nip_kapreg, guru_id } = payload;
+    if (payload.image) {
+      payload.image = await this.uploadData({ type: 'image', file: payload.image });
+    }
 
     const validateGuru = await this.query.findOneGuru({ nip_kapreg });
     if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
@@ -677,6 +772,9 @@ class User {
   async addTenagaAhli(payload) {
     const ctx = 'Add-Tenaga-Ahli';
     const { nip_kapreg, tenaga_ahli_id } = payload;
+    if (payload.image) {
+      payload.image = await this.uploadData({ type: 'image', file: payload.image });
+    }
 
     const validateTenagaAhli = await this.query.findOneTenagaAhli({ nip_kapreg });
     if (validateTenagaAhli.err || validate.isEmpty(validateTenagaAhli.data)) {

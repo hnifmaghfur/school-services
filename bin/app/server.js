@@ -79,11 +79,16 @@ function AppServer() {
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, handler.getAllGuru);
   this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, handler.getGuru);
   this.server.post('/guru/v1/add', jwtAuth.verifyToken, handler.addGuru);
+  this.server.post('/guru/v1/jabatan', jwtAuth.verifyToken, handler.addJabatan);
+  this.server.patch('/guru/v1/jabatan/:jabatan_id', jwtAuth.verifyToken, handler.deleteJabatan);
 
   //tenaga ahli
   this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, handler.getAllTenagaAhli);
   this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, handler.getTenagaAhli);
   this.server.post('/tenaga-ahli/v1/add', jwtAuth.verifyToken, handler.addTenagaAhli);
+  this.server.post('/guru/v1/tenaga-ahli', jwtAuth.verifyToken, handler.addJabatan);
+  this.server.post('/guru/v1/tenaga-ahli', jwtAuth.verifyToken, handler.addJabatanAhli);
+  this.server.patch('/guru/v1/tenaga-ahli/:jabatan_id', jwtAuth.verifyToken, handler.deleteJabatan);
 
   //addOns
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, handler.getSiswaData);
