@@ -78,6 +78,7 @@ function AppServer() {
   //guru
   this.server.get('/guru/v1/all', jwtAuth.verifyToken, handler.getAllGuru);
   this.server.get('/guru/v1/detail/:guru_id', jwtAuth.verifyToken, handler.getGuru);
+  this.server.get('/guru/v1/jabatan', jwtAuth.verifyToken, handler.getGuruJabatan);
   this.server.post('/guru/v1/add', jwtAuth.verifyToken, handler.addGuru);
   this.server.post('/guru/v1/jabatan', jwtAuth.verifyToken, handler.addJabatan);
   this.server.patch('/guru/v1/jabatan/:jabatan_id', jwtAuth.verifyToken, handler.deleteJabatan);
@@ -85,10 +86,10 @@ function AppServer() {
   //tenaga ahli
   this.server.get('/tenaga-ahli/v1/all', jwtAuth.verifyToken, handler.getAllTenagaAhli);
   this.server.get('/tenaga-ahli/v1/detail/:tenaga_ahli_id', jwtAuth.verifyToken, handler.getTenagaAhli);
+  this.server.get('/tenaga-ahli/v1/jabatan', jwtAuth.verifyToken, handler.getTenagaAhliJabatan);
   this.server.post('/tenaga-ahli/v1/add', jwtAuth.verifyToken, handler.addTenagaAhli);
-  this.server.post('/guru/v1/tenaga-ahli', jwtAuth.verifyToken, handler.addJabatan);
-  this.server.post('/guru/v1/tenaga-ahli', jwtAuth.verifyToken, handler.addJabatanAhli);
-  this.server.patch('/guru/v1/tenaga-ahli/:jabatan_id', jwtAuth.verifyToken, handler.deleteJabatan);
+  this.server.post('/tenaga-ahli/v1/jabatan', jwtAuth.verifyToken, handler.addJabatanAhli);
+  this.server.patch('/tenaga-ahli/v1/jabatan/:jabatan_id', jwtAuth.verifyToken, handler.deleteJabatan);
 
   //addOns
   this.server.get('/siswa/v1/', jwtAuth.verifyToken, handler.getSiswaData);
@@ -99,6 +100,7 @@ function AppServer() {
   this.server.post('/siswa/v1/import', jwtAuth.verifyToken, handler.importSiswa);
   this.server.post('/siswa/v1/export-raport', jwtAuth.verifyToken, handler.exportRaport);
   this.server.get('/kelas/v1/rekapitulasi', jwtAuth.verifyToken, handler.getRekapitulasi);
+  this.server.get('/staf/v1/one-jabatan/:jabatan_id', jwtAuth.verifyToken, handler.getGuruOneJabatan);
 
   //Initiation
   mongoConnectionPooling.init();
