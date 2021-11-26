@@ -735,6 +735,84 @@ class User {
     return wrapper.data(data);
 
   }
+  async viewGuruJabatan(payload) {
+    const ctx = 'getGuruJabatan';
+    const { guru_id } = payload;
+
+    let searching = { guru_id, isDelete: false };
+
+    const cGuru = await this.query.findOneGuru(searching);
+    if (cGuru.err) {
+      logger.log(ctx, cGuru.err, 'siswa not found');
+      return wrapper.error(new InternalServerError('Siswa tidak ditemukan'));
+    }
+
+    const guru = await this.query.findManyJabatan({ guru_id });
+    if (guru.err) {
+      logger.log(ctx, guru.err, 'guru not found');
+      return wrapper.error(new InternalServerError('Can not find guru'));
+    }
+
+    const data = guru.data.map(item => {
+      delete item._id;
+      delete item.updatedAt;
+      delete item.createdAt;
+
+      return item;
+    });
+
+    logger.log(ctx, 'success', 'get Jabatan guru');
+    return wrapper.paginationData(data);
+  }
+  async viewTenagaAhliJabatan(payload) {
+    const ctx = 'getTenagaAhliJabatan';
+    const { tenaga_ahli_id } = payload;
+
+    let searching = { tenaga_ahli_id, isDelete: false };
+
+    const cTenagaAhli = await this.query.findOneTenagaAhli(searching);
+    if (cTenagaAhli.err) {
+      logger.log(ctx, cTenagaAhli.err, 'tenaga ahli not found');
+      return wrapper.error(new InternalServerError('tenaga ahli tidak ditemukan'));
+    }
+
+    const tenagaAhli = await this.query.findManyJabatan({ tenaga_ahli_id });
+    if (tenagaAhli.err) {
+      logger.log(ctx, tenagaAhli.err, 'tenagaAhli not found');
+      return wrapper.error(new InternalServerError('Can not find tenaga Ahli'));
+    }
+
+    const data = tenagaAhli.data.map(item => {
+      delete item._id;
+      delete item.updatedAt;
+      delete item.createdAt;
+
+      return item;
+    });
+
+    logger.log(ctx, 'success', 'get Jabatan tenaga ahli');
+    return wrapper.paginationData(data);
+  }
+
+  async viewGuruOneJabatan(payload) {
+    const ctx = 'getOneJabatan';
+    const { jabatan_id } = payload;
+
+    const jabatan = await this.query.findOneJabatan({ jabatan_id });
+    if (jabatan.err) {
+      logger.log(ctx, jabatan.err, 'jabatan not found');
+      return wrapper.error(new InternalServerError('Can not find jabatan'));
+    }
+
+    const data = jabatan.data;
+    delete data._id;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    logger.log(ctx, 'success', 'get jabatan Guru');
+    return wrapper.data(data);
+
+  }
 
   async viewSiswaKompetensi(payload) {
     const ctx = 'getSiswaKompetensi';

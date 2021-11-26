@@ -102,6 +102,12 @@ class Query {
     return recordset;
   }
 
+  async findManyJabatan(parameter) {
+    this.db.setCollection('jabatan');
+    const recordset = await this.db.findMany(parameter);
+    return recordset;
+  }
+
   async findManyClass(parameter) {
     this.db.setCollection('class');
     const recordset = await this.db.findMany(parameter);

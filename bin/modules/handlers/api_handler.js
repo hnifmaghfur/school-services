@@ -508,6 +508,75 @@ const getSiswaOnePrestasi = async (req, res) => {
   }
 };
 
+const getGuruJabatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getGuruId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getGuruJabatan(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getTenagaAhliJabatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.query;
+    const validatePayload = validator.isValidPayload(payload, queryModel.getTenagaAhliId);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getTenagaAhliJabatan(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.paginationResponse(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
+const getGuruOneJabatan = async (req, res) => {
+  const { userId } = req.token;
+  if (userId) {
+    const payload = req.params;
+    const validatePayload = validator.isValidPayload(payload, commandModel.deleteJabatan);
+    const getRequest = async (result) => {
+      if (result.err) {
+        return result;
+      }
+      return queryHandler.getGuruOneJabatan(result.data);
+    };
+
+    const sendResponse = async (result) => {
+      (result.err) ? wrapper.response(res, 'fail', result, 'failed get data')
+        : wrapper.response(res, 'success', result, 'Success get data', http.OK);
+    };
+    sendResponse(await getRequest(validatePayload));
+  } else {
+    logger.log('GetAllClass', 'You dont have access', 'userId failed');
+    wrapper.response(res, 'fail', 'You dont have Access', 'Get All Class', httpError.UNAUTHORIZED);
+  }
+};
+
 const addClass = async (req, res) => {
   const { userId } = req.token;
   if (userId) {
@@ -994,6 +1063,9 @@ module.exports = {
   getSiswaKompetensi,
   getSiswaPrestasi,
   getSiswaOnePrestasi,
+  getGuruJabatan,
+  getTenagaAhliJabatan,
+  getGuruOneJabatan,
   getAllGuru,
   getGuru,
   getAllTenagaAhli,

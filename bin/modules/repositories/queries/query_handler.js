@@ -166,6 +166,30 @@ const getSiswaOnePrestasi = async (payload) => {
   const result = await getData();
   return result;
 };
+const getGuruJabatan = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewGuruJabatan(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getTenagaAhliJabatan = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewTenagaAhliJabatan(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
+const getGuruOneJabatan = async (payload) => {
+  const getData = async () => {
+    const result = await user.viewGuruOneJabatan(payload);
+    return result;
+  };
+  const result = await getData();
+  return result;
+};
 const getRekapitulasi = async (payload) => {
   const getData = async () => {
     const result = await user.viewRekapitulasi(payload);
@@ -196,5 +220,8 @@ module.exports = {
   getSiswaKompetensi,
   getSiswaPrestasi,
   getSiswaOnePrestasi,
+  getGuruJabatan,
+  getTenagaAhliJabatan,
+  getGuruOneJabatan,
   getRekapitulasi
 };
