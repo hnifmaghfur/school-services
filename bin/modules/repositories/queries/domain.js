@@ -87,14 +87,6 @@ class User {
     data.tahun_ajaran_awal = data.tahun_ajaran.split('-')[0];
     data.tahun_ajaran_akhir = data.tahun_ajaran.split('-')[1];
 
-    if (data.jenis_kelas == 10) {
-      data.nama_kelas = 'X';
-    } else if (data.jenis_kelas == 11) {
-      data.nama_kelas = 'XI';
-    } else {
-      data.nama_kelas = 'XII';
-    }
-
     delete data._id;
     delete data.tahun_ajaran;
     delete data.jenis_kelas;
@@ -700,7 +692,7 @@ class User {
     const siswa = await this.query.findManyPrestasi({ siswa_id });
     if (siswa.err) {
       logger.log(ctx, siswa.err, 'siswa not found');
-      return wrapper.error(new InternalServerError('Can not find siswa'));
+      return wrapper.paginationData({ nama: cSiswa.data.nama_lengkap, kelas: kelas.data.nama_kelas, data: [] });
     }
 
     const data = siswa.data.map(item => {
@@ -750,7 +742,7 @@ class User {
     const guru = await this.query.findManyJabatan({ guru_id });
     if (guru.err) {
       logger.log(ctx, guru.err, 'guru not found');
-      return wrapper.error(new InternalServerError('Can not find guru'));
+      return wrapper.paginationData({ nama: cGuru.data.nama, data: [] });
     }
 
     const data = guru.data.map(item => {
@@ -779,7 +771,7 @@ class User {
     const tenagaAhli = await this.query.findManyJabatan({ tenaga_ahli_id });
     if (tenagaAhli.err) {
       logger.log(ctx, tenagaAhli.err, 'tenagaAhli not found');
-      return wrapper.error(new InternalServerError('Can not find tenaga Ahli'));
+      return wrapper.paginationData({ nama: cTenagaAhli.data.nama, data: [] });
     }
 
     const data = tenagaAhli.data.map(item => {
