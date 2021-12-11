@@ -82,14 +82,7 @@ class User {
     const ctx = 'Add-Class';
     const { kelas_id, guru_id, namaKelas, jurusan, walikelas, tahunAjaran } = payload;
 
-    let name = 'kelas';
-    if (namaKelas == 10) {
-      name = `X ${jurusan}`;
-    } else if (namaKelas == 11) {
-      name = `XI ${jurusan}`;
-    } else {
-      name = `XII ${jurusan}`;
-    }
+    let name = `${namaKelas} ${jurusan}`;
 
     const searching = {
       namaKelas: name,
