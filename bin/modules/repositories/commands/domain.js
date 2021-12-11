@@ -102,9 +102,20 @@ class User {
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
+    let jenis_kelas;
+
+    if (namaKelas === 'X') {
+      jenis_kelas = { jenis_kelas: 10 };
+    } else if (namaKelas === 'XI') {
+      jenis_kelas = { jenis_kelas: 11 };
+    } else if (namaKelas === 'XII') {
+      jenis_kelas = { jenis_kelas: 12 };
+    }
+
+
     const data = {
       guru_id,
-      jenis_kelas: namaKelas,
+      jenis_kelas,
       nama_kelas: name,
       wali_kelas: walikelas,
       tahun_ajaran: tahunAjaran,
