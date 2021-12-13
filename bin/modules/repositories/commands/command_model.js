@@ -33,6 +33,7 @@ const addTentangDiri = joi.object({
   jml_sdr_tiri: joi.string().required(),
   jml_sdr_angkat: joi.string().required(),
   status_anak: joi.string().required(),
+  status_ortu: joi.string().required(),
   bahasa: joi.string().required(),
   pihak_dihubungi: joi.string().required(),
   penanggung_biaya: joi.string().required(),
