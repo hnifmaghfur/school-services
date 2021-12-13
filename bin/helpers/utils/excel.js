@@ -26,8 +26,6 @@ const templateExcel = async (payload) => {
   ws.row(3).setHeight(20);
   const tableTitle = wb.createStyle(style.tTitleStyle);
   const tableHeader = wb.createStyle(style.tHeaderStyle);
-  // const tableBodyLeft = wb.createStyle(tBodyLeftStyle);
-  // const tableBody = wb.createStyle(tBodyStyle);
 
   ws.cell(1, 1, 1, 33, true).string(title).style(tableTitle);
   ws.cell(3, 1, 3, 1, true).string('NO').style(tableHeader);
@@ -43,26 +41,6 @@ const templateExcel = async (payload) => {
   ws.cell(3, 11, 3, 14, true).string('Status').style(tableHeader);
   ws.cell(3, 15, 3, 15, true).string('Engineer Name').style(tableHeader);
   ws.cell(3, 16, 3, 16, true).string('Engineer Solution').style(tableHeader);
-
-  // excelData.map((item, index) => {
-  //   ws.row(index+4).setHeight(30);
-  //   ws.cell(index+4,1).number(index+1).style(tableBody);
-  //   ws.cell(index+4,2).string(item.ticket).style(tableBody);
-  //   ws.cell(index+4,3).string(item.dateCreated).style(tableBody);
-  //   ws.cell(index+4,4).string(item.tower).style(tableBody);
-  //   ws.cell(index+4,5).string(item.unit).style(tableBody);
-  //   ws.cell(index+4,6).string(item.tenantName).style(tableBody);
-  //   ws.cell(index+4,7).string(item.tenantPhone).style(tableBody);
-  //   ws.cell(index+4,8).string(item.complaint).style(tableBodyLeft);
-  //   ws.cell(index+4,9).string(item.description).style(tableBodyLeft);
-  //   ws.cell(index+4,10).string(item.category).style(tableBody);
-  //   ws.cell(index+4,11).string(item.needAssign).style(tableBody);
-  //   ws.cell(index+4,12).string(item.waiting).style(tableBody);
-  //   ws.cell(index+4,13).string(item.onProgress).style(tableBody);
-  //   ws.cell(index+4,14).string(item.done).style(tableBody);
-  //   ws.cell(index+4,15).string(item.engineer).style(tableBody);
-  //   ws.cell(index+4,16).string(item.solution).style(item.solution == '-' ? tableBody : tableBodyLeft);
-  // });
 
   return wb;
 };

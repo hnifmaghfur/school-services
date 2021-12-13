@@ -105,11 +105,11 @@ class User {
     let jenis_kelas;
 
     if (namaKelas === 'X') {
-      jenis_kelas = { jenis_kelas: 10 };
+      jenis_kelas = 10;
     } else if (namaKelas === 'XI') {
-      jenis_kelas = { jenis_kelas: 11 };
+      jenis_kelas = 11;
     } else if (namaKelas === 'XII') {
-      jenis_kelas = { jenis_kelas: 12 };
+      jenis_kelas = 12;
     }
 
 
