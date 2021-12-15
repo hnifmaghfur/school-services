@@ -86,8 +86,8 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan.charAt(0);
-            sik.value = value.sikap.charAt(0);
+            ket.value = value.keterangan;
+            sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
             ket.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -109,8 +109,8 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan.charAt(0);
-            sik.value = value.sikap.charAt(0);
+            ket.value = value.keterangan;
+            sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
             ket.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -132,8 +132,8 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan.charAt(0);
-            sik.value = value.sikap.charAt(0);
+            ket.value = value.keterangan;
+            sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
             ket.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -155,8 +155,8 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan.charAt(0);
-            sik.value = value.sikap.charAt(0);
+            ket.value = value.keterangan;
+            sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
             ket.alignment = { vertical: 'middle', horizontal: 'center' };
