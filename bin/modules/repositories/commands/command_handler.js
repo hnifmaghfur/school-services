@@ -148,6 +148,12 @@ const exportSiswa = async (payload) => {
   return postCommand(payload);
 };
 
+const exportDataSiswa = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.exportDataSiswa(payload);
+  return postCommand(payload);
+};
+
 module.exports = {
   postDataLogin,
   registerUser,
@@ -171,6 +177,7 @@ module.exports = {
   importSiswa,
   exportRaport,
   exportSiswa,
+  exportDataSiswa,
   toAlumni,
   deleteData
 };

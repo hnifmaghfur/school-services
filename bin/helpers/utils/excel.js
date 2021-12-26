@@ -220,11 +220,9 @@ const templateExcelSiswa = async (payload) => {
   const { header, data } = payload;
   const template = './excel/template_siswa.xlsx';
   try {
-    let tempData = [];
     let wb = new excelJs.Workbook();
     await wb.xlsx.readFile(template);
     let ws = wb.getWorksheet('Sheet1');
-    // let tempWS = wb.getWorksheet('option');
 
     //content header
     ws.mergeCells('E3:H3');
@@ -270,8 +268,143 @@ const templateExcelSiswa = async (payload) => {
 
 };
 
+const templateExcelDataSiswa = async (payload) => {
+  const data = payload;
+  const template = './excel/template_data_siswa.xlsx';
+  const siswa = data.tentang;
+  const alamat = data.alamat;
+  const ayah = data.orangtua.ayah;
+  const ibu = data.orangtua.ibu;
+  const wali = data.orangtua.wali;
+  const pendidikan = data.pendidikan;
+  const kesehatan = data.kesehatan;
+  const hobi = data.hobi;
+  const pindah = data.pindah;
+
+  try {
+    let wb = new excelJs.Workbook();
+    await wb.xlsx.readFile(template);
+    let ws = wb.getWorksheet('Buku Induk Siswa');
+
+    //content siswa
+    ws.getCell('E3').value = siswa.NIS;
+    ws.getCell('N3').value = siswa.NISN;
+    ws.getCell('F7').value = siswa.nama_lengkap;
+    ws.getCell('F8').value = siswa.nama_panggilan;
+    ws.getCell('F9').value = siswa.ttl;
+    ws.getCell('F10').value = siswa.jenis_kelamin;
+    ws.getCell('F11').value = siswa.agama;
+    ws.getCell('F12').value = siswa.anak_ke;
+    ws.getCell('F13').value = siswa.jml_sdr_kandung;
+    ws.getCell('F14').value = siswa.jml_sdr_tiri;
+    ws.getCell('F15').value = siswa.jml_sdr_angkat;
+    ws.getCell('F16').value = siswa.status_anak;
+    ws.getCell('F17').value = siswa.bahasa;
+    ws.getCell('F18').value = siswa.pihak_dihubungi;
+    ws.getCell('F19').value = siswa.penanggung_biaya;
+
+    //constent alamat
+    ws.getCell('F23').value = alamat.alamat;
+    ws.getCell('F24').value = alamat.no_telephone;
+    ws.getCell('F25').value = alamat.tinggal_di;
+    ws.getCell('F26').value = alamat.jarak_ke_sekolah;
+
+    //content pendidikan
+    ws.getCell('F29').value = pendidikan.tanggal_diterima;
+    ws.getCell('F31').value = pendidikan.lulus_dari;
+    ws.getCell('F32').value = pendidikan.tanggal_no_ijazah;
+    ws.getCell('F33').value = pendidikan.tanggal_no_stl;
+    ws.getCell('F34').value = pendidikan.lama_belajar;
+    ws.getCell('F35').value = pendidikan.nilai_skhun;
+
+    //content kesehatan
+    ws.getCell('F38').value = kesehatan.gol_darah;
+    ws.getCell('F39').value = kesehatan.kelainan_jasmani;
+    ws.getCell('F40').value = kesehatan.tinggi_berat_badan;
+    ws.getCell('F42').value = kesehatan.nama_penyakit;
+    ws.getCell('F43').value = kesehatan.tahun_sakit;
+    ws.getCell('F44').value = kesehatan.lama_sakit;
+
+    //content hobi
+    ws.getCell('F47').value = hobi.olahraga;
+    ws.getCell('F48').value = hobi.seni;
+    ws.getCell('F49').value = hobi.organisasi;
+    ws.getCell('F50').value = hobi.lain;
+
+    //content orangtua
+    //ayah
+    ws.getCell('F54').value = ayah.nama || '-';
+    ws.getCell('F55').value = ayah.TTL || '-';
+    ws.getCell('F56').value = ayah.agama || '-';
+    ws.getCell('F57').value = ayah.kewarganegaraan || '-';
+    ws.getCell('F58').value = ayah.pendidikan || '-';
+    ws.getCell('F59').value = ayah.pekerjaan || '-';
+    ws.getCell('M5').value = ayah.gol_pekerjaan || '-';
+    ws.getCell('M6').value = ayah.penghasilan || '-';
+    ws.getCell('M7').value = ayah.alamat || '-';
+    ws.getCell('M9').value = ayah.no_telpon || '-';
+    ws.getCell('M10').value = ayah.status || '-';
+    ws.getCell('M11').value = ayah.status_nikah || '-';
+    ws.getCell('M12').value = ayah.tahun_meninggal || '-';
+
+    //ibu
+    ws.getCell('M15').value = ibu.nama || '-';
+    ws.getCell('M16').value = ibu.TTL || '-';
+    ws.getCell('M17').value = ibu.agama || '-';
+    ws.getCell('M18').value = ibu.kewarganegaraan || '-';
+    ws.getCell('M19').value = ibu.pendidikan || '-';
+    ws.getCell('M20').value = ibu.pekerjaan || '-';
+    ws.getCell('M21').value = ibu.gol_pekerjaan || '-';
+    ws.getCell('M22').value = ibu.penghasilan || '-';
+    ws.getCell('M23').value = ibu.alamat || '-';
+    ws.getCell('M24').value = ibu.no_telpon || '-';
+    ws.getCell('M25').value = ibu.status || '-';
+    ws.getCell('M26').value = ibu.status_nikah || '-';
+    ws.getCell('M27').value = ibu.tahun_meninggal || '-';
+
+    //wali
+    ws.getCell('M30').value = wali.nama || '-';
+    ws.getCell('M31').value = wali.TTL || '-';
+    ws.getCell('M32').value = wali.agama || '-';
+    ws.getCell('M33').value = wali.kewarganegaraan || '-';
+    ws.getCell('M34').value = wali.pendidikan || '-';
+    ws.getCell('M35').value = wali.pekerjaan || '-';
+    ws.getCell('M36').value = wali.gol_pekerjaan || '-';
+    ws.getCell('M37').value = wali.penghasilan || '-';
+    ws.getCell('M38').value = wali.alamat || '-';
+    ws.getCell('M40').value = wali.no_telpon || '-';
+    ws.getCell('M41').value = wali.hubungan_wali || '-';
+
+
+    //content pindahan
+    ws.getCell('M45').value = pindah.pindah_sekolah;
+    ws.getCell('M46').value = pindah.pindah_alasan;
+    ws.getCell('M49').value = pindah.diterima_di;
+    ws.getCell('M50').value = pindah.diterima_program;
+    ws.getCell('M53').value = pindah.meninggalkan_di;
+    ws.getCell('M54').value = pindah.meninggalkan_program;
+    ws.getCell('M55').value = pindah.meninggalkan_alasan;
+    ws.getCell('M58').value = pindah.akhir_tamat_belajar;
+    ws.getCell('M59').value = pindah.akhir_sttb;
+
+
+
+    const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
+    wb.xlsx.writeFile(saveFile);
+    return { data: saveFile, err: '' };
+
+    // const buffer = await wb.xlsx.writeBuffer();
+    // return { data: buffer, err: '' };
+
+  } catch (err) {
+    return { data: '', err };
+  }
+
+};
+
 module.exports = {
   templateExcel,
   templateExcelJs,
-  templateExcelSiswa
+  templateExcelSiswa,
+  templateExcelDataSiswa,
 };

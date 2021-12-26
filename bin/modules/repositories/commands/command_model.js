@@ -174,6 +174,10 @@ const exportSiswa = joi.object({
   kelas_id: joi.string().required(),
 });
 
+const exportDataSiswa = joi.object({
+  siswa_id: joi.string().required(),
+});
+
 const idSiswa = joi.object({
   siswa_id: joi.string().allow(''),
 });
@@ -235,6 +239,7 @@ module.exports = {
   importSiswa,
   exportRaport,
   exportSiswa,
+  exportDataSiswa,
   idSiswa,
   deleteData
 };
