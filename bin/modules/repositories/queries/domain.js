@@ -840,7 +840,7 @@ class User {
     const ctx = 'getRekapitulasi';
     const { type } = payload;
 
-    let searching = {};
+    let searching = { isActive: true };
 
     if (type === 'X') {
       searching = { jenis_kelas: 10 };
