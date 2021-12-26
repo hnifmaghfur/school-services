@@ -126,9 +126,9 @@ class Query {
     return recordset;
   }
 
-  async findManySiswa(parameter) {
+  async findManySiswa(parameter, sort) {
     this.db.setCollection('tentangDiri');
-    const recordset = await this.db.findMany(parameter);
+    const recordset = await this.db.findMany(parameter, sort);
     return recordset;
   }
 

@@ -142,6 +142,12 @@ const exportRaport = async (payload) => {
   return postCommand(payload);
 };
 
+const exportSiswa = async (payload) => {
+  const user = new User(db);
+  const postCommand = async payload => user.exportSiswa(payload);
+  return postCommand(payload);
+};
+
 module.exports = {
   postDataLogin,
   registerUser,
@@ -164,6 +170,7 @@ module.exports = {
   addTenagaAhli,
   importSiswa,
   exportRaport,
+  exportSiswa,
   toAlumni,
   deleteData
 };

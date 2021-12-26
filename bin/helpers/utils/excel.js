@@ -216,7 +216,62 @@ const templateExcelJs = async (payload) => {
 
 };
 
+const templateExcelSiswa = async (payload) => {
+  const { header, data } = payload;
+  const template = './excel/template_siswa.xlsx';
+  try {
+    let tempData = [];
+    let wb = new excelJs.Workbook();
+    await wb.xlsx.readFile(template);
+    let ws = wb.getWorksheet('Sheet1');
+    // let tempWS = wb.getWorksheet('option');
+
+    //content header
+    ws.mergeCells('E3:H3');
+    ws.mergeCells('E4:H4');
+    ws.mergeCells('E5:H5');
+    ws.mergeCells('E6:H6');
+    ws.getCell('A1').value = header.tahun;
+    ws.getCell('E3').value = header.namaKepala;
+    ws.getCell('E4').value = header.nipKepala;
+    ws.getCell('E5').value = header.namaWKelas;
+    ws.getCell('E6').value = header.nipWKelas;
+    ws.getCell('M3').value = header.bulan.toUpperCase();
+    ws.getCell('M6').value = header.jurusan;
+
+    //content body
+    data.map((item, index) => {
+      ws.getCell(`A${13 + index}`).value = index + 1;
+      ws.getCell(`B${13 + index}`).value = item.nama_kelas;
+      ws.getCell(`C${13 + index}`).value = item.nis;
+      ws.getCell(`D${13 + index}`).value = item.nisn;
+      ws.getCell(`E${13 + index}`).value = item.nama;
+      ws.getCell(`F${13 + index}`).value = item.ttl;
+      ws.getCell(`G${13 + index}`).value = item.jk;
+      ws.getCell(`H${13 + index}`).value = item.agama;
+      ws.getCell(`I${13 + index}`).value = item.alamat;
+      ws.getCell(`J${13 + index}`).value = item.nama_ayah;
+      ws.getCell(`K${13 + index}`).value = item.pekerjaan_ayah;
+      ws.getCell(`L${13 + index}`).value = item.noTelp_ayah;
+      ws.getCell(`M${13 + index}`).value = item.nama_ibu;
+      ws.getCell(`N${13 + index}`).value = item.pekerjaan_ibu;
+    });
+
+    // const saveFile = `./excel/download/${header.namaKelas}.xlsx`;
+    // wb.xlsx.writeFile(saveFile);
+    // return { data: saveFile, err: '' };
+
+    const buffer = await wb.xlsx.writeBuffer();
+    return { data: buffer, err: '' };
+
+  } catch (err) {
+    return { data: '', err };
+  }
+
+};
+
 module.exports = {
   templateExcel,
   templateExcelJs,
+  templateExcelSiswa
 };
