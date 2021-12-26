@@ -12,9 +12,9 @@
     "lint": "eslint bin",
     "lint:fix": "npm run lint -- --fix"
   },
-  "author": "Hanif Maghfur",
+  "author": "",
   "license": "MIT",
-  "homepage": "https://github.com/hnifmaghfur",
+  "homepage": "",
   "dependencies": {
     "compress-images": "^2.0.2",
     "confidence": "^4.0.2",

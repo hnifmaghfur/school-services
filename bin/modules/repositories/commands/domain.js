@@ -23,6 +23,19 @@ class User {
   constructor(db) {
     this.command = new Command(db);
     this.query = new Query(db);
+    dateFormat.i18n = {
+      dayNames: [
+        'Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab',
+        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+      ],
+      monthNames: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      ],
+      timeNames: [
+        'a', 'p', 'am', 'pm', 'A', 'P', 'AM', 'PM'
+      ]
+    };
   }
 
   async generateCredential(payload) {
@@ -81,6 +94,11 @@ class User {
   async addClass(payload) {
     const ctx = 'Add-Class';
     const { kelas_id, guru_id, namaKelas, jurusan, walikelas, tahunAjaran } = payload;
+
+    const wKelas = await this.query.findOneGuru({ guru_id });
+    if (wKelas.err) {
+      return wrapper.error(new NotFoundError('Wali Kelas tidak ditemukan'));
+    }
 
     let name = `${namaKelas} ${jurusan}`;
 
@@ -1107,6 +1125,89 @@ class User {
     const kelasData = dataKelas.filter(({ namaKelas }, index) => !ids.includes(namaKelas, index + 1));
 
     const excel = await templateExcel.templateExcelJs({ data, siswaData, kelasData });
+    if (excel.err) {
+      logger.error(ctx, 'failed create excel', 'create excel');
+      return wrapper.error(new InternalServerError('Gagal memuat raport'));
+    }
+
+    return wrapper.data(excel.data);
+  }
+
+  async exportSiswa(payload) {
+    const ctx = 'Export-Siswa';
+    const { kelas_id } = payload;
+
+    const kelas = await this.query.findOneClass({ kelas_id });
+    if (kelas.err) {
+      return wrapper.error(new NotFoundError('Kelas not found'));
+    }
+
+    const waliKelas = await this.query.findOneGuru({ guru_id: kelas.data.guru_id });
+    if (waliKelas.err) {
+      return wrapper.error(new NotFoundError('Wali kelas not found'));
+    }
+
+    const kepalaSekolah = await this.query.findOneGuru({ $or: [{ 'jabatan': new RegExp('sekolah', 'i') }] });
+
+    const namaWKelas = waliKelas.data.nama;
+    const nipWKelas = waliKelas.data.nip_karpeg;
+    const namaKelas = kelas.data.nama_kelas;
+    const namaKepala = kepalaSekolah.data.nama || '';
+    const nipKepala = kepalaSekolah.data.nip_karpeg || '';
+
+    const tahunAjaran = kelas.data.tahun_ajaran;
+    const jurusan = kelas.data.nama_kelas.split(' ')[1] || '-';
+
+    const dataExcelHeader = {
+      namaKelas,
+      namaWKelas: `: ${namaWKelas}`,
+      nipWKelas: `: ${nipWKelas}`,
+      namaKepala: `: ${namaKepala}`,
+      nipKepala: `: ${nipKepala}`,
+      tahun: `DAFTAR NAMA SISWA SMA NEGERI 1 KOTA JAMBI TAHUN PELAJARAN ${tahunAjaran}`,
+      jurusan: `JURUSAN : ${jurusan}`,
+      bulan: dateFormat(new Date(), 'mmmm yyyy')
+    };
+
+    const siswa = await this.query.findManySiswa({ kelas_id }, { nama_lengkap: 1 });
+    if (siswa.err) {
+      return wrapper.error(new NotFoundError('Siswa belum ada di kelas ini'));
+    }
+    const dataExcelSiswa = await Promise.all(siswa.data.map(async item => {
+      const siswa_id = item.siswa_id;
+      const address = await this.query.findOneTempatTinggal({ siswa_id });
+      const alamat = address.data.alamat || '';
+      let dataIbu = { nama: '', pekerjaan: '' };
+      let dataAyah = { nama: '', pekerjaan: '', noTelp: '' };
+      const ortu = await this.query.findManyOrangTua({ siswa_id, type_ortu: { $in: ['1', '2'] } });
+      ortu.data.forEach(i => {
+        if (i.type_ortu === '1') {
+          dataAyah.nama = i.nama;
+          dataAyah.pekerjaan = i.pekerjaan;
+          dataAyah.noTelp = i.no_telpon;
+        } else {
+          dataIbu.nama = i.nama;
+          dataIbu.pekerjaan = i.pekerjaan;
+        }
+      });
+      return {
+        nama_kelas: namaKelas,
+        nis: item.NIS,
+        nisn: item.NISN,
+        nama: item.nama_lengkap,
+        ttl: item.ttl,
+        jk: item.jenis_kelamin.charAt(0).toUpperCase(),
+        agama: item.agama,
+        alamat,
+        nama_ayah: dataAyah.nama,
+        pekerjaan_ayah: dataAyah.pekerjaan,
+        noTelp_ayah: dataAyah.noTelp,
+        nama_ibu: dataIbu.nama,
+        pekerjaan_ibu: dataIbu.pekerjaan
+      };
+    }));
+
+    const excel = await templateExcel.templateExcelSiswa({ header: dataExcelHeader, data: dataExcelSiswa });
     if (excel.err) {
       logger.error(ctx, 'failed create excel', 'create excel');
       return wrapper.error(new InternalServerError('Gagal memuat raport'));
