@@ -1220,7 +1220,7 @@ class User {
     const ctx = 'Export-data-Siswa';
     const { siswa_id } = payload;
 
-    const tentangData = await this.query.findOneSiswa({ siswa_id, isDelete: false, isActive: true });
+    const tentangData = await this.query.findOneSiswa({ siswa_id, isDelete: false });
     if (tentangData.err) {
       return wrapper.error(new NotFoundError('Siswa not found'));
     }
