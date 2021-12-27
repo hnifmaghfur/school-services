@@ -1178,20 +1178,22 @@ class User {
     const dataExcelSiswa = await Promise.all(siswa.data.map(async item => {
       const siswa_id = item.siswa_id;
       const address = await this.query.findOneTempatTinggal({ siswa_id });
-      const alamat = address.data.alamat || '';
+      const alamat = validate.isEmpty(address.data.alamat) ? '' : address.data.alamat;
       let dataIbu = { nama: '', pekerjaan: '' };
       let dataAyah = { nama: '', pekerjaan: '', noTelp: '' };
       const ortu = await this.query.findManyOrangTua({ siswa_id, type_ortu: { $in: ['1', '2'] } });
-      ortu.data.forEach(i => {
-        if (i.type_ortu === '1') {
-          dataAyah.nama = i.nama;
-          dataAyah.pekerjaan = i.pekerjaan;
-          dataAyah.noTelp = i.no_telpon;
-        } else {
-          dataIbu.nama = i.nama;
-          dataIbu.pekerjaan = i.pekerjaan;
-        }
-      });
+      if (!validate.isEmpty(ortu.data)) {
+        ortu.data.forEach(i => {
+          if (i.type_ortu === '1') {
+            dataAyah.nama = i.nama;
+            dataAyah.pekerjaan = i.pekerjaan;
+            dataAyah.noTelp = i.no_telpon;
+          } else {
+            dataIbu.nama = i.nama;
+            dataIbu.pekerjaan = i.pekerjaan;
+          }
+        });
+      }
       return {
         nama_kelas: namaKelas,
         nis: item.NIS,
