@@ -1125,6 +1125,8 @@ class User {
     const kelasData = dataKelas.filter(({ namaKelas }, index) => !ids.includes(namaKelas, index + 1));
 
     const excel = await templateExcel.templateExcelJs({ data, siswaData, kelasData });
+    // eslint-disable-next-line no-console
+    console.log(excel);
     if (excel.err) {
       logger.error(ctx, 'failed create excel', 'create excel');
       return wrapper.error(new InternalServerError('Gagal memuat raport'));
