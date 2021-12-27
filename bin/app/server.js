@@ -99,7 +99,8 @@ function AppServer() {
   this.server.get('/kelas/v1/kompetensi/:siswa_id', jwtAuth.verifyToken, handler.getKelasKompetensi);
   this.server.post('/siswa/v1/import', jwtAuth.verifyToken, handler.importSiswa);
   this.server.post('/siswa/v1/export-raport', jwtAuth.verifyToken, handler.exportRaport);
-  this.server.post('/siswa/v1/export-siswa', jwtAuth.verifyToken, handler.exportSiswa);
+  this.server.post('/siswa/v1/export-rekapitulasi-kelas', jwtAuth.verifyToken, handler.exportSiswa);
+  this.server.post('/siswa/v1/export-siswa', jwtAuth.verifyToken, handler.exportDataSiswa);
   this.server.get('/kelas/v1/rekapitulasi', jwtAuth.verifyToken, handler.getRekapitulasi);
   this.server.get('/staf/v1/one-jabatan/:jabatan_id', jwtAuth.verifyToken, handler.getGuruOneJabatan);
 

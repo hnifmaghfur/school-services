@@ -1216,6 +1216,55 @@ class User {
     return wrapper.data(excel.data);
   }
 
+  async exportDataSiswa(payload) {
+    const ctx = 'Export-data-Siswa';
+    const { siswa_id } = payload;
+
+    const tentangData = await this.query.findOneSiswa({ siswa_id, isDelete: false });
+    if (tentangData.err) {
+      return wrapper.error(new NotFoundError('Siswa not found'));
+    }
+
+    const alamatData = await this.query.findOneTempatTinggal({ siswa_id });
+    const orgData = await this.query.findManyOrangTua({ siswa_id });
+    const pendidikanData = await this.query.findOnePendidikan({ siswa_id });
+    const kesehatanData = await this.query.findOneKesehatan({ siswa_id });
+    const hobiData = await this.query.findOneHobi({ siswa_id });
+    const pindahData = await this.query.findOnePindahan({ siswa_id });
+
+    let ayah = {};
+    let ibu = {};
+    let wali = {};
+
+    orgData.data.forEach(item => {
+      if (item.type === '1') {
+        return ayah = item;
+      } else if (item.type === '2') {
+        return ibu = item;
+      }
+      return wali = item;
+
+    });
+
+    const data = {
+      tentang: tentangData.data,
+      alamat: alamatData.data,
+      orangtua: { ayah, ibu, wali },
+      pendidikan: pendidikanData.data,
+      kesehatan: kesehatanData.data,
+      hobi: hobiData.data,
+      pindah: pindahData.data
+    };
+
+    const excel = await templateExcel.templateExcelDataSiswa(data);
+    if (excel.err) {
+      logger.error(ctx, 'failed create excel', 'create excel');
+      return wrapper.error(new InternalServerError('Gagal memuat raport'));
+    }
+
+    return wrapper.data(excel.data);
+  }
+
   async toAlumni(payload) {
     const { siswa_id } = payload;
 
