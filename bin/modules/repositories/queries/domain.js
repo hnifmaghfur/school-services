@@ -840,7 +840,7 @@ class User {
     const ctx = 'getRekapitulasi';
     const { type } = payload;
 
-    let searching = { isActive: true };
+    let searching = {};
 
     if (type === 'X') {
       searching = { jenis_kelas: 10 };
@@ -852,7 +852,7 @@ class User {
       searching = { kelas_id: type };
     }
 
-    const dKelas = await this.query.findManyClass(searching);
+    const dKelas = await this.query.findManyClass({ ...searching, isActive: true });
     if (dKelas.err) {
       logger.log(ctx, 'Internal Server Error', 'Class not found');
       return wrapper.error(new InternalServerError('Can not find Class'));
