@@ -2,6 +2,7 @@
 const excel4node = require('excel4node');
 const excelJs = require('exceljs');
 const style = require('./excelStyle');
+const fs = require('fs');
 
 const templateExcel = async (payload) => {
   const excelData = payload;
@@ -388,14 +389,29 @@ const templateExcelDataSiswa = async (payload) => {
     ws.getCell('M59').value = pindah.akhir_sttb;
 
     //photo
-    ws.getCell('O6').value = pindah.akhir_sttb;
+    let imageId = 'error';
+    if (siswa.image.includes('/')) {
+      imageId = siswa.image.split('/')[siswa.image.split('/').length - 1];
+    }
 
-    // const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
-    // wb.xlsx.writeFile(saveFile);
-    // return { data: saveFile, err: '' };
+    if (imageId === 'error') {
+      ws.getCell('O6').value = 'Image not found';
+    } else {
+      const path = `./files/images/original/${imageId}`;
+      const id = wb.addImage({
+        buffer: fs.readFileSync(path),
+        extension: 'png'
+      });
 
-    const buffer = await wb.xlsx.writeBuffer();
-    return { data: buffer, err: '' };
+      ws.addImage(id, 'O6:P13');
+    }
+
+    const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
+    wb.xlsx.writeFile(saveFile);
+    return { data: saveFile, err: '' };
+
+    // const buffer = await wb.xlsx.writeBuffer();
+    // return { data: buffer, err: '' };
 
   } catch (err) {
     return { data: '', err };
