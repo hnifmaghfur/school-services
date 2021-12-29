@@ -766,9 +766,9 @@ class User {
     }
 
     const validateGuru = await this.query.findOneGuru({ nip_kapreg });
-    if (validateGuru.err || validate.isEmpty(validateGuru.data)) {
+    if (!validate.isEmpty(validateGuru.data)) {
       logger.log(ctx, 'guru not found', 'validate guru');
-      return wrapper.error(new InternalServerError('guru Not Found'));
+      return wrapper.error(new InternalServerError('guru telah ada'));
     }
 
     let guruId = uuid();
@@ -1112,12 +1112,14 @@ class User {
       if (validate.isEmpty(kelas.err)) {
         return {
           namaKelas: item.namaKelas,
-          tahunAjaran: kelas.data.tahun_ajaran
+          tahunAjaran: kelas.data.tahun_ajaran,
+          jenis_kelas: item.jenis_kelas
         };
       }
       return {
         namaKelas: item.namaKelas,
-        tahunAjaran: '-'
+        tahunAjaran: '-',
+        jenis_kelas: 0
       };
     }));
 
@@ -1125,8 +1127,6 @@ class User {
     const kelasData = dataKelas.filter(({ namaKelas }, index) => !ids.includes(namaKelas, index + 1));
 
     const excel = await templateExcel.templateExcelJs({ data, siswaData, kelasData });
-    // eslint-disable-next-line no-console
-    console.log(excel);
     if (excel.err) {
       logger.error(ctx, 'failed create excel', 'create excel');
       return wrapper.error(new InternalServerError('Gagal memuat raport'));
