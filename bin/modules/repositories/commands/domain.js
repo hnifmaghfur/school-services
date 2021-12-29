@@ -1260,6 +1260,7 @@ class User {
       pindah: pindahData.data
     };
 
+
     const excel = await templateExcel.templateExcelDataSiswa(data);
     if (excel.err) {
       logger.error(ctx, 'failed create excel', 'create excel');
