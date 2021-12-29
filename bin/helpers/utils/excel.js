@@ -403,15 +403,15 @@ const templateExcelDataSiswa = async (payload) => {
         extension: 'png'
       });
 
-      ws.addImage(id, 'O6:P13');
+      ws.addImage(id, 'O6:P17');
     }
 
-    const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
-    wb.xlsx.writeFile(saveFile);
-    return { data: saveFile, err: '' };
+    // const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
+    // wb.xlsx.writeFile(saveFile);
+    // return { data: saveFile, err: '' };
 
-    // const buffer = await wb.xlsx.writeBuffer();
-    // return { data: buffer, err: '' };
+    const buffer = await wb.xlsx.writeBuffer();
+    return { data: buffer, err: '' };
 
   } catch (err) {
     return { data: '', err };
