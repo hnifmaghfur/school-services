@@ -765,12 +765,6 @@ class User {
       payload.image = await this.uploadData({ type: 'image', file: payload.image });
     }
 
-    const validateGuru = await this.query.findOneGuru({ nip_kapreg });
-    if (!validate.isEmpty(validateGuru.data)) {
-      logger.log(ctx, 'guru not found', 'validate guru');
-      return wrapper.error(new InternalServerError('guru telah ada'));
-    }
-
     let guruId = uuid();
     const createdAt = dateFormat(new Date(), 'isoDateTime');
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
@@ -797,12 +791,6 @@ class User {
     const { nip_kapreg, tenaga_ahli_id } = payload;
     if (payload.image) {
       payload.image = await this.uploadData({ type: 'image', file: payload.image });
-    }
-
-    const validateTenagaAhli = await this.query.findOneTenagaAhli({ nip_kapreg });
-    if (validateTenagaAhli.err || validate.isEmpty(validateTenagaAhli.data)) {
-      logger.log(ctx, 'Tenaga Ahli not found', 'validate Tenaga Ahli');
-      return wrapper.error(new InternalServerError('guru Not Found'));
     }
 
     let tenaga_id = uuid();
@@ -1113,13 +1101,13 @@ class User {
         return {
           namaKelas: item.namaKelas,
           tahunAjaran: kelas.data.tahun_ajaran,
-          jenis_kelas: item.jenis_kelas
+          jenis_kelas: 0
         };
       }
       return {
         namaKelas: item.namaKelas,
         tahunAjaran: '-',
-        jenis_kelas: 0
+        jenis_kelas: item.jenis_kelas
       };
     }));
 
