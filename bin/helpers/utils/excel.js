@@ -86,7 +86,7 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan;
+            ket.value = value.keterampilan || '';
             sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
@@ -109,7 +109,7 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan;
+            ket.value = value.keterampilan || '';
             sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
@@ -132,7 +132,7 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan;
+            ket.value = value.keterampilan || '';
             sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
@@ -155,7 +155,7 @@ const templateExcelJs = async (payload) => {
             const ket = row.getCell(rKeterampilan);
             const sik = row.getCell(rSikap);
             peng.value = value.nilai;
-            ket.value = value.keterangan;
+            ket.value = value.keterampilan || '';
             sik.value = '';
             peng.alignment = { vertical: 'middle', horizontal: 'center' };
             peng.font = { bold: true };
@@ -387,7 +387,8 @@ const templateExcelDataSiswa = async (payload) => {
     ws.getCell('M58').value = pindah.akhir_tamat_belajar;
     ws.getCell('M59').value = pindah.akhir_sttb;
 
-
+    //photo
+    ws.getCell('O6').value = pindah.akhir_sttb;
 
     // const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
     // wb.xlsx.writeFile(saveFile);
