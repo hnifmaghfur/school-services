@@ -218,6 +218,20 @@ class User {
         tahun_ajaran = dataKelas.data.tahun_ajaran;
       }
 
+      let status = 'Mampu';
+      if (item.kps === 'Ada') {
+        status = 'Tidak Mampu';
+      }
+
+      if (item.pkh > 0) {
+        status = 'Tidak Mampu';
+      }
+
+      if (item.kks > 0) {
+        status = 'Tidak Mampu';
+      }
+
+
       return {
         'kelas_id': item.kelas_id || 'Belum ada kelas',
         'siswa_id': item.siswa_id,
@@ -225,6 +239,7 @@ class User {
         'NISN': item.NISN,
         'NIS': item.NIS,
         'jenis_kelamin': item.jenis_kelamin,
+        status,
         nama_kelas,
         tahun_ajaran
       };
