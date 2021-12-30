@@ -3,6 +3,7 @@ const excel4node = require('excel4node');
 const excelJs = require('exceljs');
 const style = require('./excelStyle');
 const fs = require('fs');
+const { isNumber } = require('validate.js');
 
 const templateExcel = async (payload) => {
   const excelData = payload;
@@ -56,6 +57,14 @@ const templateExcelJs = async (payload) => {
     let ws = wb.getWorksheet('Raport');
     let tempWS = wb.getWorksheet('option');
 
+    const ds = kelasData[0].jenis_kelas * kelasData[0].semester;
+
+    let start = 0;
+
+    if (isNumber(ds)) {
+      start = ds == 10 ? 1 : ds == 20 ? 2 : ds == 11 ? 3 : ds == 22 ? 4 : ds == 12 ? 5 : 6;
+    }
+
     //konten row 3
     ws.mergeCells('F3:K3');
     ws.mergeCells('Q3:S3');
@@ -67,9 +76,9 @@ const templateExcelJs = async (payload) => {
 
     //content nilai
     data.map((item, index) => {
-      const rPengetahuan = 8 + (index * 3);
-      const rKeterampilan = 9 + (index * 3);
-      const rSikap = 10 + (index * 3);
+      const rPengetahuan = 8 + start + (index * 3);
+      const rKeterampilan = 9 + start + (index * 3);
+      const rSikap = 10 + start + (index * 3);
 
       tempData.push({
         position: rPengetahuan,
@@ -203,12 +212,12 @@ const templateExcelJs = async (payload) => {
     wb.removeWorksheet('option');
 
     //local
-    // const saveFile = `./excel/download/${siswaData.nisn + '_' + siswaData.nama}.xlsx`;
-    // wb.xlsx.writeFile(saveFile);
-    // return { data: saveFile, err: '' };
+    const saveFile = `./excel/download/${siswaData.nisn + '_' + siswaData.nama}.xlsx`;
+    wb.xlsx.writeFile(saveFile);
+    return { data: saveFile, err: '' };
 
-    const buffer = await wb.xlsx.writeBuffer();
-    return { data: buffer, err: '' };
+    // const buffer = await wb.xlsx.writeBuffer();
+    // return { data: buffer, err: '' };
 
   } catch (err) {
     return { data: '', err };
