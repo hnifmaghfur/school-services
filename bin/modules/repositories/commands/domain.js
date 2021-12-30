@@ -1101,13 +1101,15 @@ class User {
         return {
           namaKelas: item.namaKelas,
           tahunAjaran: kelas.data.tahun_ajaran,
-          jenis_kelas: 0
+          jenis_kelas: 0,
+          semester: Number(item.semester)
         };
       }
       return {
         namaKelas: item.namaKelas,
         tahunAjaran: '-',
-        jenis_kelas: kelas.data.jenis_kelas
+        jenis_kelas: kelas.data.jenis_kelas,
+        semester: Number(item.semester)
       };
     }));
 
