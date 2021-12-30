@@ -1097,7 +1097,7 @@ class User {
 
     const dataKelas = await Promise.all(data.map(async item => {
       const kelas = await this.query.findOneClass({ kelas_id: item.kelas_id, isActive: true });
-      if (validate.isEmpty(kelas.err)) {
+      if (!validate.isEmpty(kelas.err)) {
         return {
           namaKelas: item.namaKelas,
           tahunAjaran: kelas.data.tahun_ajaran,
@@ -1107,7 +1107,7 @@ class User {
       return {
         namaKelas: item.namaKelas,
         tahunAjaran: '-',
-        jenis_kelas: item.jenis_kelas
+        jenis_kelas: kelas.data.jenis_kelas
       };
     }));
 
@@ -1229,12 +1229,13 @@ class User {
     let wali = {};
 
     orgData.data.forEach(item => {
-      if (item.type === '1') {
+      if (item.type_ortu === '1') {
         return ayah = item;
-      } else if (item.type === '2') {
+      } else if (item.type_ortu === '2') {
         return ibu = item;
       }
       return wali = item;
+
 
     });
 
