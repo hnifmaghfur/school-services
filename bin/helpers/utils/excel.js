@@ -388,29 +388,29 @@ const templateExcelDataSiswa = async (payload) => {
     ws.getCell('M59').value = pindah.akhir_sttb;
 
     //photo
-    // let imageId = 'error';
-    // if (siswa.image.includes('/')) {
-    //   imageId = siswa.image.split('/')[siswa.image.split('/').length - 1];
-    // }
+    let imageId = 'error';
+    if (siswa.image.includes('/')) {
+      imageId = siswa.image.split('/')[siswa.image.split('/').length - 1];
+    }
 
-    // if (imageId === 'error') {
-    //   ws.getCell('O6').value = 'Image not found';
-    // } else {
-    //   const path = `./files/images/original/${imageId}`;
-    //   const id = wb.addImage({
-    //     buffer: fs.readFileSync(path),
-    //     extension: 'png'
-    //   });
+    if (imageId === 'error') {
+      ws.getCell('O6').value = 'Image not found';
+    } else {
+      const path = `./files/images/original/${imageId}`;
+      const id = wb.addImage({
+        buffer: fs.readFileSync(path),
+        extension: 'png'
+      });
 
-    //   ws.addImage(id, 'O6:P17');
-    // }
+      ws.addImage(id, 'O6:P17');
+    }
 
-    const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
-    wb.xlsx.writeFile(saveFile);
-    return { data: saveFile, err: '' };
+    // const saveFile = `./excel/download/${siswa.NISN + '_DATA_' + siswa.nama_lengkap}.xlsx`;
+    // wb.xlsx.writeFile(saveFile);
+    // return { data: saveFile, err: '' };
 
-    // const buffer = await wb.xlsx.writeBuffer();
-    // return { data: buffer, err: '' };
+    const buffer = await wb.xlsx.writeBuffer();
+    return { data: buffer, err: '' };
 
   } catch (err) {
     return { data: '', err };
