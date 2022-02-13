@@ -835,7 +835,7 @@ class User {
 
     await Promise.all(sheetContent.map(async (item, index) => {
 
-      const checkUser = await this.query.findOneTentangDiri({ $or: [{ NISN: item.NISN }, { NIS: item.NIS }] });
+      const checkUser = await this.query.findOneTentangDiri({ isDelete: false, $or: [{ NISN: item.NISN }, { NIS: item.NIS }] });
       if (!validate.isEmpty(checkUser.data)) {
         logger.log(ctx, 'validate data siswa', 'check siswa');
         return duplicate++;
