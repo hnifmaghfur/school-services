@@ -1139,7 +1139,7 @@ class User {
       return wrapper.error(new NotFoundError('Wali kelas not found'));
     }
 
-    const kepalaSekolah = await this.query.findOneGuru({ $or: [{ 'jabatan': new RegExp('kepala sekolah', 'i') }] });
+    const kepalaSekolah = await this.query.findOneGuru({ $or: [{ 'jabatan': new RegExp('kepala sekolah', 'i') }], isDelete: false });
 
     const namaWKelas = waliKelas.data.nama;
     const nipWKelas = waliKelas.data.nip_karpeg;
