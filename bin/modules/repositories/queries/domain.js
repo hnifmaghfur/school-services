@@ -915,13 +915,13 @@ class User {
 
           if (value.agama.toLowerCase() == 'islam') {
             islam++;
-          } else if (value.agama.toLowerCase() == 'khatoik') {
+          } else if (value.agama.toLowerCase() == 'katolik') {
             khatolik++;
           } else if (!validate.isEmpty(value.agama.match(/kristen/i))) {
             protestan++;
           } else if (value.agama.toLowerCase() == 'hindu') {
             hindu++;
-          } else if (value.agama.toLowerCase() == 'budha') {
+          } else if (value.agama.toLowerCase() == 'buddha') {
             budha++;
           } else if (value.agama.toLowerCase() == 'protestan') {
             protestan++;
