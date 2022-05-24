@@ -955,10 +955,10 @@ class User {
         kelamin: { L: laki, P: perempuan, total: laki + perempuan },
         agama: {
           islam,
-          khatolik,
+          katolik: khatolik,
           protestan,
           hindu,
-          budha,
+          buddha: budha,
           total: islam + khatolik + protestan + hindu + budha
         },
         tahun_kelahiran: rTahun_lahir,
