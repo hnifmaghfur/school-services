@@ -599,7 +599,7 @@ class User {
 
     const updatedAt = dateFormat(new Date(), 'isoDateTime');
 
-    const result = await this.command.patchOneBantuan(siswa_id, { pkh, kks, kps, updatedAt });
+    const result = await this.command.patchOneBantuan({ siswa_id }, { pkh, kks, kps, updatedAt });
     if (result.err) {
       logger.log(ctx, 'failed upload data', 'insert Bantuan');
       return wrapper.error(new InternalServerError('internal server error'));
